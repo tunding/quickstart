@@ -1,5 +1,7 @@
 package org.springside.examples.quickstart.web.account;
 
+import java.util.HashMap;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +11,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springside.examples.quickstart.entity.User;
+import org.springside.examples.quickstart.entity.Runner;
 import org.springside.examples.quickstart.service.account.AccountService;
+import org.springside.modules.mapper.JsonMapper;
 
 /**
  * 用户注册的Controller.
@@ -23,17 +26,28 @@ public class RegisterController {
 
 	@Autowired
 	private AccountService accountService;
+	
+	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
+	protected HashMap<String, Object> map = new HashMap<String, Object>();
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String registerForm() {
 		return "account/register";
 	}
 
-	@RequestMapping(value="/form", method = RequestMethod.POST)
-	public String register(@Valid User user, RedirectAttributes redirectAttributes) {
-		accountService.registerUser(user);
-		redirectAttributes.addFlashAttribute("username", user.getLoginName());
-		return "redirect:/login";
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST)
+	public String register(@Valid Runner user, RedirectAttributes redirectAttributes) {
+		try{
+			accountService.registerUser(user);
+			map.put("result", "success");
+		}catch(RuntimeException e){
+			e.printStackTrace();
+			map.put("result", e.getMessage());
+		}
+		return jsonMapper.toJson(map);
+/*		redirectAttributes.addFlashAttribute("username", user.getLoginName());
+		return "redirect:/login";*/
 	}
 
 	/**

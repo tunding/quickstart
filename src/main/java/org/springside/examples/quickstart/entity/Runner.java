@@ -28,7 +28,7 @@ import com.google.common.collect.ImmutableList;
 @Table(name = "runner_user")
 @DynamicInsert @DynamicUpdate
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class User extends IdEntity {
+public class Runner extends IdEntity {
 	private String loginName;
 	private String plainPassword;
 	private String salt;
@@ -43,10 +43,10 @@ public class User extends IdEntity {
 	private Date createTime;//记录创建的时间
 	private Date lastUpdateTime;//记录最后更新的时间
 
-	public User() {
+	public Runner() {
 	}
 
-	public User(Long id) {
+	public Runner(Long id) {
 		this.id = id;
 	}
 

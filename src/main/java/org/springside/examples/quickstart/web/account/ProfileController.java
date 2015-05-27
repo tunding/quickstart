@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springside.examples.quickstart.entity.User;
+import org.springside.examples.quickstart.entity.Runner;
 import org.springside.examples.quickstart.service.account.AccountService;
 import org.springside.examples.quickstart.service.account.ShiroDbRealm.ShiroUser;
 
@@ -34,7 +34,7 @@ public class ProfileController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String update(@Valid @ModelAttribute("user") User user) {
+	public String update(@Valid @ModelAttribute("user") Runner user) {
 		accountService.updateUser(user);
 		updateCurrentUserName(user.getName());
 		return "redirect:/";

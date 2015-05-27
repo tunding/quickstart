@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springside.examples.quickstart.entity.User;
+import org.springside.examples.quickstart.entity.Runner;
 import org.springside.examples.quickstart.repository.TaskDao;
 import org.springside.examples.quickstart.repository.UserDao;
 import org.springside.examples.quickstart.service.ServiceException;
@@ -38,19 +38,19 @@ public class AccountService {
 	private TaskDao taskDao;
 	private DateProvider dateProvider = DateProvider.DEFAULT;
 
-	public List<User> getAllUser() {
-		return (List<User>) userDao.findAll();
+	public List<Runner> getAllUser() {
+		return (List<Runner>) userDao.findAll();
 	}
 
-	public User getUser(Long id) {
+	public Runner getUser(Long id) {
 		return userDao.findOne(id);
 	}
 
-	public User findUserByLoginName(String loginName) {
+	public Runner findUserByLoginName(String loginName) {
 		return userDao.findByLoginName(loginName);
 	}
 
-	public void registerUser(User user) {
+	public void registerUser(Runner user) {
 		entryptPassword(user);
 		user.setCreateTime(dateProvider.getDate());
 		user.setLastUpdateTime(dateProvider.getDate());
@@ -58,7 +58,7 @@ public class AccountService {
 		userDao.save(user);
 	}
 
-	public void updateUser(User user) {
+	public void updateUser(Runner user) {
 		if (StringUtils.isNotBlank(user.getPlainPassword())) {
 			entryptPassword(user);
 		}
@@ -93,7 +93,7 @@ public class AccountService {
 	/**
 	 * 设定安全的密码，生成随机的salt并经过1024次 sha-1 hash
 	 */
-	private void entryptPassword(User user) {
+	private void entryptPassword(Runner user) {
 		byte[] salt = Digests.generateSalt(SALT_SIZE);
 		user.setSalt(Encodes.encodeHex(salt));
 

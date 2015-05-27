@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springside.examples.quickstart.data.UserData;
-import org.springside.examples.quickstart.entity.User;
+import org.springside.examples.quickstart.entity.Runner;
 import org.springside.examples.quickstart.repository.TaskDao;
 import org.springside.examples.quickstart.repository.UserDao;
 import org.springside.examples.quickstart.service.ServiceException;
@@ -43,7 +43,7 @@ public class AccountServiceTest {
 
 	@Test
 	public void registerUser() {
-		User user = UserData.randomNewUser();
+		Runner user = UserData.randomNewUser();
 		Date currentTime = new Date();
 		accountService.setDateProvider(new ConfigurableDateProvider(currentTime));
 
@@ -59,12 +59,12 @@ public class AccountServiceTest {
 	@Test
 	public void updateUser() {
 		// 如果明文密码不为空，加密密码会被更新.
-		User user = UserData.randomNewUser();
+		Runner user = UserData.randomNewUser();
 		accountService.updateUser(user);
 		assertNotNull(user.getSalt());
 
 		// 如果明文密码为空，加密密码无变化。
-		User user2 = UserData.randomNewUser();
+		Runner user2 = UserData.randomNewUser();
 		user2.setPlainPassword(null);
 		accountService.updateUser(user2);
 		assertNull(user2.getSalt());
