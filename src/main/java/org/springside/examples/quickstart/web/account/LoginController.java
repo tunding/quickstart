@@ -3,12 +3,14 @@ package org.springside.examples.quickstart.web.account;
 import java.util.HashMap;
 
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springside.examples.quickstart.service.account.AccountService;
 import org.springside.modules.mapper.JsonMapper;
 
 /**
@@ -21,6 +23,8 @@ import org.springside.modules.mapper.JsonMapper;
 @Controller
 @RequestMapping(value = "/login")
 public class LoginController {
+	@Autowired
+	private AccountService accountService;
 	
 	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
 	protected HashMap<String, Object> map = new HashMap<String, Object>();
@@ -34,9 +38,12 @@ public class LoginController {
 	@RequestMapping(method = RequestMethod.POST)
 	public String fail(@RequestParam(FormAuthenticationFilter.DEFAULT_USERNAME_PARAM) String userName, Model model) {
 		map.put("result", "failed");
+		if (accountService.findUserByLoginName(userName) == null) {
+			map.put("data", "用户名不存在");
+		} else {
+			map.put("data", "密码不正确");
+		}
 		return jsonMapper.toJson(map);
-/*		model.addAttribute(FormAuthenticationFilter.DEFAULT_USERNAME_PARAM, userName);
-		return "account/login";*/
 	}
 
 }

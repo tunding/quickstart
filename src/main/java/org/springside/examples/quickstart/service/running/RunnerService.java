@@ -20,7 +20,7 @@ public class RunnerService {
 	@Autowired
 	private RunnerDao runnerDao;
 	
-	public List<Runner> getAllRunner(String longitude, String latitude, String distance, int pageNumber, int pageSize, String sex, String age, String time, String sort){
+	public List<Runner> getAllRunner(String longitude, String latitude, int distance, int pageNumber, int pageSize, String sex, String age, String time, String sort){
 		Map<String, String> searchParams = new HashMap<String, String>();
 		if(StringUtils.isEmpty(longitude)){
 			return null;
@@ -58,7 +58,7 @@ public class RunnerService {
 		int end   = pageNumber*pageSize - 1;
 		
 		List<Runner> runners = runnerDao.findRunner(userGeoHash, searchParams);
-		return null;
+		return runners;
 	}
 	
 }

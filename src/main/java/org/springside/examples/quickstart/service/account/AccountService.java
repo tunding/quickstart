@@ -1,6 +1,7 @@
 package org.springside.examples.quickstart.service.account;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -52,6 +53,7 @@ public class AccountService {
 
 	public void registerUser(Runner user) {
 		entryptPassword(user);
+		user.setUuid(UUID.randomUUID().toString());
 		user.setCreateTime(dateProvider.getDate());
 		user.setLastUpdateTime(dateProvider.getDate());
 

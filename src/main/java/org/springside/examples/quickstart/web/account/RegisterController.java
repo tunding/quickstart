@@ -4,8 +4,10 @@ import java.util.HashMap;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,11 +45,10 @@ public class RegisterController {
 			map.put("result", "success");
 		}catch(RuntimeException e){
 			e.printStackTrace();
-			map.put("result", e.getMessage());
+			map.put("result", "failed");
+			map.put("data", e.getMessage());
 		}
 		return jsonMapper.toJson(map);
-/*		redirectAttributes.addFlashAttribute("username", user.getLoginName());
-		return "redirect:/login";*/
 	}
 
 	/**

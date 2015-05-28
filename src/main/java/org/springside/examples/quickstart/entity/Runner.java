@@ -87,7 +87,6 @@ public class Runner extends IdEntity {
 		this.plainPassword = plainPassword;
 	}
 	@Column(name="password")
-	@NotBlank
 	public String getPassword() {
 		return password;
 	}
@@ -96,8 +95,6 @@ public class Runner extends IdEntity {
 		this.password = password;
 	}
 	@Column(name="uuid")
-	@NotBlank
-	@Length(min=32,max=32)
 	public String getUuid() {
 		return uuid;
 	}
@@ -105,7 +102,6 @@ public class Runner extends IdEntity {
 		this.uuid = uuid;
 	}
 	@Column(name="name")
-	@NotBlank
 	public String getName() {
 		return name;
 	}
@@ -113,7 +109,6 @@ public class Runner extends IdEntity {
 		this.name = name;
 	}
 	@Column(name="sex")
-	@NotNull
 	public Integer getSex() {
 		return sex;
 	}
