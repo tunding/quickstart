@@ -1,5 +1,6 @@
 package org.springside.examples.quickstart.service.running;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,7 +49,7 @@ public class RunnerService {
 			if(loginName.equals(runner.getLoginName())){
 				continue;
 			}
-			if(StringUtils.isNotEmpty(sex)&&!sex.equals(runner.getSex())){
+			if(StringUtils.isNotEmpty(sex)&&!sex.equals(String.valueOf(runner.getSex()))){
 				continue;
 			}
 			if(StringUtils.isNotEmpty(age)){
@@ -61,9 +62,14 @@ public class RunnerService {
 			if(StringUtils.isNotEmpty(time)){
 				Date now = new Date();
 				SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				time = df.format(new Date(now.getTime()- Long.valueOf(time) * 60 * 1000));
-				if(java.sql.Date.valueOf(time).after(java.sql.Date.valueOf(String.valueOf(runner.getLastUpdateTime())))){
-					continue;
+				Date start = new Date(now.getTime()- Long.valueOf(time) * 60 * 1000);
+				try {
+					if(start.after(df.parse(String.valueOf(gpsinfo.getLastUpdateTime())))){
+						continue;
+					}
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 			double apart_distance = getDistance(latitude, longitude, gpsinfo.getLatitude(), gpsinfo.getLongitude());

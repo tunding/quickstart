@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.servlet.ServletRequest;
 
-import org.json.simple.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +41,7 @@ public class RunnerNearController extends BaseController {
 			List<Runner> runners = runnerService.getAllRunner(loginName, longitude, latitude, distance, pageNumber, pageSize, sex, age, time, sort);
 			map.put("result", "success");
 			if(runners!=null&&!runners.isEmpty()){
-				map.put("data", JSONArray.toJSONString(runners));
+				map.put("data", runners);
 			}else{
 				map.put("data", "null");
 			}
@@ -51,7 +50,6 @@ public class RunnerNearController extends BaseController {
 			map.put("result", "failed");
 			map.put("data", "");
 		}
-		System.out.println(jsonMapper.toJson(map));
 		return jsonMapper.toJson(map);
 	}
 	
