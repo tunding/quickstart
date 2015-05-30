@@ -32,9 +32,9 @@ public class ActivityNearController extends BaseController{
 		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "search_");
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		try{
-			List<Activity> activities = activityService.getAllActivity(pageNumber, pageSize, searchParams, longitude, latitude);
+			/*List<Activity> activities = activityService.getAllActivity(pageNumber, pageSize, searchParams, longitude, latitude);
 			map.put("result", "success");
-			map.put("content", activities);
+			map.put("content", activities);*/
 		}catch(RuntimeException e){
 			e.printStackTrace();
 			map.put("result", "error");

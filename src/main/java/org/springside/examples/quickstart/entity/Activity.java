@@ -8,14 +8,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -38,11 +35,8 @@ public class Activity extends BaseEntity{
 	private Integer kilometer;
 	private String longitude;
 	private String latitude;
-	private String geohashCode;
 	private double distance;
 	@Column(name="uuid")
-	@NotBlank
-	@Length(min=32,max=32)
 	public String getUuid() {
 		return uuid;
 	}
@@ -60,7 +54,6 @@ public class Activity extends BaseEntity{
 	@JsonIgnore
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+08:00")
 	@Temporal(TemporalType.TIMESTAMP)
-	@NotNull
 	public Date getTime() {
 		return time;
 	}
@@ -68,7 +61,6 @@ public class Activity extends BaseEntity{
 		this.time = time;
 	}
 	@Column(name="address")
-	@NotBlank
 	public String getAddress() {
 		return address;
 	}
@@ -76,7 +68,6 @@ public class Activity extends BaseEntity{
 		this.address = address;
 	}
 	@Column(name="kilometer")
-	@NotNull
 	public Integer getKilometer() {
 		return kilometer;
 	}
@@ -96,13 +87,6 @@ public class Activity extends BaseEntity{
 	}
 	public void setLatitude(String latitude) {
 		this.latitude = latitude;
-	}
-	@Column(name="geohashCode")
-	public String getGeohashCode() {
-		return geohashCode;
-	}
-	public void setGeohashCode(String geohashCode) {
-		this.geohashCode = geohashCode;
 	}
 	@Transient
 	public double getDistance() {

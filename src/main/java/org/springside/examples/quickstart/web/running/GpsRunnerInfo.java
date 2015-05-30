@@ -10,7 +10,7 @@ import org.springside.examples.quickstart.service.running.RunnerService;
 
 @Controller
 @RequestMapping(value="/gps/info")
-public class GpsInfo {
+public class GpsRunnerInfo {
 	@Autowired
 	private RunnerService runnerService;
 	

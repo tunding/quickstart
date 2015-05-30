@@ -9,10 +9,10 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
-@Table(name = "gps_info")
+@Table(name = "gps_runner_info")
 @DynamicInsert @DynamicUpdate
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class GpsInfo extends BaseEntity {
+public class GpsRunnerInfo extends BaseEntity {
 	private String uuid;
 	private String longitude;
 	private String latitude;
