@@ -29,6 +29,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Activity extends BaseEntity{
 	private String uuid;
+	private String actuuid;
 	private String info;
 	private Date time;
 	private String address;
@@ -36,12 +37,20 @@ public class Activity extends BaseEntity{
 	private String longitude;
 	private String latitude;
 	private double distance;
+	private String state;
 	@Column(name="uuid")
 	public String getUuid() {
 		return uuid;
 	}
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
+	}
+	@Column(name="actuuid")
+	public String getActuuid() {
+		return actuuid;
+	}
+	public void setActuuid(String actuuid) {
+		this.actuuid = actuuid;
 	}
 	@Column(name="info")
 	public String getInfo() {
@@ -95,5 +104,11 @@ public class Activity extends BaseEntity{
 	public void setDistance(double distance) {
 		this.distance = distance;
 	}
-
+	@Column(name="state")
+	public String getState() {
+		return state;
+	}
+	public void setState(String state) {
+		this.state = state;
+	}
 }

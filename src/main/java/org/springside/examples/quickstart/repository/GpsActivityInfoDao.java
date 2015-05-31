@@ -9,15 +9,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springside.examples.quickstart.entity.GpsActivityInfo;
-import org.springside.examples.quickstart.entity.GpsRunnerInfo;
 
 public interface GpsActivityInfoDao extends PagingAndSortingRepository<GpsActivityInfo, Long>,
 		JpaSpecificationExecutor<GpsActivityInfo> {
 	@Query("from GpsActivityInfo where geohash like ?1%")
 	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-	public List<GpsRunnerInfo> findByGeohash(String geohash);
+	public List<GpsActivityInfo> findByGeohash(String geohash);
 	
-	@Query("from GpsActivityInfo where uuid=?1")
+	@Query("from GpsActivityInfo where actuuid=?1")
 	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-	public List<GpsRunnerInfo> findByUUID(String uuid);
+	public List<GpsActivityInfo> findByActUUID(String actuuid);
 }

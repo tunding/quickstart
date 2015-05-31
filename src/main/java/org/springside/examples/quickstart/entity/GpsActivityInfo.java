@@ -13,15 +13,15 @@ import org.hibernate.annotations.DynamicUpdate;
 @DynamicInsert @DynamicUpdate
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class GpsActivityInfo extends BaseEntity {
-	private String uuid;
+	private String actuuid;
 	private String longitude;
 	private String latitude;
 	private String geohash;
-	public String getUuid() {
-		return uuid;
+	public String getActuuid() {
+		return actuuid;
 	}
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
+	public void setActuuid(String actuuid) {
+		this.actuuid = actuuid;
 	}
 	public String getLongitude() {
 		return longitude;

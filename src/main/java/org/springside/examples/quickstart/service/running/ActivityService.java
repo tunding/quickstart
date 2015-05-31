@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +39,8 @@ public class ActivityService extends BaseService{
 	
 	@Autowired
 	private ParticipateDao participateDao;
+	
+	private Date now = new Date();
 
 	
 	public void participate(String uuid, String activityId, String opt){
@@ -52,6 +55,10 @@ public class ActivityService extends BaseService{
 	public void saveActivity(String uuid, String longitude, String latitude, String address, String time, String info, int kilometer){
 		
 		Activity activity = getActivity(uuid);
+		GpsActivityInfo gpsactivityinfo = getGpsActivityInfo(activity.getActuuid());
+		
+		activity.setUuid(uuid);
+		activity.setActuuid(UUID.randomUUID().toString());
 		activity.setAddress(address);
 		activity.setLongitude(longitude);
 		activity.setLatitude(latitude);
@@ -67,11 +74,11 @@ public class ActivityService extends BaseService{
 		activity.setInfo(info);
 		activity.setKilometer(kilometer);
 		
-		GpsActivityInfo gpsactivityinfo = new GpsActivityInfo();
+		
 		double lat = Double.valueOf(latitude);
 		double lon = Double.valueOf(longitude);
 		String userGeoHash = new Geohash().encode(lat, lon);
-		gpsactivityinfo.setUuid(uuid);
+		gpsactivityinfo.setActuuid(activity.getActuuid());
 		gpsactivityinfo.setLongitude(longitude);
 		gpsactivityinfo.setLatitude(latitude);
 		gpsactivityinfo.setGeohash(userGeoHash);
@@ -85,8 +92,17 @@ public class ActivityService extends BaseService{
 		
 	}
 	
-	private Activity getActivity(String uuid){
-		List<Activity> activities = activityDao.findByUUID(uuid);
+	public GpsActivityInfo getGpsActivityInfo(String actuuid){
+		if("".equals(actuuid)){
+			return new GpsActivityInfo();
+		}else{
+			List<GpsActivityInfo> gpsactivities = gpsActivityInfoDao.findByActUUID(actuuid);
+			return gpsactivities.get(0);
+		}
+	}
+	
+	public Activity getActivity(String uuid){
+		List<Activity> activities = activityDao.findTodayByUUID(uuid, now);
 		if(activities.size()>0){
 			return activities.get(0);
 		}else{
@@ -94,8 +110,13 @@ public class ActivityService extends BaseService{
 		}
 	}
 	
+	public List<Activity> getHistoryActivity(String uuid){
+		List<Activity> activities = activityDao.findHistoryByUUID(uuid, now);
+		return activities;
+	}
+	
 	public boolean delActivity(String uuid){
-		List<Activity> activities = activityDao.findByUUID(uuid);
+		List<Activity> activities = activityDao.findSelfTodayByUUID(uuid);
 		try{
 			for(Activity activity:activities){
 				activityDao.delete(activity);
@@ -107,8 +128,15 @@ public class ActivityService extends BaseService{
 		return false;
 	}
 	
-	public boolean findActivityByUUID(String uuid){
-		if(activityDao.findByUUID(uuid).size()>0){
+	public boolean findSelfTodayActivityByUUID(String uuid){
+		if(activityDao.findSelfTodayByUUID(uuid).size()>0){
+			return false;
+		}else{
+			return true;
+		}
+	}
+	public boolean findTodayActivityByUUID(String uuid){
+		if(activityDao.findTodayByUUID(uuid, now).size()>0){
 			return false;
 		}else{
 			return true;

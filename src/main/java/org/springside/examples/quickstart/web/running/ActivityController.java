@@ -1,13 +1,14 @@
 package org.springside.examples.quickstart.web.running;
 
-import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springside.examples.quickstart.entity.Activity;
 import org.springside.examples.quickstart.entity.Runner;
 import org.springside.examples.quickstart.service.account.AccountService;
 import org.springside.examples.quickstart.service.running.ActivityService;
@@ -48,6 +49,43 @@ public class ActivityController {
 		return jsonMapper.toJson(map);
 	}
 	
+	@ResponseBody
+	@RequestMapping(value="/getactivity")
+	public String getActivity(@RequestParam("loginName")String loginName){
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		Runner runner = accountService.findUserByLoginName(loginName);
+		String uuid = runner.getUuid();
+		try{
+			Activity activity = activityService.getActivity(uuid);
+			map.put("result", "success");
+			map.put("data", activity);
+		}catch(RuntimeException e){
+			e.printStackTrace();
+			map.put("result", "failed");
+			map.put("data", e.getMessage());
+		}
+		return jsonMapper.toJson(map);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/gethistoryactivity")
+	public String getHistoryActivity(@RequestParam("loginName")String loginName){
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		Runner runner = accountService.findUserByLoginName(loginName);
+		String uuid = runner.getUuid();
+		try{
+			List<Activity> activities = activityService.getHistoryActivity(uuid);
+			map.put("result", "success");
+			map.put("data", activities);
+		}catch(RuntimeException e){
+			e.printStackTrace();
+			map.put("result", "failed");
+			map.put("data", e.getMessage());
+		}
+		return jsonMapper.toJson(map);
+	}
+	
+	@ResponseBody
 	@RequestMapping(value="/deleteactivity")
 	public boolean delActivity(@RequestParam("loginName")String loginName){
 		Runner runner = accountService.findUserByLoginName(loginName);
@@ -60,6 +98,6 @@ public class ActivityController {
 	public boolean checkActivity(@RequestParam(value="loginName") String loginName){
 		Runner runner = accountService.findUserByLoginName(loginName);
 		String uuid = runner.getUuid();
-		return activityService.findActivityByUUID(uuid);
+		return activityService.findTodayActivityByUUID(uuid);
 	}
 }
