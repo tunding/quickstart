@@ -51,7 +51,6 @@
 			<name>Team Nexus Repository</name>
 			<url>http://localhost:8081/nexus/content/groups/public</url> 
 		</repository>
-		-->
 		<repository>
 			<id>nexus</id>
 			<name>Team Nexus Repository</name>
@@ -59,6 +58,17 @@
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
+		</repository>
+		-->
+		<repository>
+			<id>nexus-osc</id>
+			<name>Nexus osc</name>
+			<url>http://maven.oschina.net/content/groups/public/</url>
+		</repository>
+		<repository>
+			<id>nexus-osc-thirdparty</id>
+			<name>thirdparty</name>
+			<url>http://maven.oschina.net/content/repositories/thirdparty/</url>
 		</repository>
 		<repository>
 			<id>central</id>
