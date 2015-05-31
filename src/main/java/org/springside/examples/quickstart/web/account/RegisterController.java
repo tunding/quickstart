@@ -37,12 +37,13 @@ public class RegisterController {
 		return "account/register";
 	}
 
-	@ResponseBody
+	@ResponseBody	
 	@RequestMapping(method = RequestMethod.POST)
 	public String register(@Valid Runner user, RedirectAttributes redirectAttributes) {
 		try{
 			accountService.registerUser(user);
 			map.put("result", "success");
+			map.put("data", user.getLoginName()+" register success");
 		}catch(RuntimeException e){
 			e.printStackTrace();
 			map.put("result", "failed");

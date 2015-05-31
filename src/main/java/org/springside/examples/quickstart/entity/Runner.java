@@ -9,7 +9,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -17,8 +16,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -31,6 +28,7 @@ import com.google.common.collect.ImmutableList;
 public class Runner extends IdEntity {
 	private String loginName;
 	private String plainPassword;
+	private double distance;
 	private String salt;
 	private String roles;
 	private String uuid;
@@ -85,6 +83,14 @@ public class Runner extends IdEntity {
 
 	public void setPlainPassword(String plainPassword) {
 		this.plainPassword = plainPassword;
+	}
+	@Transient
+	public double getDistance() {
+		return distance;
+	}
+
+	public void setDistance(double distance) {
+		this.distance = distance;
 	}
 	@Column(name="password")
 	public String getPassword() {

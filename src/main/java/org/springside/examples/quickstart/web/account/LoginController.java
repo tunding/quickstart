@@ -45,5 +45,12 @@ public class LoginController {
 		}
 		return jsonMapper.toJson(map);
 	}
+	
+	@ResponseBody
+	@RequestMapping(value="/success", method = RequestMethod.GET)
+	public String success() {
+		map.put("result", "success");
+		return jsonMapper.toJson(map);
+	}
 
 }

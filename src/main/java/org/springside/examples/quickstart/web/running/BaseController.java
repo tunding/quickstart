@@ -12,7 +12,7 @@ public class BaseController {
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	protected static final String DEFAULT_PAGE_NUMBER="1";
 	protected static final String DEFAULT_PAGE_SIZE="10";
-	protected static final String DEFAULT_DISTANCE="1000";
+	protected static final String DEFAULT_DISTANCE="10000";
 	
     @Autowired
     protected Validator validator;
