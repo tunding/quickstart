@@ -1,5 +1,7 @@
 package org.springside.examples.quickstart.web.account;
 
+import java.util.HashMap;
+
 import javax.validation.Valid;
 
 import org.apache.shiro.SecurityUtils;
@@ -10,9 +12,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springside.examples.quickstart.entity.Runner;
 import org.springside.examples.quickstart.service.account.AccountService;
 import org.springside.examples.quickstart.service.account.ShiroDbRealm.ShiroUser;
+import org.springside.modules.mapper.JsonMapper;
 
 /**
  * 用户修改自己资料的Controller.
@@ -25,14 +29,21 @@ public class ProfileController {
 
 	@Autowired
 	private AccountService accountService;
+	
+	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
 
+	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET)
 	public String updateForm(Model model) {
 		Long id = getCurrentUserId();
-		model.addAttribute("user", accountService.getUser(id));
-		return "account/profile";
+		//model.addAttribute("user", accountService.getUser(id));
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("result", "success");
+		map.put("data", accountService.getUser(id));
+		return jsonMapper.toJson(map);
 	}
 
+	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
 	public String update(@Valid @ModelAttribute("user") Runner user) {
 		accountService.updateUser(user);

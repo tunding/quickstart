@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springside.examples.quickstart.entity.Activity;
 import org.springside.examples.quickstart.service.running.ActivityService;
 import org.springside.modules.mapper.JsonMapper;
@@ -23,33 +24,41 @@ public class ActivityNearController extends BaseController{
 	
 	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
 	
+	@ResponseBody
 	@RequestMapping(value={"/list", "/", ""})
 	public String getNearActivity(ServletRequest request,
 			@RequestParam(value = "longitude") String longitude,
 			@RequestParam(value = "latitude") String latitude,
+			@RequestParam(value = "distance", defaultValue=DEFAULT_DISTANCE) int distance,
 			@RequestParam(value = "pageNum", defaultValue=DEFAULT_PAGE_NUMBER) int pageNumber,
-			@RequestParam(value = "pageSize", defaultValue=DEFAULT_PAGE_SIZE) int pageSize){
-		Map<String, Object> searchParams = Servlets.getParametersStartingWith(request, "search_");
+			@RequestParam(value = "pageSize", defaultValue=DEFAULT_PAGE_SIZE) int pageSize,
+			@RequestParam(value = "time", defaultValue = "") String time,
+			@RequestParam(value = "sort", defaultValue = "") String sort){
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		try{
-			/*List<Activity> activities = activityService.getAllActivity(pageNumber, pageSize, searchParams, longitude, latitude);
+			List<Activity> activities = activityService.getAllActivity(longitude, latitude, distance, pageNumber, pageSize, time, sort);
 			map.put("result", "success");
-			map.put("content", activities);*/
+			if(activities!=null&&!activities.isEmpty()){
+				map.put("data", activities);
+			}else{
+				map.put("data", "null");
+			}
 		}catch(RuntimeException e){
 			e.printStackTrace();
-			map.put("result", "error");
-			map.put("msg", e.getMessage());
+			map.put("result", "failed");
+			map.put("data", "");
 		}
 		return jsonMapper.toJson(map);
 	}
 	
+	@ResponseBody
 	@RequestMapping(value="/participate")
 	public String participateActivity(@RequestParam(value="uuid") String uuid,
-			@RequestParam(value="activityId") String activityId,
+			@RequestParam(value="actuuid") String actuuid,
 			@RequestParam(value="controller") String opt){
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		try{
-			activityService.participate(uuid, activityId, opt);
+			activityService.participate(uuid, actuuid, opt);
 			map.put("result", "success");
 		}catch(RuntimeException e){
 			e.printStackTrace();

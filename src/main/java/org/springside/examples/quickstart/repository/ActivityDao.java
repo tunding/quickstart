@@ -13,6 +13,10 @@ import org.springside.examples.quickstart.entity.Activity;
 
 public interface ActivityDao extends JpaSpecificationExecutor<Activity>,
 		PagingAndSortingRepository<Activity, Long> {
+	@Query("from Activity where actuuid=?1 and state=1")
+	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
+	public List<Activity> findByACTUUID(String actuuid);
+	
 	@Query("from Activity where uuid=?1 and state=1")
 	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
 	public List<Activity> findSelfTodayByUUID(String uuid);

@@ -87,10 +87,11 @@ public class ActivityController {
 	
 	@ResponseBody
 	@RequestMapping(value="/deleteactivity")
-	public boolean delActivity(@RequestParam("loginName")String loginName){
+	public boolean delActivity(@RequestParam("loginName")String loginName,
+			@RequestParam("actuuid") String actuuid){
 		Runner runner = accountService.findUserByLoginName(loginName);
 		String uuid = runner.getUuid();
-		return activityService.delActivity(uuid);
+		return activityService.delActivity(uuid, actuuid);
 	}
 	
 	@ResponseBody

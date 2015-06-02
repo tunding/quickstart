@@ -1,15 +1,13 @@
 package org.springside.examples.quickstart.service.running;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springside.examples.quickstart.entity.Activity;
 import org.springside.examples.quickstart.entity.GpsActivityInfo;
-import org.springside.examples.quickstart.map.common.FilterOperator;
-import org.springside.examples.quickstart.map.common.FilterOperator.Operator;
+import org.springside.examples.quickstart.entity.Participate;
 import org.springside.examples.quickstart.map.common.Geohash;
 import org.springside.examples.quickstart.map.module.LatLng;
 import org.springside.examples.quickstart.map.utils.DistanceUtil;
@@ -41,15 +38,98 @@ public class ActivityService extends BaseService{
 	private ParticipateDao participateDao;
 	
 	private Date now = new Date();
-
 	
-	public void participate(String uuid, String activityId, String opt){
-/*		if("in".equals(opt)){
-			String now = genCurrentTime();
-			//participateDao.newParticipate(uuid, activityId, now);
+	public List<Activity> getAllActivity(String longitude, String latitude, int distance, int pageNumber, int pageSize, String time, String sort){
+		if(StringUtils.isEmpty(longitude)){
+			return null;
+		}
+		if(StringUtils.isEmpty(latitude)){
+			return null;
+		}
+		double lat = Double.valueOf(latitude);
+		double lon = Double.valueOf(longitude);
+		String actGeoHash = new Geohash().encode(lat, lon);
+		List<GpsActivityInfo> gpsactinfos = getGeoHash(actGeoHash);
+		ArrayList<Activity> activities = new ArrayList<Activity>();
+		for(GpsActivityInfo gpsactivityinfo : gpsactinfos){
+			String actuuid = gpsactivityinfo.getActuuid();
+			Activity act = activityDao.findByACTUUID(actuuid).get(0);
+			if(StringUtils.isNotEmpty(time)){
+				Date now = new Date();
+				SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				try {
+					if(now.after(df.parse(time))){
+						continue;
+					}
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			double apart_distance = getDistance(latitude, longitude, gpsactivityinfo.getLatitude(), gpsactivityinfo.getLongitude());
+			act.setDistance(apart_distance);
+			if(distance<apart_distance){
+				continue;
+			}
+			activities.add(act);
+		}
+		//排序distance，升序
+		sortByDistance(activities);
+		//查询记录范围
+		int start = (pageNumber-1) * pageSize;
+		int end   = pageNumber*pageSize - 1;
+		int size  = activities.size();
+		if(end<size){
+			return activities.subList(start, end);
+		}else if(start<size){
+			return activities.subList(start, size);
+		}else{
+			return null;
+		}
+	}
+	private double getDistance(String cen_latitude, String cen_longitude, String run_latitude, String run_longitude){
+		LatLng cen_latlng = new LatLng(Double.valueOf(cen_latitude), Double.valueOf(cen_longitude));
+		LatLng run_latlng = new LatLng(Double.valueOf(run_latitude), Double.valueOf(run_longitude));
+		return DistanceUtil.getDistance(cen_latlng, run_latlng);
+	}
+	private void sortByDistance(ArrayList<Activity> acts){
+		Comparator<Activity> comparator = new Comparator<Activity>() {
+			
+			@Override
+			public int compare(Activity a1, Activity a2) {
+				// TODO Auto-generated method stub
+				if(a1.getDistance()<a2.getDistance()){
+					return -1;
+				}if(a1.getDistance()==a2.getDistance()){
+					return 0;
+				}else{
+					return 1;
+				}
+			}
+		};
+		Collections.sort(acts,comparator);
+	}
+	private List<GpsActivityInfo> getGeoHash(String actGeoHash){
+		return gpsActivityInfoDao.findByGeohash(actGeoHash.subSequence(0, 4).toString());
+	}
+	
+	public void participate(String uuid, String actuuid, String opt){
+		Participate part = getParticipate(uuid, actuuid);
+		if("in".equals(opt)){
+			part.setActuuid(actuuid);
+			part.setUuid(uuid);
+			participateDao.save(part);
 		}else if("out".equals(opt)){
-			participateDao.delParticipate(uuid, activityId);
-		}*/
+			participateDao.delete(part);
+		}
+	}
+	private Participate getParticipate(String uuid, String actuuid){
+		if(participateDao.findpart(uuid, actuuid).size()>0){
+			return participateDao.findpart(uuid, actuuid).get(0);
+		}else{
+			return new Participate();
+		}
 	}
 	
 	public void saveActivity(String uuid, String longitude, String latitude, String address, String time, String info, int kilometer){
@@ -93,7 +173,7 @@ public class ActivityService extends BaseService{
 	}
 	
 	public GpsActivityInfo getGpsActivityInfo(String actuuid){
-		if("".equals(actuuid)){
+		if(null==actuuid){
 			return new GpsActivityInfo();
 		}else{
 			List<GpsActivityInfo> gpsactivities = gpsActivityInfoDao.findByActUUID(actuuid);
@@ -115,13 +195,16 @@ public class ActivityService extends BaseService{
 		return activities;
 	}
 	
-	public boolean delActivity(String uuid){
+	public boolean delActivity(String uuid, String actuuid){
 		List<Activity> activities = activityDao.findSelfTodayByUUID(uuid);
 		try{
 			for(Activity activity:activities){
-				activityDao.delete(activity);
+				if(activity.getActuuid().equals(actuuid)){
+					gpsActivityInfoDao.delete(gpsActivityInfoDao.findByActUUID(actuuid).get(0));
+					activityDao.delete(activity);
+					return true;
+				}
 			}
-			return true;
 		}catch(RuntimeException e){
 			e.printStackTrace();
 		}

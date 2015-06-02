@@ -16,7 +16,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Participate extends BaseEntity{
 	private String uuid;
-	private String activityId;
+	private String actuuid;
 	@Column(name="uuid")
 	public String getUuid() {
 		return uuid;
@@ -24,11 +24,11 @@ public class Participate extends BaseEntity{
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
-	@Column(name="activityId")
-	public String getActivityId() {
-		return activityId;
+	@Column(name="actuuid")
+	public String getActuuid() {
+		return actuuid;
 	}
-	public void setActivityId(String activityId) {
-		this.activityId = activityId;
+	public void setActuuid(String actuuid) {
+		this.actuuid = actuuid;
 	}
 }
