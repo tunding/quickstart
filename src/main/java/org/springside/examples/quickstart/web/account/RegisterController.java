@@ -4,10 +4,8 @@ import java.util.HashMap;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,7 +37,7 @@ public class RegisterController {
 
 	@ResponseBody	
 	@RequestMapping(method = RequestMethod.POST)
-	public String register(@Valid Runner user, RedirectAttributes redirectAttributes) {
+	public String register(@Valid Runner user) {
 		try{
 			accountService.registerUser(user);
 			map.put("result", "success");

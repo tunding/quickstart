@@ -55,6 +55,21 @@
 					<input type="password" id="confirmPassword" name="confirmPassword" class="input-large required" equalTo="#plainPassword"/>
 				</div>
 			</div>
+			<div class="control-group">
+				<label for="age" class="control-label">年龄:</label>
+				<div class="controls">
+					<input type="text" id="age" name="age" class="input-large required" maxlength="3"/>
+				</div>
+			</div>
+			<div class="control-group">
+				<label for="sex" class="control-label">性别:</label>
+				<div class="controls">
+					<select id="sex" name="sex" class="valid">
+						<option value="0">男</option>
+						<option value="1">女</option>
+					</select>
+				</div>
+			</div>
 			<div class="form-actions">
 				<input id="submit_btn" class="btn btn-primary" type="submit" value="提交"/>&nbsp;	
 				<input id="cancel_btn" class="btn" type="button" value="返回" onclick="history.back()"/>
