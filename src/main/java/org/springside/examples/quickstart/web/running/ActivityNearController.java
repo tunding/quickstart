@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springside.examples.quickstart.entity.Activity;
+import org.springside.examples.quickstart.entity.Runner;
 import org.springside.examples.quickstart.service.running.ActivityService;
+import org.springside.examples.quickstart.service.running.RunnerService;
 import org.springside.modules.mapper.JsonMapper;
 import org.springside.modules.web.Servlets;
 
@@ -21,6 +23,8 @@ import org.springside.modules.web.Servlets;
 public class ActivityNearController extends BaseController{
 	@Autowired
 	private ActivityService activityService;
+	@Autowired
+	private RunnerService runnerService;
 	
 	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
 	
@@ -53,12 +57,13 @@ public class ActivityNearController extends BaseController{
 	
 	@ResponseBody
 	@RequestMapping(value="/participate")
-	public String participateActivity(@RequestParam(value="uuid") String uuid,
-			@RequestParam(value="actuuid") String actuuid,
+	public String participateActivity(@RequestParam(value="actuuid") String actuuid,
 			@RequestParam(value="controller") String opt){
 		HashMap<String, Object> map = new HashMap<String, Object>();
+		Long user_id = getCurrentUserId();
+		Runner runner = runnerService.getRunner(user_id);
 		try{
-			activityService.participate(uuid, actuuid, opt);
+			activityService.participate(runner.getUuid(), actuuid, opt);
 			map.put("result", "success");
 		}catch(RuntimeException e){
 			e.printStackTrace();

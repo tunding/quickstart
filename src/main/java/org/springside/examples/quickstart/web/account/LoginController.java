@@ -2,10 +2,6 @@ package org.springside.examples.quickstart.web.account;
 
 import java.util.HashMap;
 
-import javax.servlet.jsp.PageContext;
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletRequest;
-import javax.servlet.jsp.PageContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,7 +17,7 @@ import org.springside.modules.mapper.JsonMapper;
 
 @Controller
 @RequestMapping(value="/runner/near")
-public class RunnerNearController extends BaseController {
+public class RunnerNearController extends BaseController{
 	
 	@Autowired
 	private RunnerService runnerService;
@@ -28,9 +27,7 @@ public class RunnerNearController extends BaseController {
 	@RequestMapping(value="/test", method = RequestMethod.GET)
 	public String test() {
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		System.out.println("test method");
-		String session = PageContext.SESSION;
-		map.put("session", session);
+		map.put("test","this is a test controller");
 		return jsonMapper.toJson(map);
 	}
 	

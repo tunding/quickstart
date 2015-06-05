@@ -12,6 +12,10 @@
 			<th>访问方法</th>
 		</tr>
 		<tr>
+			<td>currentUser</td>
+			<td><a href="${ ctx }/profile">查询个人信息</a></td>
+		</tr>
+		<tr>
 			<td>runner</td>
 			<td>
 				<table>
@@ -48,6 +52,7 @@
 						  <p>纬度: <input type="text" name="latitude" /></p>
 						  <p>经度: <input type="text" name="longitude" /></p>
 						  <p>地址: <input type="text" name="address" /></p>
+						  <p>距离: <input type="text" name="kilometer" /></p>
 						  <p>开始时间: <input type="text" name="time" /></p>
 						  <p>详情: <input type="text" name="info" /></p>
 						  <input class="btn btn-primary"  type="submit" value="上报活动" />
