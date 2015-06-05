@@ -1,0 +1,38 @@
+108.880272,34.197078 wqj6t9khqjrh tunding
+108.874421,34.184215 wqj6mrpcmzs3 gaufy
+116.355071,39.898637 wx4dzxr4mtj2 line
+108.933161,34.24063 wqj6yc6dnsh1 grass
+
+108.862443,34.208155 高新逸品 wqj6t5rhyy2c
+108.990522,34.253745 交大兴庆小区 wqjdb5sqx0ze
+108.937884,34.180789 清凉寺 wqjdb5sqx0ze
+108.895751,34.200847 都市之门
+108.927369,34.180617 欧亚学院快捷酒店
+108.905907,34.250045 丰庆公园
+
+http://localhost:8080/running/login
+username=wangzhichao&password=wangzhichao
+
+
+http://localhost:8080/running/register
+loginName=gaufy&name=gaufy&plainPassword=gaufy&confirmPassword=gaufy&sex=1&age=30&cloudId=123456
+loginName=line&name=line&plainPassword=line&confirmPassword=line&sex=1&age=27&cloudId=123456
+loginName=grass&name=grass&plainPassword=grass&confirmPassword=grass&sex=1&age=24&cloudId=123456
+
+http://localhost:8080/running/activity/info/checkActivity
+loginName=tunding
+
+http://localhost:8080/running/activity/info/saveactivity
+loginName=tunding&address=高新逸品&longitude=108.862443&latitude=34.208155&time=2015-05-30 23:59:00&info=123456&kilometer=10
+
+http://localhost:8080/running/activity/info/getactivity
+loginName=tunding
+
+http://localhost:8080/running/activity/info/gethistoryactivity
+loginName=tunding
+
+http://localhost:8080/running/activity/near
+longitude=108.895751&latitude=34.200847
+
+http://localhost:8080/running/profile
+id=5&loginName=wangzhichao&name=wangzhichao&plainPassword=wangzhichao&confirmPassword=wangzhichao&sex=0&age=20&cloudId=123456

@@ -2,6 +2,10 @@ package org.springside.examples.quickstart.web.account;
 
 import java.util.HashMap;
 
+import javax.servlet.jsp.PageContext;
+
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,6 +41,7 @@ public class LoginController {
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
 	public String fail(@RequestParam(FormAuthenticationFilter.DEFAULT_USERNAME_PARAM) String userName, Model model) {
+		System.out.println("fail method");
 		map.put("result", "failed");
 		if (accountService.findUserByLoginName(userName) == null) {
 			map.put("data", "用户名不存在");
@@ -49,8 +54,14 @@ public class LoginController {
 	@ResponseBody
 	@RequestMapping(value="/success", method = RequestMethod.GET)
 	public String success() {
+		System.out.println("success method");
 		map.put("result", "success");
 		return jsonMapper.toJson(map);
+	}
+	
+	@RequestMapping(value="/menu", method = RequestMethod.GET)
+	public String test() {
+		return "account/menu";
 	}
 
 }

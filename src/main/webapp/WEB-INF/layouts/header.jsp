@@ -2,9 +2,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
+<c:set var="sessionid" value="${pageContext.session.id}"/>
 <div id="header">
 	<div id="title">
-	    <h1><a href="${ctx}"> 约跑</a>
+			<label>${ sessionid }</label>
+	    <h1><a href="${ctx}/login/menu"> 约跑(点击进入菜单)</a>
 	    <shiro:user>
 			<div class="btn-group pull-right">
 				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">

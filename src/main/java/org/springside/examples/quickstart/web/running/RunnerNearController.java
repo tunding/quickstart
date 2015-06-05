@@ -4,10 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.jsp.PageContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springside.examples.quickstart.entity.Runner;
@@ -22,13 +24,20 @@ public class RunnerNearController extends BaseController {
 	private RunnerService runnerService;
 	
 	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
+	@ResponseBody
+	@RequestMapping(value="/test", method = RequestMethod.GET)
+	public String test() {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		System.out.println("test method");
+		String session = PageContext.SESSION;
+		map.put("session", session);
+		return jsonMapper.toJson(map);
+	}
+	
 	
 	@ResponseBody
 	@RequestMapping(value={"/list", "/", ""})
 	public String  getNearPerson(ServletRequest request,
-			@RequestParam(value = "loginName") String loginName,
-			@RequestParam(value = "longitude") String longitude,
-			@RequestParam(value = "latitude") String latitude,
 			@RequestParam(value = "distance", defaultValue=DEFAULT_DISTANCE) int distance,
 			@RequestParam(value = "pageNum", defaultValue=DEFAULT_PAGE_NUMBER) int pageNumber,
 			@RequestParam(value = "pageSize", defaultValue=DEFAULT_PAGE_SIZE) int pageSize,
@@ -37,8 +46,9 @@ public class RunnerNearController extends BaseController {
 			@RequestParam(value = "time", defaultValue = "") String time,
 			@RequestParam(value = "sort", defaultValue = "") String sort){
 		HashMap<String, Object> map = new HashMap<String, Object>();
+		Long user_id = getCurrentUserId();
 		try{
-			List<Runner> runners = runnerService.getAllRunner(loginName, longitude, latitude, distance, pageNumber, pageSize, sex, age, time, sort);
+			List<Runner> runners = runnerService.getAllRunner(user_id, distance, pageNumber, pageSize, sex, age, time, sort);
 			map.put("result", "success");
 			if(runners!=null&&!runners.isEmpty()){
 				map.put("data", runners);

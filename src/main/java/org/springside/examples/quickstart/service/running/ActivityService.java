@@ -54,16 +54,20 @@ public class ActivityService extends BaseService{
 		for(GpsActivityInfo gpsactivityinfo : gpsactinfos){
 			String actuuid = gpsactivityinfo.getActuuid();
 			Activity act = activityDao.findByACTUUID(actuuid).get(0);
+			SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			if(StringUtils.isNotEmpty(time)){
-				Date now = new Date();
-				SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				try {
-					if(now.after(df.parse(time))){
+					if(df.parse(time).after(act.getTime())){
 						continue;
 					}
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				}
+			}else{
+				Date now = new Date();
+				if(now.after(act.getTime())){
+					continue;
 				}
 			}
 			
@@ -182,6 +186,7 @@ public class ActivityService extends BaseService{
 	}
 	
 	public Activity getActivity(String uuid){
+		System.out.println(now);
 		List<Activity> activities = activityDao.findTodayByUUID(uuid, now);
 		if(activities.size()>0){
 			return activities.get(0);

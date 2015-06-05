@@ -2,10 +2,12 @@ package org.springside.examples.quickstart.web.running;
 
 import javax.validation.Validator;
 
+import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
+import org.springside.examples.quickstart.service.account.ShiroDbRealm.ShiroUser;
 import org.springside.modules.beanvalidator.BeanValidators;
 
 public class BaseController {
@@ -34,4 +36,12 @@ public class BaseController {
         }
         model.addAttribute("message", sb.toString());
     }
+    
+	/**
+	 * 取出Shiro中的当前用户Id.
+	 */
+	protected Long getCurrentUserId() {
+		ShiroUser user = (ShiroUser) SecurityUtils.getSubject().getPrincipal();
+		return user.id;
+	}
 }

@@ -6,36 +6,41 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springside.examples.quickstart.entity.Activity;
 import org.springside.examples.quickstart.entity.Runner;
 import org.springside.examples.quickstart.service.account.AccountService;
 import org.springside.examples.quickstart.service.running.ActivityService;
+import org.springside.examples.quickstart.service.running.RunnerService;
 import org.springside.modules.mapper.JsonMapper;
 
 
 @Controller
 @RequestMapping(value="/activity/info")
-public class ActivityController {
+public class ActivityController extends BaseController{
 	@Autowired
 	private ActivityService activityService;
 	@Autowired
 	private AccountService accountService;
+	@Autowired
+	private RunnerService runnerService;
 	
 	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
 	
 	@ResponseBody
 	@RequestMapping(value="/saveactivity")
-	public String saveActivity(@RequestParam(value="loginName") String loginName,
-			@RequestParam(value = "longitude") String longitude,
+	public String saveActivity(@RequestParam(value = "longitude") String longitude,
 			@RequestParam(value = "latitude") String latitude,
 			@RequestParam(value = "address") String address,
 			@RequestParam(value = "time") String time,
 			@RequestParam(value = "info") String info,
 			@RequestParam(value = "kilometer") int kilometer){
+		System.out.println("saveractivity");
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		Runner runner = accountService.findUserByLoginName(loginName);
+		Long user_id = getCurrentUserId();
+		Runner runner = runnerService.getRunner(user_id);
 		String uuid = runner.getUuid();
 		try{
 			activityService.saveActivity(uuid, longitude, latitude, address, time, info, kilometer);
@@ -51,9 +56,10 @@ public class ActivityController {
 	
 	@ResponseBody
 	@RequestMapping(value="/getactivity")
-	public String getActivity(@RequestParam("loginName")String loginName){
+	public String getActivity(){
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		Runner runner = accountService.findUserByLoginName(loginName);
+		Long user_id = getCurrentUserId();
+		Runner runner = runnerService.getRunner(user_id);
 		String uuid = runner.getUuid();
 		try{
 			Activity activity = activityService.getActivity(uuid);
@@ -69,9 +75,10 @@ public class ActivityController {
 	
 	@ResponseBody
 	@RequestMapping(value="/gethistoryactivity")
-	public String getHistoryActivity(@RequestParam("loginName")String loginName){
+	public String getHistoryActivity(){
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		Runner runner = accountService.findUserByLoginName(loginName);
+		Long user_id = getCurrentUserId();
+		Runner runner = runnerService.getRunner(user_id);
 		String uuid = runner.getUuid();
 		try{
 			List<Activity> activities = activityService.getHistoryActivity(uuid);
@@ -87,9 +94,9 @@ public class ActivityController {
 	
 	@ResponseBody
 	@RequestMapping(value="/deleteactivity")
-	public boolean delActivity(@RequestParam("loginName")String loginName,
-			@RequestParam("actuuid") String actuuid){
-		Runner runner = accountService.findUserByLoginName(loginName);
+	public boolean delActivity(@RequestParam("actuuid") String actuuid){
+		Long user_id = getCurrentUserId();
+		Runner runner = runnerService.getRunner(user_id);
 		String uuid = runner.getUuid();
 		return activityService.delActivity(uuid, actuuid);
 	}

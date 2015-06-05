@@ -31,7 +31,12 @@ public class RunnerService {
 	@Autowired
 	private GpsRunnerInfoDao gpsRunnerInfoDao;
 	
-	public List<Runner> getAllRunner(String loginName, String longitude, String latitude, int distance, int pageNumber, int pageSize, String sex, String age, String time, String sort){
+	public List<Runner> getAllRunner(Long user_id, int distance, int pageNumber, int pageSize, String sex, String age, String time, String sort){
+		Runner currentUser = getRunner(user_id);
+		String loginName = currentUser.getLoginName();
+		GpsRunnerInfo gps = getGpsRunnerInfo(currentUser.getUuid());
+		String longitude = gps.getLongitude();
+		String latitude = gps.getLatitude();
 		if(StringUtils.isEmpty(longitude)){
 			return null;
 		}
@@ -122,13 +127,13 @@ public class RunnerService {
 		return gpsRunnerInfoDao.findByGeohash(userGeoHash.subSequence(0, 4).toString());
 	}
 	
-	public String UpdateGeoHash(String LongName, String longitude, String latitude){
+	public String UpdateGeoHash(Long user_id, String latitude, String longitude){
 		double lat = Double.valueOf(latitude);
 		double lon = Double.valueOf(longitude);
 		String userGeoHash = new Geohash().encode(lat, lon);
 		try{
-			Runner runner = accountService.findUserByLoginName(LongName);
-			GpsRunnerInfo gpsrunnerinfo = new GpsRunnerInfo();
+			Runner runner = runnerDao.findOne(user_id);
+			GpsRunnerInfo gpsrunnerinfo = getGpsRunnerInfo(runner.getUuid());
 			gpsrunnerinfo.setUuid(runner.getUuid());;
 			gpsrunnerinfo.setLatitude(latitude);
 			gpsrunnerinfo.setLongitude(longitude);
@@ -138,6 +143,19 @@ public class RunnerService {
 			e.printStackTrace();
 		}
 		return userGeoHash;
+	}
+	
+	private GpsRunnerInfo getGpsRunnerInfo(String uuid){
+		GpsRunnerInfo gps = gpsRunnerInfoDao.findByUUID(uuid);
+		if(gps!=null){
+			return gps;
+		}else{
+			return new GpsRunnerInfo();
+		}
+	}
+	
+	public Runner getRunner(Long id){
+		return runnerDao.findOne(id);
 	}
 	
 }

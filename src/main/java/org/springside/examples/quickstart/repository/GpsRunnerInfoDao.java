@@ -14,4 +14,8 @@ public interface GpsRunnerInfoDao extends PagingAndSortingRepository<GpsRunnerIn
 	@Query("from GpsRunnerInfo where geohash like ?1%")
 	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
 	public List<GpsRunnerInfo> findByGeohash(String geohash);
+	
+	@Query("from GpsRunnerInfo where uuid=?1")
+	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
+	public GpsRunnerInfo findByUUID(String uuid);
 }
