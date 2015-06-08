@@ -186,7 +186,6 @@ public class ActivityService extends BaseService{
 	}
 	
 	public Activity getActivity(String uuid){
-		System.out.println(now);
 		List<Activity> activities = activityDao.findTodayByUUID(uuid, now);
 		if(activities.size()>0){
 			return activities.get(0);

@@ -91,7 +91,7 @@ public class ShiroDbRealm extends AuthorizingRealm {
 	 * 自定义Authentication对象，使得Subject除了携带用户的登录名外还可以携带更多信息.
 	 */
 	public static class ShiroUser implements Serializable {
-		private static final long serialVersionUID = -1373760761780840081L;
+		private static final long serialVersionUID = -7432465367525407301L;
 		public Long id;
 		public String loginName;
 		public String name;
