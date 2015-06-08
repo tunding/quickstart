@@ -1,4 +1,4 @@
-package org.springside.examples.quickstart.functional;
+package org.springside.fi.functional;
 
 import org.junit.BeforeClass;
 import org.junit.Rule;

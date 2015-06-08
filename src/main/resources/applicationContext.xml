@@ -15,7 +15,7 @@
 	<description>Spring公共配置 </description>
 
 	<!-- 使用annotation 自动注册bean, 并保证@Required、@Autowired的属性被注入 -->
-	<context:component-scan base-package="org.springside.examples.quickstart">
+	<context:component-scan base-package="org.springside.fi">
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
 		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
 	</context:component-scan>
@@ -23,7 +23,7 @@
 	<!-- Jpa Entity Manager 配置 -->
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"> 
 		<property name="dataSource" ref="dataSource"/>
-		<property name="packagesToScan" value="org.springside.examples.quickstart.entity"/>
+		<property name="packagesToScan" value="org.springside.fi.entity"/>
 		<property name="jpaVendorAdapter">
 				<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
            <property name="showSql" value="true" />
@@ -51,7 +51,7 @@
 	</bean>
 
 	<!-- Spring Data Jpa配置 -->
- 	<jpa:repositories base-package="org.springside.examples.quickstart.**.repository"  transaction-manager-ref="transactionManager" entity-manager-factory-ref="entityManagerFactory"/>
+ 	<jpa:repositories base-package="org.springside.fi.**.repository"  transaction-manager-ref="transactionManager" entity-manager-factory-ref="entityManagerFactory"/>
    
 	<!-- Jpa 事务配置 -->
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">

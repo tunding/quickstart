@@ -1,4 +1,4 @@
-package org.springside.examples.quickstart.functional.rest;
+package org.springside.fi.functional.rest;
 
 import static org.junit.Assert.*;
 
@@ -13,9 +13,9 @@ import org.junit.experimental.categories.Category;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import org.springside.examples.quickstart.data.TaskData;
-import org.springside.examples.quickstart.entity.Task;
-import org.springside.examples.quickstart.functional.BaseFunctionalTestCase;
+import org.springside.fi.data.TaskData;
+import org.springside.fi.entity.Task;
+import org.springside.fi.functional.BaseFunctionalTestCase;
 import org.springside.modules.mapper.JsonMapper;
 import org.springside.modules.test.category.Smoke;
 

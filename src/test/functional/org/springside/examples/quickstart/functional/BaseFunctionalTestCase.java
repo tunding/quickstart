@@ -1,4 +1,4 @@
-package org.springside.examples.quickstart.functional;
+package org.springside.fi.functional;
 
 import java.net.URL;
 import java.sql.Driver;
@@ -8,7 +8,7 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
-import org.springside.examples.quickstart.QuickStartServer;
+import org.springside.fi.QuickStartServer;
 import org.springside.modules.test.data.DataFixtures;
 import org.springside.modules.test.jetty.JettyFactory;
 import org.springside.modules.test.spring.Profiles;

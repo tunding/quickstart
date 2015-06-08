@@ -1,10 +1,10 @@
-package org.springside.examples.quickstart.functional.gui;
+package org.springside.fi.functional.gui;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.springside.examples.quickstart.functional.BaseSeleniumTestCase;
+import org.springside.fi.functional.BaseSeleniumTestCase;
 
 public class RegisterFT extends BaseSeleniumTestCase {
 
