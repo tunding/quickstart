@@ -30,13 +30,14 @@ public class RegisterController {
 	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
 	protected HashMap<String, Object> map = new HashMap<String, Object>();
 
-	@RequestMapping(method = RequestMethod.GET)
+/*	@RequestMapping(method = RequestMethod.GET)
 	public String registerForm() {
 		return "account/register";
-	}
+	}*/
 
 	@ResponseBody	
-	@RequestMapping(method = RequestMethod.POST)
+	//@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping()
 	public String register(@Valid Runner user) {
 		try{
 			accountService.registerUser(user);

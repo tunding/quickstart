@@ -26,7 +26,14 @@
 						<td><a href="${ ctx }/runner/near/list">附近的人</a></td>
 					</tr>
 					<tr>
-						<td><a href="${ ctx }/gps/info/putgeohash">上报runner的gps</a></td>
+						<td>上报runner的gps</a></td>
+						<td>
+							<form action="${ctx}/gps/info/putgeohash" method="post">
+							  <p>纬度: <input type="text" name="lat" /></p>
+							  <p>经度: <input type="text" name="lon" /></p>
+							  <input class="btn btn-primary"  type="submit" value="保存" />
+							</form>
+						</td>
 					</tr>
 				</table>
 			</td>

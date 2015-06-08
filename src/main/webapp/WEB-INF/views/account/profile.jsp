@@ -8,7 +8,7 @@
 </head>
 
 <body>
-	<form id="inputForm" action="${ctx}/profile" method="post" class="form-horizontal">
+	<form id="inputForm" action="${ctx}/profile/save" method="post" class="form-horizontal">
 		<input type="hidden" name="id" value="${user.id}"/>
 		<fieldset>
 			<legend><small>资料修改</small></legend>

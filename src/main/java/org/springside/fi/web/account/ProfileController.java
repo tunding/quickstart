@@ -32,11 +32,18 @@ public class ProfileController {
 	
 	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
 
-	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET)
+	public String profileForm(Model model) {
+		Long id = getCurrentUserId();
+		model.addAttribute("user", accountService.getUser(id));
+		return "account/profile";
+	}
+	
+	@ResponseBody
+	//@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(value="/details")
 	public String updateForm(Model model) {
 		Long id = getCurrentUserId();
-		//model.addAttribute("user", accountService.getUser(id));
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("result", "success");
 		map.put("data", accountService.getUser(id));
@@ -44,7 +51,8 @@ public class ProfileController {
 	}
 
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.POST)
+	//@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(value="/save")
 	public String update(@Valid @ModelAttribute("user") Runner user) {
 		accountService.updateUser(user);
 		updateCurrentUserName(user.getName());

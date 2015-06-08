@@ -15,13 +15,8 @@ public class GpsRunnerInfo extends BaseController{
 	@Autowired
 	private RunnerService runnerService;
 	
-	@RequestMapping(value="/putgeohash", method = RequestMethod.GET)
-	public String inputGps(){
-		return "running/putgeohash";
-	}
-	
 	@ResponseBody
-	@RequestMapping(value="/putgeohash", method=RequestMethod.POST)
+	@RequestMapping(value="/putgeohash")
 	public String putGeoHash(@RequestParam(value="lat") String lat,
 			@RequestParam(value="lon") String lon){
 		Long user_id = getCurrentUserId();
