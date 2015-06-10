@@ -1,5 +1,5 @@
 ﻿# Host: localhost  (Version: 5.6.11)
-# Date: 2015-06-05 18:21:25
+# Date: 2015-06-10 18:12:20
 # Generator: MySQL-Front 5.3  (Build 4.187)
 
 /*!40101 SET NAMES utf8 */;
@@ -25,13 +25,13 @@ CREATE TABLE `activity_info` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `actuuid` (`actuuid`),
   KEY `uuid` (`uuid`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='活动信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='活动信息表';
 
 #
 # Data for table "activity_info"
 #
 
-INSERT INTO `activity_info` VALUES (7,'16c71b7d-a240-4ec0-9d5c-2be1df9b50b6','16c71b7d-a240-4ec0-9d5c-2be1df9b50b6','123456','2015-05-31 22:00:00','交大兴庆小区','108.990522','34.253745',10,'2015-05-31 10:47:42','2015-05-31 11:34:24','1'),(8,'a5679a02-f5db-4767-b838-b0eff99f110f','a5679a02-f5db-4767-b838-b0eff99f110f','123456','2015-05-31 21:00:00','清凉寺','108.937884','34.180789',10,'2015-05-31 10:53:13','2015-05-31 11:34:29','1');
+INSERT INTO `activity_info` VALUES (7,'16c71b7da2404ec09d5c2be1df9b50b6','16c71b7da2404ec09d5c2be1df9b50b6','123456','2015-05-31 22:00:00','交大兴庆小区','108.990522','34.253745',10,'2015-05-31 10:47:42','2015-06-10 09:50:30','1'),(8,'a5679a02f5db4767b838b0eff99f110f','a5679a02f5db4767b838b0eff99f110f','123456','2015-06-08 21:00:00','清凉寺','108.937884','34.180789',10,'2015-06-08 22:53:13','2015-06-10 09:50:40','1');
 
 #
 # Structure for table "activity_participate"
@@ -88,13 +88,13 @@ CREATE TABLE `gps_activity_info` (
   `last_update_time` timestamp NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   PRIMARY KEY (`id`),
   KEY `actuuid` (`actuuid`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COMMENT='活动地理信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COMMENT='活动地理信息表';
 
 #
 # Data for table "gps_activity_info"
 #
 
-INSERT INTO `gps_activity_info` VALUES (16,'16c71b7d-a240-4ec0-9d5c-2be1df9b50b6','108.990522','34.253745','wqjdb5sqx0ze','2015-05-31 10:47:42','2015-05-31 11:17:10'),(17,'a5679a02-f5db-4767-b838-b0eff99f110f','108.937884','34.180789','wqj6qyqjs8vu','2015-05-31 10:53:13','2015-05-31 11:17:13');
+INSERT INTO `gps_activity_info` VALUES (16,'16c71b7da2404ec09d5c2be1df9b50b6','108.990522','34.253745','wqjdb5sqx0ze','2015-05-31 10:47:42','2015-06-10 09:50:55'),(17,'a5679a02f5db4767b838b0eff99f110f','108.937884','34.180789','wqj6qyqjs8vu','2015-05-31 10:53:13','2015-06-10 09:53:19');
 
 #
 # Structure for table "gps_runner_info"
@@ -117,7 +117,7 @@ CREATE TABLE `gps_runner_info` (
 # Data for table "gps_runner_info"
 #
 
-INSERT INTO `gps_runner_info` VALUES (1,'c362342a-b6de-44d0-b5ec-91234a54e585','108.905907','34.250045','wqj6y5nbgx4h','2015-05-30 11:47:29','2015-06-05 15:42:27'),(7,'e9f0b704-8b52-4a8c-917d-6fa43dff7bda','108.933161','34.24063','wqj6yc6dnsh1','2015-05-30 12:31:53','2015-05-30 11:47:29'),(8,'16c71b7d-a240-4ec0-9d5c-2be1df9b50b6','108.874421','34.184215','wqj6mrpcmzs3','2015-05-30 12:33:14','2015-05-30 11:47:29'),(9,'a5679a02-f5db-4767-b838-b0eff99f110f','116.355071','39.898637','wx4dzxr4mtj2','2015-05-30 12:36:42','2015-05-30 11:47:29');
+INSERT INTO `gps_runner_info` VALUES (1,'c362342ab6de44d0b5ec91234a54e585','108.939032','34.224827','wqj6wyqyp6jv','2015-05-30 11:47:29','2015-06-10 09:47:03'),(7,'e9f0b7048b524a8c917d6fa43dff7bda','108.933161','34.24063','wqj6yc6dnsh1','2015-05-30 12:31:53','2015-06-10 09:47:10'),(8,'16c71b7da2404ec09d5c2be1df9b50b6','108.874421','34.184215','wqj6mrpcmzs3','2015-05-30 12:33:14','2015-06-10 09:47:30'),(9,'a5679a02f5db4767b838b0eff99f110f','116.355071','39.898637','wx4dzxr4mtj2','2015-05-30 12:36:42','2015-06-10 09:47:50');
 
 #
 # Structure for table "runner_relationship"
@@ -160,10 +160,10 @@ CREATE TABLE `runner_user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uuid` (`uuid`),
   UNIQUE KEY `login_name` (`login_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COMMENT='用户表';
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COMMENT='用户表';
 
 #
 # Data for table "runner_user"
 #
 
-INSERT INTO `runner_user` VALUES (1,'c31cfe4b-4c31-49ae-9e96-ffe239cdbe6c','admin','admin','dc9f459ceeb3448533253085e508c47bfc2f29bf','7faaa3e4dc341755','',0,100,NULL,NULL,'2015-06-04 17:35:49','2015-06-04 17:35:59'),(5,'c362342a-b6de-44d0-b5ec-91234a54e585','wangzhichao','wangzhichao','3092260d55392d7b58aeb64855dfb02bed0c5ae1','babf29af136e0f51','',0,22,NULL,'12345','2015-05-28 20:33:09','2015-06-02 18:11:44'),(16,'16c71b7d-a240-4ec0-9d5c-2be1df9b50b6','gaufy','gaufy','c38f4715e7e1bd56e2fd1858b1367469fa02e998','3c6524907953aea9','',0,30,NULL,'123456','2015-05-30 12:27:51','2015-05-30 20:54:40'),(17,'a5679a02-f5db-4767-b838-b0eff99f110f','line','line','7766f42cb79ee2e6304015695b1afe0ec8565340','9ba557379c500b1f','',1,27,NULL,'123456','2015-05-30 12:29:29','2015-05-30 12:29:29'),(18,'e9f0b704-8b52-4a8c-917d-6fa43dff7bda','grass','grass','858df5871d5306e7b941851e23110d6d6b699cdb','6c6efc6224bf4f5d','',1,24,NULL,'123456','2015-05-30 12:29:36','2015-05-30 12:29:36');
+INSERT INTO `runner_user` VALUES (1,'c31cfe4b4c3149ae9e96ffe239cdbe6c','admin','admin','dc9f459ceeb3448533253085e508c47bfc2f29bf','7faaa3e4dc341755','',0,100,NULL,NULL,'2015-06-04 17:35:49','2015-06-10 09:48:05'),(5,'c362342ab6de44d0b5ec91234a54e585','wangzhichao','wangzhichao','cdf19bc8d440d37f48b39ed6435594f86d777ba9','07a6ada959ce7a52','',0,20,NULL,'abcdefg','2015-05-28 20:33:09','2015-06-10 09:48:13'),(16,'16c71b7da2404ec09d5c2be1df9b50b6','gaufy','gaufy','c38f4715e7e1bd56e2fd1858b1367469fa02e998','3c6524907953aea9','',0,30,NULL,'123456','2015-05-30 12:27:51','2015-06-10 09:48:24'),(17,'a5679a02f5db4767b838b0eff99f110f','line','line','7766f42cb79ee2e6304015695b1afe0ec8565340','9ba557379c500b1f','',1,27,NULL,'123456','2015-05-30 12:29:29','2015-06-10 09:48:30'),(18,'e9f0b7048b524a8c917d6fa43dff7bda','grass','grass','858df5871d5306e7b941851e23110d6d6b699cdb','6c6efc6224bf4f5d','',1,24,NULL,'123456','2015-05-30 12:29:36','2015-06-10 09:48:36'),(19,'37ffaf5929cd48d3b149aaaca6c6373a','get','get','7bd212f5bf01ed642b9da289ff7be069689e1ce1','cf85b4bffbc8c854','',0,19,NULL,'!@','2015-06-08 17:33:19','2015-06-10 09:48:44');

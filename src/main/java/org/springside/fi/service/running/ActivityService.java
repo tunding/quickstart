@@ -142,7 +142,7 @@ public class ActivityService extends BaseService{
 		GpsActivityInfo gpsactivityinfo = getGpsActivityInfo(activity.getActuuid());
 		
 		activity.setUuid(uuid);
-		activity.setActuuid(UUID.randomUUID().toString());
+		activity.setActuuid(UUID.randomUUID().toString().replace("-", ""));
 		activity.setAddress(address);
 		activity.setLongitude(longitude);
 		activity.setLatitude(latitude);

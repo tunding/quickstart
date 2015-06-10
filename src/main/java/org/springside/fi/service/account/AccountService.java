@@ -53,7 +53,7 @@ public class AccountService {
 
 	public void registerUser(Runner user) {
 		entryptPassword(user);
-		user.setUuid(UUID.randomUUID().toString());
+		user.setUuid(UUID.randomUUID().toString().replace("-", ""));
 		user.setCreateTime(dateProvider.getDate());
 		user.setLastUpdateTime(dateProvider.getDate());
 
