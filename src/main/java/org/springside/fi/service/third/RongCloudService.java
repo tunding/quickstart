@@ -16,8 +16,7 @@ import org.springside.fi.common.httpclient.HttpClientTemplate;
 
 @Service
 public class RongCloudService extends BaseThirdService{
-	private final String RongHOST = SystemGlobal.getConfig("RongCloudAPI")+"/user/getToken.json";
-// final String appSecret = SystemGlobal.getConfig("App-Key");
+	private final String RongHOST = SystemGlobal.getConfig("RongCloudAPI")+"user/getToken.json";
 	
 	@Autowired
 	private HttpClientTemplate httpClientTemplate;
@@ -31,14 +30,6 @@ public class RongCloudService extends BaseThirdService{
 			logger.error("name is empty");
 			return null;
 		}
-//		String nonce = getRandom();
-//		String timestamp = String.valueOf(new Date().getTime()/1000);
-//		byte[] sign = DigestUtils.sha1(appSecret+nonce+timestamp);
-//		String signature = "";
-//		for (int i=0; i < sign.length; i++) {
-//			signature +=
-//					Integer.toString( ( sign[i] & 0xff ) + 0x100, 16).substring( 1 );
-//		}
 		return getTokenData(userId, name);
 		
 	}
@@ -57,10 +48,5 @@ public class RongCloudService extends BaseThirdService{
 			return null;
 		}
 	}
-	
-//	private String getRandom(){
-//		Random r=new Random();
-//		return String.valueOf(r.nextInt(Integer.MAX_VALUE));
-//	}
 	
 }

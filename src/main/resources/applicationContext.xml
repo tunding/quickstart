@@ -19,7 +19,22 @@
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
 		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
 	</context:component-scan>
-
+	
+	<!-- httpclient线程池 -->  
+    <bean id="connectionManagerParams" class="org.apache.commons.httpclient.params.HttpConnectionManagerParams">  
+        <property name="connectionTimeout" value="10000"/>  
+        <property name="soTimeout" value="10000"/>  
+        <property name="maxTotalConnections" value="30"/>  
+        <property name="defaultMaxConnectionsPerHost" value="20"/>
+    </bean>
+      
+    <bean id="connectionManager" class="org.apache.commons.httpclient.MultiThreadedHttpConnectionManager">  
+        <property name="params" ref="connectionManagerParams"/>  
+    </bean>
+    <bean id="httpClientTemplate" class="org.springside.fi.common.httpclient.HttpClientTemplate">
+        <property name="connectionManager" ref="connectionManager"/>
+    </bean>
+    
 	<!-- Jpa Entity Manager 配置 -->
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"> 
 		<property name="dataSource" ref="dataSource"/>

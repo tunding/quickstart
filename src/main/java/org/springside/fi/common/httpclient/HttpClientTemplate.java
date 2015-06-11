@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -38,7 +39,8 @@ import org.springside.fi.common.SystemGlobal;
 public class HttpClientTemplate extends AbstractHttpClientTemplate<RequestEntity> {
 
     final Logger logger = LoggerFactory.getLogger(HttpClientTemplate.class);
-    private final String appSecret = SystemGlobal.getConfig("App-Key");
+    private final String appKey = SystemGlobal.getConfig("App-Key");
+    private final String appSecret = SystemGlobal.getConfig("App-Secret");
 
     /**
      * Constructor.
@@ -86,11 +88,10 @@ public class HttpClientTemplate extends AbstractHttpClientTemplate<RequestEntity
 			signature +=
 					Integer.toString( ( sign[i] & 0xff ) + 0x100, 16).substring( 1 );
 		}
-		post.addRequestHeader("App-Key", appSecret);
+		post.addRequestHeader("App-Key", appKey);
 		post.addRequestHeader("Nonce", nonce);
 		post.addRequestHeader("Timestamp", timestamp);
 		post.addRequestHeader("Signature", signature);
-		
 		
         if (requestPayload != null) {
             post.setRequestEntity(requestPayload);
