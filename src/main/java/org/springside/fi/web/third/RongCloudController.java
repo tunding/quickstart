@@ -1,11 +1,14 @@
 package org.springside.fi.web.third;
 
+import java.io.UnsupportedEncodingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springside.fi.entity.Runner;
 import org.springside.fi.service.running.RunnerService;
+import org.springside.fi.service.third.RongCloudService;
 import org.springside.fi.web.running.BaseController;
 
 /**
@@ -18,6 +21,8 @@ public class RongCloudController extends BaseController{
 	
 	@Autowired
 	private RunnerService runnerService;
+	@Autowired
+	private RongCloudService rongCloudService;
 	
 	@ResponseBody
 	@RequestMapping(value="/gettocken")
@@ -26,7 +31,15 @@ public class RongCloudController extends BaseController{
 		Runner runner = runnerService.getRunner(id);
 		String uuid = runner.getUuid();
 		String loginName = runner.getLoginName();
-		return runnerService.getToken(uuid, loginName);
+		try {
+			String token = rongCloudService.getToken(uuid, loginName);
+			System.out.println(token);
+			return token;
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 }
