@@ -37,7 +37,7 @@ public class Runner extends IdEntity {
 	private Integer sex;
 	private Integer age;
 	private String signature;
-	private String cloudId;
+	private String cloudToken;
 	private Date createTime;//记录创建的时间
 	private Date lastUpdateTime;//记录最后更新的时间
 
@@ -135,12 +135,12 @@ public class Runner extends IdEntity {
 	public void setSignature(String signature) {
 		this.signature = signature;
 	}
-	@Column(name="cloudId")
-	public String getCloudId() {
-		return cloudId;
+	@Column(name="cloudToken")
+	public String getCloudToken() {
+		return cloudToken;
 	}
-	public void setCloudId(String cloudId) {
-		this.cloudId = cloudId;
+	public void setCloudToken(String cloudToken) {
+		this.cloudToken = cloudToken;
 	}
 	@JsonIgnore
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+08:00")
