@@ -1,4 +1,4 @@
-108.880272,34.197078 wqj6t9khqjrh tunding
+﻿108.880272,34.197078 wqj6t9khqjrh tunding
 108.874421,34.184215 wqj6mrpcmzs3 gaufy
 116.355071,39.898637 wx4dzxr4mtj2 line
 108.933161,34.24063 wqj6yc6dnsh1 grass
@@ -15,9 +15,9 @@ username=wangzhichao&password=wangzhichao
 
 
 http://localhost:8080/running/register
-loginName=gaufy&name=gaufy&plainPassword=gaufy&confirmPassword=gaufy&sex=1&age=30&cloudId=123456
-loginName=line&name=line&plainPassword=line&confirmPassword=line&sex=1&age=27&cloudId=123456
-loginName=grass&name=grass&plainPassword=grass&confirmPassword=grass&sex=1&age=24&cloudId=123456
+loginName=gaufy&name=gaufy&plainPassword=gaufy&confirmPassword=gaufy&sex=1&age=30&cloudToken=123456
+loginName=line&name=line&plainPassword=line&confirmPassword=line&sex=1&age=27&cloudToken=123456
+loginName=grass&name=grass&plainPassword=grass&confirmPassword=grass&sex=1&age=24&cloudToken=123456
 
 http://localhost:8080/running/activity/info/checkActivity
 loginName=tunding
@@ -35,4 +35,4 @@ http://localhost:8080/running/activity/near
 longitude=108.895751&latitude=34.200847
 
 http://localhost:8080/running/profile
-id=5&loginName=wangzhichao&name=wangzhichao&plainPassword=wangzhichao&confirmPassword=wangzhichao&sex=0&age=20&cloudId=123456
+id=5&loginName=wangzhichao&name=wangzhichao&plainPassword=wangzhichao&confirmPassword=wangzhichao&sex=0&age=20&cloudToken=123456
