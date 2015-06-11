@@ -1,5 +1,5 @@
 ﻿# Host: localhost  (Version: 5.6.11)
-# Date: 2015-06-10 18:12:20
+# Date: 2015-06-11 13:15:40
 # Generator: MySQL-Front 5.3  (Build 4.187)
 
 /*!40101 SET NAMES utf8 */;
@@ -154,7 +154,7 @@ CREATE TABLE `runner_user` (
   `sex` int(11) NOT NULL DEFAULT '0' COMMENT '性别',
   `age` int(11) DEFAULT NULL COMMENT '年龄',
   `signature` varchar(255) DEFAULT NULL COMMENT '个性签名',
-  `cloud_id` varchar(255) DEFAULT NULL COMMENT '第三方ID',
+  `cloud_token` varchar(255) DEFAULT NULL COMMENT '第三方ID',
   `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `last_update_time` timestamp NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP COMMENT '记录最后更新时间',
   PRIMARY KEY (`id`),
@@ -166,4 +166,4 @@ CREATE TABLE `runner_user` (
 # Data for table "runner_user"
 #
 
-INSERT INTO `runner_user` VALUES (1,'c31cfe4b4c3149ae9e96ffe239cdbe6c','admin','admin','dc9f459ceeb3448533253085e508c47bfc2f29bf','7faaa3e4dc341755','',0,100,NULL,NULL,'2015-06-04 17:35:49','2015-06-10 09:48:05'),(5,'c362342ab6de44d0b5ec91234a54e585','wangzhichao','wangzhichao','cdf19bc8d440d37f48b39ed6435594f86d777ba9','07a6ada959ce7a52','',0,20,NULL,'abcdefg','2015-05-28 20:33:09','2015-06-10 09:48:13'),(16,'16c71b7da2404ec09d5c2be1df9b50b6','gaufy','gaufy','c38f4715e7e1bd56e2fd1858b1367469fa02e998','3c6524907953aea9','',0,30,NULL,'123456','2015-05-30 12:27:51','2015-06-10 09:48:24'),(17,'a5679a02f5db4767b838b0eff99f110f','line','line','7766f42cb79ee2e6304015695b1afe0ec8565340','9ba557379c500b1f','',1,27,NULL,'123456','2015-05-30 12:29:29','2015-06-10 09:48:30'),(18,'e9f0b7048b524a8c917d6fa43dff7bda','grass','grass','858df5871d5306e7b941851e23110d6d6b699cdb','6c6efc6224bf4f5d','',1,24,NULL,'123456','2015-05-30 12:29:36','2015-06-10 09:48:36'),(19,'37ffaf5929cd48d3b149aaaca6c6373a','get','get','7bd212f5bf01ed642b9da289ff7be069689e1ce1','cf85b4bffbc8c854','',0,19,NULL,'!@','2015-06-08 17:33:19','2015-06-10 09:48:44');
+INSERT INTO `runner_user` VALUES (1,'c31cfe4b4c3149ae9e96ffe239cdbe6c','admin','admin','dc9f459ceeb3448533253085e508c47bfc2f29bf','7faaa3e4dc341755','',0,100,NULL,NULL,'2015-06-04 17:35:49','2015-06-10 09:48:05'),(5,'c362342ab6de44d0b5ec91234a54e585','wangzhichao','wangzhichao','cdf19bc8d440d37f48b39ed6435594f86d777ba9','07a6ada959ce7a52','',0,20,NULL,'6E1LXFFfg8ixFJGSsyHxYCC6VKjtGRUzMDiQbRuslit/oKJ5yRE9G+RFq24DpnSdbkhUTOxpq46/lD0+v3ZsswCoxEPBd+GE2Hmu7phKoojqb9KcxWdq4HE3rWPIffC26GqaIiHo3HM=','2015-05-28 20:33:09','2015-06-11 13:13:55'),(16,'16c71b7da2404ec09d5c2be1df9b50b6','gaufy','gaufy','c38f4715e7e1bd56e2fd1858b1367469fa02e998','3c6524907953aea9','',0,30,NULL,'123456','2015-05-30 12:27:51','2015-06-10 09:48:24'),(17,'a5679a02f5db4767b838b0eff99f110f','line','line','7766f42cb79ee2e6304015695b1afe0ec8565340','9ba557379c500b1f','',1,27,NULL,'123456','2015-05-30 12:29:29','2015-06-10 09:48:30'),(18,'e9f0b7048b524a8c917d6fa43dff7bda','grass','grass','858df5871d5306e7b941851e23110d6d6b699cdb','6c6efc6224bf4f5d','',1,24,NULL,'123456','2015-05-30 12:29:36','2015-06-10 09:48:36'),(19,'37ffaf5929cd48d3b149aaaca6c6373a','get','get','7bd212f5bf01ed642b9da289ff7be069689e1ce1','cf85b4bffbc8c854','',0,19,NULL,'!@','2015-06-08 17:33:19','2015-06-10 09:48:44');
