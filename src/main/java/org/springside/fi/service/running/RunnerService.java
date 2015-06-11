@@ -20,10 +20,15 @@ import org.springside.fi.map.utils.DistanceUtil;
 import org.springside.fi.repository.GpsRunnerInfoDao;
 import org.springside.fi.repository.RunnerDao;
 import org.springside.fi.service.account.AccountService;
+import org.springside.fi.service.third.object.RongCloudToken;
+import org.springside.modules.mapper.JsonMapper;
 
 @Service
 @Transactional("transactionManager")
 public class RunnerService {
+	
+	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
+	
 	@Autowired
 	private AccountService accountService;
 	@Autowired
@@ -99,6 +104,38 @@ public class RunnerService {
 		}
 	}
 	
+	public String UpdateGeoHash(Long user_id, String latitude, String longitude){
+		double lat = Double.valueOf(latitude);
+		double lon = Double.valueOf(longitude);
+		String userGeoHash = new Geohash().encode(lat, lon);
+		try{
+			Runner runner = runnerDao.findOne(user_id);
+			GpsRunnerInfo gpsrunnerinfo = getGpsRunnerInfo(runner.getUuid());
+			gpsrunnerinfo.setUuid(runner.getUuid());;
+			gpsrunnerinfo.setLatitude(latitude);
+			gpsrunnerinfo.setLongitude(longitude);
+			gpsrunnerinfo.setGeohash(userGeoHash);
+			gpsRunnerInfoDao.save(gpsrunnerinfo);
+		}catch(RuntimeException e){
+			e.printStackTrace();
+		}
+		return userGeoHash;
+	}
+	
+	public Runner getRunner(Long id){
+		return runnerDao.findOne(id);
+	}
+	
+	public void saveCloudToken(Long id, String res){
+		//解析token
+		RongCloudToken token = jsonMapper.fromJson(res, RongCloudToken.class);
+		if(token.getCode().equals("200")){
+			Runner runner = getRunner(id);
+			runner.setCloudToken(token.getToken());
+			runnerDao.save(runner);
+		}
+	}
+	
 	private void sortByDistance(ArrayList<Runner> runners){
 		Comparator<Runner> comparator = new Comparator<Runner>() {
 			
@@ -127,24 +164,6 @@ public class RunnerService {
 		return gpsRunnerInfoDao.findByGeohash(userGeoHash.subSequence(0, 4).toString());
 	}
 	
-	public String UpdateGeoHash(Long user_id, String latitude, String longitude){
-		double lat = Double.valueOf(latitude);
-		double lon = Double.valueOf(longitude);
-		String userGeoHash = new Geohash().encode(lat, lon);
-		try{
-			Runner runner = runnerDao.findOne(user_id);
-			GpsRunnerInfo gpsrunnerinfo = getGpsRunnerInfo(runner.getUuid());
-			gpsrunnerinfo.setUuid(runner.getUuid());;
-			gpsrunnerinfo.setLatitude(latitude);
-			gpsrunnerinfo.setLongitude(longitude);
-			gpsrunnerinfo.setGeohash(userGeoHash);
-			gpsRunnerInfoDao.save(gpsrunnerinfo);
-		}catch(RuntimeException e){
-			e.printStackTrace();
-		}
-		return userGeoHash;
-	}
-	
 	private GpsRunnerInfo getGpsRunnerInfo(String uuid){
 		GpsRunnerInfo gps = gpsRunnerInfoDao.findByUUID(uuid);
 		if(gps!=null){
@@ -152,10 +171,6 @@ public class RunnerService {
 		}else{
 			return new GpsRunnerInfo();
 		}
-	}
-	
-	public Runner getRunner(Long id){
-		return runnerDao.findOne(id);
 	}
 	
 }

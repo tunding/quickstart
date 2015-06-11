@@ -32,8 +32,9 @@ public class RongCloudController extends BaseController{
 		String uuid = runner.getUuid();
 		String loginName = runner.getLoginName();
 		try {
-			String token = rongCloudService.getToken(uuid, loginName);
-			return token;
+			String res = rongCloudService.getToken(uuid, loginName);
+			runnerService.saveCloudToken(id, res);
+			return res;
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
