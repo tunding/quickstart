@@ -1,4 +1,14 @@
-﻿108.880272,34.197078 wqj6t9khqjrh tunding
+
+好友关注接口
+GET｜POST
+http://localhost:8080/running／
+好友取消关注接口
+
+通讯录接口
+
+
+
+108.880272,34.197078 wqj6t9khqjrh tunding
 108.874421,34.184215 wqj6mrpcmzs3 gaufy
 116.355071,39.898637 wx4dzxr4mtj2 line
 108.933161,34.24063 wqj6yc6dnsh1 grass
