@@ -16,7 +16,7 @@ import org.springside.fi.common.httpclient.HttpClientTemplate;
 
 @Service
 public class RongCloudService extends BaseThirdService{
-	private final String RongHOST = SystemGlobal.getConfig("RongCloudAPI")+"user/getToken.json";
+	private final String RongHOSTToken = SystemGlobal.getConfig("RongCloudAPI")+"user/getToken.json";
 	
 	@Autowired
 	private HttpClientTemplate httpClientTemplate;
@@ -39,7 +39,7 @@ public class RongCloudService extends BaseThirdService{
 		StringRequestEntity requestEntity = null;
 		try{
 			requestEntity = new StringRequestEntity(reqParams, "application/x-www-form-urlencoded", "UTF-8");
-			return convertResult(httpClientTemplate.executePostMethod(RongHOST, requestEntity, null));
+			return convertResult(httpClientTemplate.executePostMethod(RongHOSTToken, requestEntity, null));
 		}catch(UnsupportedEncodingException e){
 			e.printStackTrace();
 			return null;

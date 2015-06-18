@@ -1,5 +1,5 @@
 ﻿# Host: localhost  (Version: 5.6.11)
-# Date: 2015-06-11 13:15:40
+# Date: 2015-06-18 18:02:00
 # Generator: MySQL-Front 5.3  (Build 4.187)
 
 /*!40101 SET NAMES utf8 */;
@@ -128,6 +128,7 @@ CREATE TABLE `runner_relationship` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `attention_uuid` varchar(36) NOT NULL DEFAULT '' COMMENT '关注者uuid',
   `passive_attention_uuid` varchar(36) NOT NULL DEFAULT '' COMMENT '被关注者uuid',
+  `state` tinyint(3) NOT NULL DEFAULT '1' COMMENT '1表示有效，2表示已设置黑名单',
   `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '记录创建时间',
   `last_update_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '记录修改时间',
   PRIMARY KEY (`id`)
@@ -166,4 +167,4 @@ CREATE TABLE `runner_user` (
 # Data for table "runner_user"
 #
 
-INSERT INTO `runner_user` VALUES (1,'c31cfe4b4c3149ae9e96ffe239cdbe6c','admin','admin','dc9f459ceeb3448533253085e508c47bfc2f29bf','7faaa3e4dc341755','',0,100,NULL,NULL,'2015-06-04 17:35:49','2015-06-10 09:48:05'),(5,'c362342ab6de44d0b5ec91234a54e585','wangzhichao','wangzhichao','cdf19bc8d440d37f48b39ed6435594f86d777ba9','07a6ada959ce7a52','',0,20,NULL,'6E1LXFFfg8ixFJGSsyHxYCC6VKjtGRUzMDiQbRuslit/oKJ5yRE9G+RFq24DpnSdbkhUTOxpq46/lD0+v3ZsswCoxEPBd+GE2Hmu7phKoojqb9KcxWdq4HE3rWPIffC26GqaIiHo3HM=','2015-05-28 20:33:09','2015-06-11 13:13:55'),(16,'16c71b7da2404ec09d5c2be1df9b50b6','gaufy','gaufy','c38f4715e7e1bd56e2fd1858b1367469fa02e998','3c6524907953aea9','',0,30,NULL,'123456','2015-05-30 12:27:51','2015-06-10 09:48:24'),(17,'a5679a02f5db4767b838b0eff99f110f','line','line','7766f42cb79ee2e6304015695b1afe0ec8565340','9ba557379c500b1f','',1,27,NULL,'123456','2015-05-30 12:29:29','2015-06-10 09:48:30'),(18,'e9f0b7048b524a8c917d6fa43dff7bda','grass','grass','858df5871d5306e7b941851e23110d6d6b699cdb','6c6efc6224bf4f5d','',1,24,NULL,'123456','2015-05-30 12:29:36','2015-06-10 09:48:36'),(19,'37ffaf5929cd48d3b149aaaca6c6373a','get','get','7bd212f5bf01ed642b9da289ff7be069689e1ce1','cf85b4bffbc8c854','',0,19,NULL,'!@','2015-06-08 17:33:19','2015-06-10 09:48:44');
+INSERT INTO `runner_user` VALUES (1,'c31cfe4b4c3149ae9e96ffe239cdbe6c','admin','admin','dc9f459ceeb3448533253085e508c47bfc2f29bf','7faaa3e4dc341755','',0,100,NULL,NULL,'2015-06-04 17:35:49','2015-06-10 09:48:05'),(5,'c362342ab6de44d0b5ec91234a54e585','wangzhichao','wangzhichao','cdf19bc8d440d37f48b39ed6435594f86d777ba9','07a6ada959ce7a52','',0,20,NULL,'6E1LXFFfg8ixFJGSsyHxYCC6VKjtGRUzMDiQbRuslit/oKJ5yRE9G+RFq24DpnSdbkhUTOxpq46/lD0+v3ZsswCoxEPBd+GE2Hmu7phKoojqb9KcxWdq4HE3rWPIffC26GqaIiHo3HM=','2015-05-28 20:33:09','2015-06-11 13:13:55'),(16,'16c71b7da2404ec09d5c2be1df9b50b6','gaufy','gaufy','c38f4715e7e1bd56e2fd1858b1367469fa02e998','3c6524907953aea9','',0,30,NULL,'123456','2015-05-30 12:27:51','2015-06-10 09:48:24'),(17,'a5679a02f5db4767b838b0eff99f110f','line','line','7766f42cb79ee2e6304015695b1afe0ec8565340','9ba557379c500b1f','',1,27,NULL,'123456','2015-05-30 12:29:29','2015-06-10 09:48:30'),(18,'e9f0b7048b524a8c917d6fa43dff7bda','grass','grass','858df5871d5306e7b941851e23110d6d6b699cdb','6c6efc6224bf4f5d','',1,24,NULL,'B+hGb3GIswvMZr9aEkNgJecZ+dJoFP0Hgg43aoqHKqDFtmEdqgN4P32oSxHOsbLHQojA2OtyM8mlSh5xTmVuL2emDmmvKOGuPJ0edICgdMrXh+9glV0SJUNiG3o70U1BLIsePwOPf/A=','2015-05-30 12:29:36','2015-06-11 14:06:20'),(19,'37ffaf5929cd48d3b149aaaca6c6373a','get','get','7bd212f5bf01ed642b9da289ff7be069689e1ce1','cf85b4bffbc8c854','',0,19,NULL,'!@','2015-06-08 17:33:19','2015-06-10 09:48:44');

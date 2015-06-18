@@ -16,6 +16,7 @@ import org.hibernate.annotations.DynamicUpdate;
 public class Relationship extends BaseEntity{
 	private String attentionUuid;
 	private String passiveAttentionUuid;
+	private Integer state;
 	@Column(name="attention_uuid")
 	public String getAttentionUuid() {
 		return attentionUuid;
@@ -29,5 +30,12 @@ public class Relationship extends BaseEntity{
 	}
 	public void setPassiveAttentionUuid(String passiveAttentionUuid) {
 		this.passiveAttentionUuid = passiveAttentionUuid;
+	}
+	@Column(name="state")
+	public Integer getState() {
+		return state;
+	}
+	public void setState(Integer state) {
+		this.state = state;
 	}
 }
