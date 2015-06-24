@@ -2,6 +2,7 @@ package org.springside.fi.service.running;
 
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.httpclient.methods.StringRequestEntity;
@@ -13,6 +14,9 @@ import org.springside.fi.common.httpclient.HttpClientTemplate;
 import org.springside.fi.entity.Relationship;
 import org.springside.fi.entity.Runner;
 import org.springside.fi.repository.RelationshipDao;
+import org.springside.fi.rest.RestErrorCode;
+import org.springside.fi.service.rong.models.ContactNtfMessage;
+import org.springside.fi.service.rong.models.Message;
 import org.springside.fi.service.third.BaseThirdService;
 import org.springside.fi.service.third.object.RongCloudBlacklist;
 import org.springside.modules.mapper.JsonMapper;
@@ -22,6 +26,7 @@ import org.springside.modules.mapper.JsonMapper;
 public class RelationshipService extends BaseThirdService{
 	private final String RongHOSTBlacklistAdd = SystemGlobal.getConfig("RongCloudAPI")+"user/blacklist/add.json";
 	private final String RongHOSTBlacklistRemove = SystemGlobal.getConfig("RongCloudAPI")+"user/blacklist/remove.json";
+	private final String RongHOSTPrivateMsg = SystemGlobal.getConfig("RongCloudAPI")+"/message/private/publish.json";
 	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
 	
 	@Autowired
@@ -31,29 +36,42 @@ public class RelationshipService extends BaseThirdService{
 	@Autowired
 	private RelationshipDao relationshipDao;
 	
-	public String updateRelationship(long id, String opt, String passiveAttentionUuid) {
+	public void removeRelationship(long id, String passiveAttentionUuid){
 		String attentionUuid = getUuid(id);
-		if(opt.equals("add")){
-			if(isFriend(id, passiveAttentionUuid)){
-				
-			}else if(isblack(id, passiveAttentionUuid)){
-				
-			}else{
-				attention(attentionUuid, passiveAttentionUuid);
-			}
-		}else if(opt.equals("remove")){
-			try{
-				if(isblack(id, passiveAttentionUuid)){
-					removeBlackList(attentionUuid, passiveAttentionUuid);
-				}
-				if(reverseIsBlack(id, passiveAttentionUuid)){
-					removeBlackList(passiveAttentionUuid, attentionUuid);
-				}
-				removeAttention(attentionUuid, passiveAttentionUuid);
-			}catch(RuntimeException e){
-				e.printStackTrace();
-			}
+		if(isblack(id, passiveAttentionUuid)){
+			removeBlackList(attentionUuid, passiveAttentionUuid);
 		}
+		if(reverseIsBlack(id, passiveAttentionUuid)){
+			removeBlackList(passiveAttentionUuid, attentionUuid);
+		}
+		System.out.println(attentionUuid);
+		System.out.println(passiveAttentionUuid);
+		removeAttention(attentionUuid, passiveAttentionUuid);
+		removeAttention(passiveAttentionUuid, attentionUuid);
+	}
+	public String attentionRelationship(long id, String content, String passiveAttentionUuid) {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		String attentionUuid = getUuid(id);
+		if(isFriend(id, passiveAttentionUuid)){
+			map.put("code", RestErrorCode.REST_ISFRIEND_CODE);
+			map.put("data", RestErrorCode.REST_ISFRIEND_MSG);
+		}else if(isblack(id, passiveAttentionUuid)){
+			map.put("code", RestErrorCode.REST_ISBLACK_CODE);
+			map.put("data", RestErrorCode.REST_ISBLACK_MSG);
+		}else{
+			Message msg = new ContactNtfMessage("attention", attentionUuid,
+					passiveAttentionUuid, content);
+			System.out.println(attention(attentionUuid, passiveAttentionUuid, msg));
+			map.put("code", RestErrorCode.REST_SUCCESS_CODE);
+			map.put("data", "验证消息已发送...");
+		}
+		return jsonMapper.toJson(map);
+	}
+	
+	public void agreeRelationship(long id, String passiveAttentionUuid){
+		String attentionUuid = getUuid(id);
+		agree(attentionUuid, passiveAttentionUuid);
+		agree(passiveAttentionUuid, attentionUuid);
 	}
 	
 	public String submitBlack(long id, String passiveAttentionUuid){
@@ -124,8 +142,6 @@ public class RelationshipService extends BaseThirdService{
 	private void removeAttention(String attentionUuid, String passiveAttentionUuid){
 		Relationship relationship = getRelationship(attentionUuid, passiveAttentionUuid);
 		relationshipDao.delete(relationship);
-		relationship = getRelationship(passiveAttentionUuid, attentionUuid);
-		relationshipDao.delete(relationship);
 	}
 	
 	private String addBlackList(String userId, String blackUserId){
@@ -158,14 +174,28 @@ public class RelationshipService extends BaseThirdService{
 		}
 	}
 
-	private void attention(String attentionUuid, String passiveAttentionUuid){
+	private String attention(String fromUserId, String toUserId, Message msg){
+		String reqParams = "fromUserId="+fromUserId+"&toUserId="+toUserId+"&objectName=RC:ContactNtf&content="+msg;
+		System.out.println(reqParams);
+		StringRequestEntity requestEntity = null;
+		try{
+			requestEntity = new StringRequestEntity(reqParams, "Application/json", "UTF-8");
+			return convertResult(httpClientTemplate.executePostMethod(RongHOSTPrivateMsg, requestEntity, null));
+		}catch(UnsupportedEncodingException e){
+			e.printStackTrace();
+			return null;
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	private void agree(String attentionUuid, String passiveAttentionUuid){
 		Relationship relationship = getRelationship(attentionUuid, passiveAttentionUuid);
 		relationship.setAttentionUuid(attentionUuid);
 		relationship.setPassiveAttentionUuid(passiveAttentionUuid);
 		relationshipDao.save(relationship);
 	}
-
-	
 	
 	/**
 	 * @param attentionUuid 主动uuid
@@ -174,6 +204,7 @@ public class RelationshipService extends BaseThirdService{
 	 */
 	private Relationship getRelationship(String attentionUuid, String passiveAttentionUuid){
 		List<Relationship> relationships = relationshipDao.findRelationship(attentionUuid, passiveAttentionUuid);
+		System.out.println(relationships.size()>0);
 		if(relationships.size()>0){
 			return relationships.get(0);
 		}else{

@@ -1,8 +1,15 @@
-
-好友关注接口
+﻿好友关注
 GET｜POST
-http://localhost:8080/running／
+http://localhost:8080/running/ralationship/friendship/attention?passiveAttentionUuid=a5679a02f5db4767b838b0eff99f110f
+
+好友关注同意接口
+GET｜POST
+http://localhost:8080/running/ralationship/friendship/agree?attentionUuid=c362342ab6de44d0b5ec91234a54e585
+{"result":"success","data":null}
+
 好友取消关注接口
+GET｜POST
+http://localhost:8080/running/ralationship/friendship/attentionremove?passiveAttentionUuid=c362342ab6de44d0b5ec91234a54e585
 
 通讯录接口
 
@@ -20,8 +27,7 @@ http://localhost:8080/running／
 108.927369,34.180617 欧亚学院快捷酒店
 108.905907,34.250045 丰庆公园
 
-http://localhost:8080/running/login
-username=wangzhichao&password=wangzhichao
+http://localhost:8080/running/login?username=wangzhichao&password=wangzhichao
 
 
 http://localhost:8080/running/register

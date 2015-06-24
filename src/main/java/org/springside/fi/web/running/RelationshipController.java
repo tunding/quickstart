@@ -20,15 +20,47 @@ public class RelationshipController extends BaseController{
 	private RelationshipService relationshipService;
 	
 	@ResponseBody
-	@RequestMapping(value="/attention")
-	public String OptFriendship(@RequestParam(value="opt") String opt,
-			@RequestParam(value="passiveAttentionUuid") String passiveAttentionUuid){
+	@RequestMapping(value="/agree")
+	public String agreeAttention(@RequestParam(value="attentionUuid") String attentionUuid){
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		Long user_id = getCurrentUserId();
 		try{
-			relationshipService.updateRelationship(user_id, opt, passiveAttentionUuid);
+			relationshipService.agreeRelationship(user_id, attentionUuid);
 			map.put("result", "success");
-			map.put("data", null);
+			map.put("data", "");
+		}catch(RuntimeException e){
+			e.printStackTrace();
+			map.put("result", "failed");
+			map.put("data", e.getMessage());
+		}
+		return jsonMapper.toJson(map);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/attention")
+	public String AttentionFriendship(@RequestParam(value="passiveAttentionUuid") String passiveAttentionUuid,
+			@RequestParam(value="message") String msg){
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		Long user_id = getCurrentUserId();
+		try{
+			return relationshipService.attentionRelationship(user_id, passiveAttentionUuid, msg);
+		}catch(RuntimeException e){
+			e.printStackTrace();
+			map.put("result", "failed");
+			map.put("data", e.getMessage());
+			return jsonMapper.toJson(map);
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/attentionremove")
+	public String RemoveFriendship(@RequestParam(value="passiveAttentionUuid") String passiveAttentionUuid){
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		Long user_id = getCurrentUserId();
+		try{
+			relationshipService.removeRelationship(user_id, passiveAttentionUuid);
+			map.put("result", "success");
+			map.put("data", "");
 		}catch(RuntimeException e){
 			e.printStackTrace();
 			map.put("result", "failed");
