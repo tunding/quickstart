@@ -36,6 +36,9 @@ public class RelationshipService extends BaseThirdService{
 	@Autowired
 	private RelationshipDao relationshipDao;
 	
+	/**
+	 * 本地删除好友关系
+	 */
 	public void removeRelationship(long id, String passiveAttentionUuid){
 		String attentionUuid = getUuid(id);
 		if(isblack(id, passiveAttentionUuid)){
@@ -44,11 +47,16 @@ public class RelationshipService extends BaseThirdService{
 		if(reverseIsBlack(id, passiveAttentionUuid)){
 			removeBlackList(passiveAttentionUuid, attentionUuid);
 		}
-		System.out.println(attentionUuid);
-		System.out.println(passiveAttentionUuid);
 		removeAttention(attentionUuid, passiveAttentionUuid);
 		removeAttention(passiveAttentionUuid, attentionUuid);
 	}
+	
+	/**
+	 * 请求添加好友
+	 * 如果原本当前用户是请求对象的好友，则返回。
+	 * 如果原本当前用户在请求对象的黑名单里，则返回。
+	 * 否则，发送请求添加好友信息
+	 */
 	public String attentionRelationship(long id, String content, String passiveAttentionUuid) {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		String attentionUuid = getUuid(id);
@@ -61,13 +69,16 @@ public class RelationshipService extends BaseThirdService{
 		}else{
 			Message msg = new ContactNtfMessage("attention", attentionUuid,
 					passiveAttentionUuid, content);
-			System.out.println(attention(attentionUuid, passiveAttentionUuid, msg));
+			attention(attentionUuid, passiveAttentionUuid, msg);
 			map.put("code", RestErrorCode.REST_SUCCESS_CODE);
 			map.put("data", "验证消息已发送...");
 		}
 		return jsonMapper.toJson(map);
 	}
 	
+	/**
+	 * 添加好友需要A->B和B->A两层好友关系
+	 */
 	public void agreeRelationship(long id, String passiveAttentionUuid){
 		String attentionUuid = getUuid(id);
 		agree(attentionUuid, passiveAttentionUuid);
@@ -79,6 +90,7 @@ public class RelationshipService extends BaseThirdService{
 		List<Relationship> relationships = relationshipDao.findRelationshipFriend(attentionUuid, passiveAttentionUuid);
 		String res = addBlackList(attentionUuid, passiveAttentionUuid);
 		try{
+			//解析融云返回值，200则移除本地黑名单
 			RongCloudBlacklist blacklist = jsonMapper.fromJson(res, RongCloudBlacklist.class);
 			if(blacklist.getCode().equals("200")){
 				Relationship relationship = relationships.get(0);
@@ -96,6 +108,7 @@ public class RelationshipService extends BaseThirdService{
 		List<Relationship> relationships = relationshipDao.findRelationshipBlack(attentionUuid, passiveAttentionUuid);
 		String res = removeBlackList(attentionUuid, passiveAttentionUuid);
 		try{
+			//解析融云返回值，200则移除本地黑名单			
 			RongCloudBlacklist blacklist = jsonMapper.fromJson(res, RongCloudBlacklist.class);
 			if(blacklist.getCode().equals("200")){
 				Relationship relationship = relationships.get(0);
@@ -129,6 +142,9 @@ public class RelationshipService extends BaseThirdService{
 		}
 	}
 	
+	/**
+	 * state为1的有效好友
+	 */
 	public boolean isFriend(long id, String passiveAttentionUuid){
 		String attentionUuid = getUuid(id);
 		List<Relationship> relationships = relationshipDao.findRelationshipFriend(attentionUuid, passiveAttentionUuid);
@@ -139,11 +155,19 @@ public class RelationshipService extends BaseThirdService{
 		}
 	}
 	
+	/**
+	 * 本地数据库中删除好友关系
+	 */
 	private void removeAttention(String attentionUuid, String passiveAttentionUuid){
 		Relationship relationship = getRelationship(attentionUuid, passiveAttentionUuid);
 		relationshipDao.delete(relationship);
 	}
 	
+	/**
+	 * @param userId
+	 * @param blackUserId
+	 * 添加blackUserId到userId的黑名单中
+	 */
 	private String addBlackList(String userId, String blackUserId){
 		String reqParams = "userId="+userId+"&blackUserId="+blackUserId;
 		StringRequestEntity requestEntity = null;
@@ -168,7 +192,7 @@ public class RelationshipService extends BaseThirdService{
 		String reqParams = "userId="+userId+"&blackUserId="+blackUserId;
 		StringRequestEntity requestEntity = null;
 		try{
-			requestEntity = new StringRequestEntity(reqParams, "application/x-www-form-urlencoded", "UTF-8");
+			requestEntity = new StringRequestEntity(reqParams, "application/json", "UTF-8");
 			return convertResult(httpClientTemplate.executePostMethod(RongHOSTBlacklistRemove, requestEntity, null));
 		}catch(UnsupportedEncodingException e){
 			e.printStackTrace();
