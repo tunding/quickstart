@@ -159,6 +159,11 @@ public class RelationshipService extends BaseThirdService{
 		}
 	}
 	
+	/**
+	 * @param userId
+	 * @param blackUserId
+	 * 移除黑名单
+	 */
 	private String removeBlackList(String userId, String blackUserId){
 		String reqParams = "userId="+userId+"&blackUserId="+blackUserId;
 		StringRequestEntity requestEntity = null;
@@ -174,6 +179,12 @@ public class RelationshipService extends BaseThirdService{
 		}
 	}
 
+	/**
+	 * @param fromUserId
+	 * @param toUserId
+	 * @param msg
+	 * 发送好友请求消息
+	 */
 	private String attention(String fromUserId, String toUserId, Message msg){
 		String reqParams = "fromUserId="+fromUserId+"&toUserId="+toUserId+"&objectName=RC:ContactNtf&content="+msg;
 		System.out.println(reqParams);
@@ -190,6 +201,11 @@ public class RelationshipService extends BaseThirdService{
 		}
 	}
 	
+	/**
+	 * @param attentionUuid 
+	 * @param passiveAttentionUuid
+	 * attentionUuid添加passiveAttentionUuid为好友，纪录好友信息到数据库
+	 */
 	private void agree(String attentionUuid, String passiveAttentionUuid){
 		Relationship relationship = getRelationship(attentionUuid, passiveAttentionUuid);
 		relationship.setAttentionUuid(attentionUuid);
