@@ -1,10 +1,9 @@
-package org.springside.fi.service.rong.models;
 
-import org.springside.modules.mapper.JsonMapper;
+package org.springside.fi.service.rong.models;
+import org.springside.fi.service.rong.util.GsonUtil;
 
 //图片消息
 public class ImgMessage extends Message {
-	private JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
 	private String content;
 	private String imageUri;
 	private String extra;
@@ -46,6 +45,6 @@ public class ImgMessage extends Message {
 
 	@Override
 	public String toString() {
-		return jsonMapper.toJson(this);
+		return GsonUtil.toJson(this, ImgMessage.class);
 	}
 }

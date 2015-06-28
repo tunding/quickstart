@@ -1,11 +1,9 @@
 package org.springside.fi.service.rong.models;
 
-import org.springside.modules.mapper.JsonMapper;
+import org.springside.fi.service.rong.util.GsonUtil;
 
 //语音消息
 public class VoiceMessage extends Message {
-	private JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
-	
 	private String content;
 	private Long duration;
 	private String extra;
@@ -46,6 +44,6 @@ public class VoiceMessage extends Message {
 
 	@Override
 	public String toString() {		
-		return jsonMapper.toJson(this);
+		return GsonUtil.toJson(this, VoiceMessage.class);
 	}
 }

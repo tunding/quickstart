@@ -1,9 +1,8 @@
 package org.springside.fi.service.rong.models;
 
-import org.springside.modules.mapper.JsonMapper;
+import org.springside.fi.service.rong.util.GsonUtil;
 
 public class LBSMessage extends Message {
-	private JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
 	private String content;
 	private double latitude;
 	private double longitude;
@@ -68,6 +67,6 @@ public class LBSMessage extends Message {
 
 	@Override
 	public String toString() {
-		return jsonMapper.toJson(this);
+		return GsonUtil.toJson(this, LBSMessage.class);
 	}
 }

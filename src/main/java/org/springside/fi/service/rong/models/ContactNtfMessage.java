@@ -1,11 +1,10 @@
 package org.springside.fi.service.rong.models;
 
-import org.springside.modules.mapper.JsonMapper;
+import org.springside.fi.service.rong.util.GsonUtil;
 
 
 //添加联系人消息
 public class ContactNtfMessage extends Message {
-	private JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
 	private String operation;
 	private String sourceUserId;
 	private String targetUserId;
@@ -69,6 +68,6 @@ public class ContactNtfMessage extends Message {
 
 	@Override
 	public String toString() {
-		return jsonMapper.toJson(this);
+		return GsonUtil.toJson(this, ContactNtfMessage.class);
 	}
 }
