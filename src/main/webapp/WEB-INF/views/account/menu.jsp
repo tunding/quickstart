@@ -84,6 +84,11 @@
 				</table>
 			</td>
 		</tr>
+		
+		<tr>
+			<td>currentUser</td>
+			<td><a href="${ ctx }/ralationship/friendship/listfriend">通讯录</a></td>
+		</tr>
 	</table>
 </body>
 </html>

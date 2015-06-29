@@ -26,4 +26,8 @@ public interface RelationshipDao extends
 	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
 	public List<Relationship> findRelationshipFriend(String attentionUuid, String passiveAttentionUuid);
 	
+	@Query("from Relationship where attentionUuid=?1 and state=1")
+	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
+	public List<Relationship> findListFriend(String attentionUuid);
+	
 }

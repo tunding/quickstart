@@ -1,4 +1,4 @@
-﻿package org.springside.fi.service.rong.util;
+package org.springside.fi.service.rong.util;
 
 import org.springside.fi.service.rong.models.SdkHttpResult;
 

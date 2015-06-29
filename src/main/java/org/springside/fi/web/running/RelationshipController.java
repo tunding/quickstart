@@ -11,20 +11,21 @@ import org.springside.fi.service.running.RelationshipService;
 import org.springside.modules.mapper.JsonMapper;
 
 /**
- * 创建时间：2015年6月28日 上午10:44:53  
- * 项目名称：quickstart  
+ * @date：2015年6月28日 上午10:44:53  
+ * @project：quickstart  
  * @author wangzhichao  
  * @version 1.0   
- * 文件名称：RelationshipController.java  
- * 类说明：	好友关系操作controller
- * 			同意添加好友｜agreeAttention
- * 			请求添加好友｜AttentionFriendship
- * 			删除好友｜RemoveFriendship
- * 			添加黑名单｜submitBlack
- * 			删除黑名单｜removeBlack
- * 			对方是否在你的黑名单｜isBlack
- * 			是否在对方的黑名单｜reverseIsBlack
- * 			是否已添加对方为好友｜isFriend
+ * @name：RelationshipController.java  
+ * @description：	好友关系操作controller
+ * 		同意添加好友｜agreeAttention
+ * 		请求添加好友｜AttentionFriendship
+ * 		删除好友｜RemoveFriendship
+ * 		添加黑名单｜submitBlack
+ * 		删除黑名单｜removeBlack
+ * 		对方是否在你的黑名单｜isBlack
+ * 		是否在对方的黑名单｜reverseIsBlack
+ * 		是否已添加对方为好友｜isFriend
+ * 		获取好友列表|listFriend
  */
 @Controller
 @RequestMapping(value="/ralationship/friendship")
@@ -145,5 +146,15 @@ public class RelationshipController extends BaseController{
 	public boolean isFriend(@RequestParam(value="passiveAttentionUuid") String passiveAttentionUuid){
 		Long user_id = getCurrentUserId();
 		return relationshipService.isFriend(user_id, passiveAttentionUuid);
+	}
+	
+	/**
+	 * 返回当前用户通讯录
+	 */
+	@ResponseBody
+	@RequestMapping(value="/listfriend")
+	public String listFriend(){
+		Long user_id = getCurrentUserId();
+		return relationshipService.listFriend(user_id);
 	}
 }

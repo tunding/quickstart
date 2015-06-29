@@ -55,7 +55,7 @@ public class RunnerService {
 		ArrayList<Runner> runners = new ArrayList<Runner>();
 		for(GpsRunnerInfo gpsrunnerinfo : gpsrunnerinfos) {
 			String uuid = gpsrunnerinfo.getUuid();
-			Runner runner = runnerDao.findByUUID(uuid);
+			Runner runner = getRunnerByUUID(uuid);
 			if(loginName.equals(runner.getLoginName())){
 				continue;
 			}
@@ -120,6 +120,10 @@ public class RunnerService {
 			e.printStackTrace();
 		}
 		return userGeoHash;
+	}
+	
+	public Runner getRunnerByUUID(String uuid){
+		return runnerDao.findByUUID(uuid);
 	}
 	
 	public Runner getRunner(Long id){

@@ -2,6 +2,7 @@ package org.springside.fi.service.running;
 
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,12 +22,20 @@ import org.springside.fi.service.third.BaseThirdService;
 import org.springside.fi.service.third.object.RongCloudBlacklist;
 import org.springside.modules.mapper.JsonMapper;
 
+/**
+* @author tunding:wzc@tcl.com
+* @project running
+* @version 1.0
+* @date 创建时间：2015年6月29日 上午8:37:37
+* @name RelationshipService.java
+* @description 好友关系service
+*/
 @Service
 @Transactional("transactionManager")
 public class RelationshipService extends BaseThirdService{
-	private final String RongHOSTBlacklistAdd = SystemGlobal.getConfig("RongCloudAPI")+"user/blacklist/add.json";
-	private final String RongHOSTBlacklistRemove = SystemGlobal.getConfig("RongCloudAPI")+"user/blacklist/remove.json";
-	private final String RongHOSTPrivateMsg = SystemGlobal.getConfig("RongCloudAPI")+"/message/private/publish.json";
+	private final static String RongHOSTBlacklistAdd = SystemGlobal.getConfig("RongCloudAPI")+"user/blacklist/add.json";
+	private final static String RongHOSTBlacklistRemove = SystemGlobal.getConfig("RongCloudAPI")+"user/blacklist/remove.json";
+	private final static String RongHOSTPrivateMsg = SystemGlobal.getConfig("RongCloudAPI")+"message/private/publish.json";
 	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
 	
 	@Autowired
@@ -35,6 +44,32 @@ public class RelationshipService extends BaseThirdService{
 	private RunnerService runnerService;
 	@Autowired
 	private RelationshipDao relationshipDao;
+	
+	/**
+	 * @param id 返回当前用户的所有好友信息列表
+	 */
+	public String listFriend(long id){
+		String attentionUuid = getUuid(id);
+		List<Relationship> relationships = relationshipDao.findListFriend(attentionUuid);
+		List<Runner> friends = new ArrayList<Runner>();
+		
+		for(Relationship relationship : relationships){
+			Runner runner = runnerService.getRunnerByUUID(relationship.getPassiveAttentionUuid());
+			//创建runner,将需要返回的好友信息存储
+			Runner newrunner = new Runner();
+			newrunner.setId(runner.getId());
+			newrunner.setName(runner.getName());
+			newrunner.setLoginName(runner.getLoginName());
+			newrunner.setRoles(runner.getRoles());
+			newrunner.setAge(runner.getAge());
+			newrunner.setSex(runner.getSex());
+			newrunner.setSignature(runner.getSignature());
+			
+			friends.add(newrunner);
+		}
+		
+		return jsonMapper.toJson(friends);
+	}
 	
 	/**
 	 * 本地删除好友关系
@@ -57,7 +92,7 @@ public class RelationshipService extends BaseThirdService{
 	 * 如果原本当前用户在请求对象的黑名单里，则返回。
 	 * 否则，发送请求添加好友信息
 	 */
-	public String attentionRelationship(long id, String content, String passiveAttentionUuid) {
+	public String attentionRelationship(long id, String passiveAttentionUuid, String content) {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		String attentionUuid = getUuid(id);
 		if(isFriend(id, passiveAttentionUuid)){
@@ -69,7 +104,8 @@ public class RelationshipService extends BaseThirdService{
 		}else{
 			Message msg = new ContactNtfMessage("attention", attentionUuid,
 					passiveAttentionUuid, content);
-			attention(attentionUuid, passiveAttentionUuid, msg);
+			String res = attention(attentionUuid, passiveAttentionUuid, msg);
+			System.out.println(res);
 			map.put("code", RestErrorCode.REST_SUCCESS_CODE);
 			map.put("data", "验证消息已发送...");
 		}
@@ -192,7 +228,7 @@ public class RelationshipService extends BaseThirdService{
 		String reqParams = "userId="+userId+"&blackUserId="+blackUserId;
 		StringRequestEntity requestEntity = null;
 		try{
-			requestEntity = new StringRequestEntity(reqParams, "application/json", "UTF-8");
+			requestEntity = new StringRequestEntity(reqParams, "application/x-www-form-urlencoded", "UTF-8");
 			return convertResult(httpClientTemplate.executePostMethod(RongHOSTBlacklistRemove, requestEntity, null));
 		}catch(UnsupportedEncodingException e){
 			e.printStackTrace();
@@ -211,10 +247,11 @@ public class RelationshipService extends BaseThirdService{
 	 */
 	private String attention(String fromUserId, String toUserId, Message msg){
 		String reqParams = "fromUserId="+fromUserId+"&toUserId="+toUserId+"&objectName=RC:ContactNtf&content="+msg;
+		System.out.println(RongHOSTPrivateMsg);
 		System.out.println(reqParams);
 		StringRequestEntity requestEntity = null;
 		try{
-			requestEntity = new StringRequestEntity(reqParams, "Application/json", "UTF-8");
+			requestEntity = new StringRequestEntity(reqParams, "application/x-www-form-urlencoded", "UTF-8");
 			return convertResult(httpClientTemplate.executePostMethod(RongHOSTPrivateMsg, requestEntity, null));
 		}catch(UnsupportedEncodingException e){
 			e.printStackTrace();
