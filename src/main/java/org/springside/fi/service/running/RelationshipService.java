@@ -35,7 +35,7 @@ import org.springside.modules.mapper.JsonMapper;
 public class RelationshipService extends BaseThirdService{
 	private final static String RongHOSTBlacklistAdd = SystemGlobal.getConfig("RongCloudAPI")+"user/blacklist/add.json";
 	private final static String RongHOSTBlacklistRemove = SystemGlobal.getConfig("RongCloudAPI")+"user/blacklist/remove.json";
-	private final static String RongHOSTPrivateMsg = SystemGlobal.getConfig("RongCloudAPI")+"message/private/publish.json";
+	private final static String RongHOSTSystemMsg = SystemGlobal.getConfig("RongCloudAPI")+"message/system/publish.json";
 	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
 	
 	@Autowired
@@ -247,12 +247,12 @@ public class RelationshipService extends BaseThirdService{
 	 */
 	private String attention(String fromUserId, String toUserId, Message msg){
 		String reqParams = "fromUserId="+fromUserId+"&toUserId="+toUserId+"&objectName=RC:ContactNtf&content="+msg;
-		System.out.println(RongHOSTPrivateMsg);
+		System.out.println(RongHOSTSystemMsg);
 		System.out.println(reqParams);
 		StringRequestEntity requestEntity = null;
 		try{
 			requestEntity = new StringRequestEntity(reqParams, "application/x-www-form-urlencoded", "UTF-8");
-			return convertResult(httpClientTemplate.executePostMethod(RongHOSTPrivateMsg, requestEntity, null));
+			return convertResult(httpClientTemplate.executePostMethod(RongHOSTSystemMsg, requestEntity, null));
 		}catch(UnsupportedEncodingException e){
 			e.printStackTrace();
 			return null;
