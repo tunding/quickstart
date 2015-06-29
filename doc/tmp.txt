@@ -1,21 +1,4 @@
-﻿好友关注
-GET｜POST
-http://localhost:8080/running/ralationship/friendship/attention?passiveAttentionUuid=a5679a02f5db4767b838b0eff99f110f
-
-好友关注同意接口
-GET｜POST
-http://localhost:8080/running/ralationship/friendship/agree?attentionUuid=c362342ab6de44d0b5ec91234a54e585
-{"result":"success","data":null}
-
-好友取消关注接口
-GET｜POST
-http://localhost:8080/running/ralationship/friendship/attentionremove?passiveAttentionUuid=c362342ab6de44d0b5ec91234a54e585
-
-通讯录接口
-
-
-
-108.880272,34.197078 wqj6t9khqjrh tunding
+﻿108.880272,34.197078 wqj6t9khqjrh tunding
 108.874421,34.184215 wqj6mrpcmzs3 gaufy
 116.355071,39.898637 wx4dzxr4mtj2 line
 108.933161,34.24063 wqj6yc6dnsh1 grass
