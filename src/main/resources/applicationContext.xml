@@ -106,6 +106,10 @@
 			<property name="maxActive" value="${jdbc.pool.maxActive}" />
 			<property name="maxIdle" value="${jdbc.pool.maxIdle}" />
 			<property name="defaultAutoCommit" value="false" />
+			
+      <property name="testOnBorrow" value="true" />
+      <property name="validationQuery" value="SELECT 1" />
+      <property name="validationInterval" value="100000" />
 			<!-- 连接Idle一个小时后超时 -->
 			<property name="timeBetweenEvictionRunsMillis" value="3600000" />
 			<property name="minEvictableIdleTimeMillis" value="3600000" />
