@@ -1,12 +1,19 @@
 package org.springside.fi.entity;
 
+import java.util.Date;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name = "gps_activity_info")
@@ -17,6 +24,7 @@ public class GpsActivityInfo extends BaseEntity {
 	private String longitude;
 	private String latitude;
 	private String geohash;
+	private Date time;
 	public String getActuuid() {
 		return actuuid;
 	}
@@ -40,5 +48,14 @@ public class GpsActivityInfo extends BaseEntity {
 	}
 	public void setGeohash(String geohash) {
 		this.geohash = geohash;
+	}
+	@Column(name="time")
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+08:00")
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getTime() {
+		return time;
+	}
+	public void setTime(Date time) {
+		this.time = time;
 	}
 }

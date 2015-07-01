@@ -25,6 +25,15 @@ import org.springside.fi.repository.ParticipateDao;
 
 
 
+/**
+ * 创建时间：2015年7月1日 下午10:04:49  
+ * 项目名称：running  
+ * @author wangzhichao  
+ * @version 1.0   
+ * 文件名称：ActivityService.java  
+ * 类说明： 获取附近的活动
+ *
+ */
 @Service
 @Transactional("transactionManager")
 public class ActivityService extends BaseService{
@@ -39,6 +48,16 @@ public class ActivityService extends BaseService{
 	
 	private Date now = new Date();
 	
+	/**
+	 * @param longitude
+	 * @param latitude
+	 * @param distance 活动发起地点距离的最大范围
+	 * @param pageNumber
+	 * @param pageSize
+	 * @param time 活动开始时间
+	 * @param sort 排序字段，一般都为空，自动以距离作为返回
+	 * @return 附近活动列表
+	 */
 	public List<Activity> getAllActivity(String longitude, String latitude, int distance, int pageNumber, int pageSize, String time, String sort){
 		if(StringUtils.isEmpty(longitude)){
 			return null;
@@ -46,10 +65,19 @@ public class ActivityService extends BaseService{
 		if(StringUtils.isEmpty(latitude)){
 			return null;
 		}
+		/*
+		 * 取得目标地址对geohash值
+		 */
 		double lat = Double.valueOf(latitude);
 		double lon = Double.valueOf(longitude);
 		String actGeoHash = new Geohash().encode(lat, lon);
+		/*
+		 * geohash值取得附近九块地区的有效所有活动的gps信息（包括当前用户创建到活动）
+		 */
 		List<GpsActivityInfo> gpsactinfos = getGeoHash(actGeoHash);
+		/*
+		 * 遍历geohash返回的附近活动信息，筛选符合条件的插入到activities
+		 */
 		ArrayList<Activity> activities = new ArrayList<Activity>();
 		for(GpsActivityInfo gpsactivityinfo : gpsactinfos){
 			String actuuid = gpsactivityinfo.getActuuid();
@@ -61,7 +89,6 @@ public class ActivityService extends BaseService{
 						continue;
 					}
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}else{
