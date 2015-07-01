@@ -60,7 +60,6 @@ public class Activity extends BaseEntity{
 		this.info = info;
 	}
 	@Column(name="time")
-	@JsonIgnore
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+08:00")
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getTime() {

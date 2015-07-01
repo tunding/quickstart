@@ -41,13 +41,14 @@ public class ActivityNearController extends BaseController{
 			if(activities!=null&&!activities.isEmpty()){
 				map.put("data", activities);
 			}else{
-				map.put("data", "null");
+				map.put("data", null);
 			}
 		}catch(RuntimeException e){
 			e.printStackTrace();
 			map.put("result", "failed");
-			map.put("data", "");
+			map.put("data", e.getMessage());
 		}
+		
 		return jsonMapper.toJson(map);
 	}
 	
