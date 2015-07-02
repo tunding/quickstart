@@ -18,4 +18,8 @@ public interface ParticipateDao extends
 	@Modifying
 	@Query("from Participate where uuid=?1 and actuuid=?2")
 	public List<Participate> findpart(String uuid, String activityId);
+	
+	@Modifying
+	@Query("from Participate where actuuid=?1")
+	public List<Participate> findUuidByActuuid(String actuuid);
 }
