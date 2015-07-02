@@ -2,7 +2,6 @@ package org.springside.fi.web.running;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletRequest;
 
@@ -14,8 +13,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springside.fi.entity.Activity;
 import org.springside.fi.service.running.ActivityService;
 import org.springside.modules.mapper.JsonMapper;
-import org.springside.modules.web.Servlets;
 
+/**
+* @author tunding:wzc@tcl.com
+* @project running
+* @version 1.0
+* @date 创建时间：2015年7月2日 下午1:26:26
+* @name ActivityNearController.java
+* @description 附近活动列表、附近活动参与/取消参与
+*/
 @Controller
 @RequestMapping(value="/activity/near")
 public class ActivityNearController extends BaseController{
@@ -24,6 +30,11 @@ public class ActivityNearController extends BaseController{
 	
 	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
 	
+	/**
+	 * @param time 传入时间串，如"2015-07-01 21:00:00",也可以为空
+	 * @return
+	 * @description sort 作为保留字段
+	 */
 	@ResponseBody
 	@RequestMapping(value={"/list", "/", ""})
 	public String getNearActivity(ServletRequest request,
@@ -34,13 +45,18 @@ public class ActivityNearController extends BaseController{
 			@RequestParam(value = "pageSize", defaultValue=DEFAULT_PAGE_SIZE) int pageSize,
 			@RequestParam(value = "time", defaultValue = "") String time,
 			@RequestParam(value = "sort", defaultValue = "") String sort){
+		Long user_id = getCurrentUserId();
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		try{
-			List<Activity> activities = activityService.getAllActivity(longitude, latitude, distance, pageNumber, pageSize, time, sort);
+			HashMap<String, Object> res = activityService.getAllActivity(user_id, longitude, latitude, distance, pageNumber, pageSize, time, sort);
+			@SuppressWarnings("unchecked")
+			List<Activity> activities = (List<Activity>)res.get("acts");
 			map.put("result", "success");
 			if(activities!=null&&!activities.isEmpty()){
+				map.put("total", res.get("total"));
 				map.put("data", activities);
 			}else{
+				map.put("total", 0);
 				map.put("data", null);
 			}
 		}catch(RuntimeException e){
@@ -52,6 +68,12 @@ public class ActivityNearController extends BaseController{
 		return jsonMapper.toJson(map);
 	}
 	
+	/**
+	 * @param uuid
+	 * @param actuuid
+	 * @param opt in参与，out取消参与
+	 * @description 参与或取消附近的活动
+	 */
 	@ResponseBody
 	@RequestMapping(value="/participate")
 	public String participateActivity(@RequestParam(value="uuid") String uuid,

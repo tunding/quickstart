@@ -37,7 +37,8 @@ public class Activity extends BaseEntity{
 	private String longitude;
 	private String latitude;
 	private double distance;
-	private String state;
+	private Integer state;
+	private Integer participateCount;
 	@Column(name="uuid")
 	public String getUuid() {
 		return uuid;
@@ -103,11 +104,18 @@ public class Activity extends BaseEntity{
 	public void setDistance(double distance) {
 		this.distance = distance;
 	}
-	@Column(name="state")
-	public String getState() {
+	@Transient
+	public Integer getState() {
 		return state;
 	}
-	public void setState(String state) {
+	public void setState(Integer state) {
 		this.state = state;
+	}
+	@Transient
+	public Integer getParticipateCount() {
+		return participateCount;
+	}
+	public void setParticipateCount(Integer participateCount) {
+		this.participateCount = participateCount;
 	}
 }
