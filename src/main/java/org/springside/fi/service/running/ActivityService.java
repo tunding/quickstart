@@ -334,16 +334,32 @@ public class ActivityService extends BaseService{
 			return true;
 		}
 	}
-	public boolean findTodayActivityByUUID(String uuid){
-		if(activityDao.findTodayByUUID(uuid, now).size()>0){
+	/**
+	 * @param uuid
+	 * @param time
+	 * @return
+	 * @description 判断未来某一天当前用户是否已经发布活动，发布则返回false，不允许用户再次发布活动 
+	 * 需要将time表示成yyyy-MM-dd，判断同一天。
+	 * 数据库TO_DAYS函数
+	 */
+	public boolean findDayActivityByUUID(String uuid, String time){
+		SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+		Date date = null;
+		try {
+			date = df.parse(time);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(date==null || activityDao.findTodayByUUID(uuid, date).size()>0){
 			return false;
 		}else{
 			return true;
 		}
 	}
 	
-	/*
-	 * 获取当前用户对象
+	/**
+	 * 获取用户当前对象
 	 */
 	private Runner getRunner(Long id){
 		return runnerDao.findOne(id);
