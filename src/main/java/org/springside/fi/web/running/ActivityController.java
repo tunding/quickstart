@@ -1,6 +1,5 @@
 package org.springside.fi.web.running;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,6 +33,16 @@ public class ActivityController extends BaseController{
 	
 	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
 	
+	/**
+	 * @param longitude 经度
+	 * @param latitude 纬度
+	 * @param address 活动地址
+	 * @param time 活动发起时间
+	 * @param info 活动具体信息
+	 * @param kilometer 活动跑步距离，以km单位
+	 * @return
+	 * @description 现阶段只要求存储活动是一个，而不是数组形式的多个活动存储
+	 */
 	@ResponseBody
 	@RequestMapping(value="/saveactivity")
 	public String saveActivity(@RequestParam(value = "longitude") String longitude,
@@ -43,8 +52,7 @@ public class ActivityController extends BaseController{
 			@RequestParam(value = "info") String info,
 			@RequestParam(value = "kilometer") int kilometer){
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		Long user_id = getCurrentUserId();
-		Runner runner = runnerService.getRunner(user_id);
+		Runner runner = getRunner();
 		String uuid = runner.getUuid();
 		try{
 			activityService.saveActivity(uuid, longitude, latitude, address, time, info, kilometer);
@@ -62,8 +70,7 @@ public class ActivityController extends BaseController{
 	@RequestMapping(value="/getactivity")
 	public String getActivity(){
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		Long user_id = getCurrentUserId();
-		Runner runner = runnerService.getRunner(user_id);
+		Runner runner = getRunner();
 		String uuid = runner.getUuid();
 		try{
 			Activity activity = activityService.getActivity(uuid);
@@ -81,8 +88,7 @@ public class ActivityController extends BaseController{
 	@RequestMapping(value="/gethistoryactivity")
 	public String getHistoryActivity(){
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		Long user_id = getCurrentUserId();
-		Runner runner = runnerService.getRunner(user_id);
+		Runner runner = getRunner();
 		String uuid = runner.getUuid();
 		try{
 			List<Activity> activities = activityService.getHistoryActivity(uuid);
@@ -99,8 +105,7 @@ public class ActivityController extends BaseController{
 	@ResponseBody
 	@RequestMapping(value="/deleteactivity")
 	public boolean delActivity(@RequestParam("actuuid") String actuuid){
-		Long user_id = getCurrentUserId();
-		Runner runner = runnerService.getRunner(user_id);
+		Runner runner = getRunner();
 		String uuid = runner.getUuid();
 		return activityService.delActivity(uuid, actuuid);
 	}
@@ -112,9 +117,13 @@ public class ActivityController extends BaseController{
 	@ResponseBody
 	@RequestMapping(value="/checkActivity")
 	public boolean checkActivity(@RequestParam(value="time") String time){
-		Long user_id = getCurrentUserId();
-		Runner runner = runnerService.getRunner(user_id);
+		Runner runner = getRunner();
 		String uuid = runner.getUuid();
 		return activityService.findDayActivityByUUID(uuid, time);
+	}
+	
+	private Runner getRunner(){
+		Long user_id = getCurrentUserId();
+		return runnerService.getRunner(user_id);
 	}
 }
