@@ -248,29 +248,84 @@ public class ActivityService extends BaseService{
 	}
 	
 	
-	public void saveActivity(String uuid, String longitude, String latitude, String address, String time, String info, int kilometer){
-		
-		Activity activity = getActivity(uuid);
-		GpsActivityInfo gpsactivityinfo = getGpsActivityInfo(activity.getActuuid());
-		
-		activity.setUuid(uuid);
-		activity.setActuuid(UUID.randomUUID().toString().replace("-", ""));
-		activity.setAddress(address);
-		activity.setLongitude(longitude);
-		activity.setLatitude(latitude);
-		SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date starttime;
-		try {
-			starttime = df.parse(time);
-			activity.setTime(starttime);
-		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+	/**
+	 * @param uuid
+	 * @param longitude
+	 * @param latitude
+	 * @param address
+	 * @param time
+	 * @param info
+	 * @param kilometer
+	 * @description 存储发布的活动，同时当前用户被默认为第一个参与者
+	 */
+	public String saveActivity(String uuid, String longitude, String latitude, String address, String time, String info, int kilometer){
+		/*
+		 * time转换为Date类型，赋值到starttime
+		 */
+		Date starttime = TransferDate(time);
+		/*
+		 * String转换Date失败，则返回null
+		 */
+		if(starttime == null){
+			return null;
 		}
-		activity.setInfo(info);
-		activity.setKilometer(kilometer);
+		/*
+		 * 获取当前用户发布的活动，如果time日期没有发布活动则返回新建的Activity
+		 */
+		Activity activity = getActivity(uuid, starttime);
+		/*
+		 * 设置act的属性信息
+		 */
+		saveActInfo(uuid, longitude, latitude, address, info, kilometer,
+				starttime, activity);
+		/*
+		 * 通过活动actuuid获取活动经纬度信息对象
+		 */
+		GpsActivityInfo gpsactivityinfo = getGpsActivityInfo(activity.getActuuid());
+		/*
+		 * 设置活动gps属性信息
+		 */
+		saveActGpsInfo(longitude, latitude, starttime, activity,
+				gpsactivityinfo);
+		/*
+		 * 通过活动uuid和用户uuid获得参与活动对象
+		 */
+		Participate part = getParticipate(uuid, activity.getActuuid());
+		/*
+		 * part如果原本就存在则不需要修改
+		 */
+		if(StringUtils.isBlank(part.getActuuid())){
+			savePartInfo(uuid, activity, part);
+			try{
+				participateDao.save(part);
+			}catch(RuntimeException e){
+				e.printStackTrace();
+				return "save participate failed";
+			}
+		}
 		
+		try{
+			activityDao.save(activity);
+			gpsActivityInfoDao.save(gpsactivityinfo);
+		}catch(RuntimeException e){
+			e.printStackTrace();;
+			return "save failed";
+		}
+		return "200";
 		
+	}
+	/**
+	 * @description participate信息设置完毕
+	 */
+	private void savePartInfo(String uuid, Activity activity, Participate part) {
+		part.setActuuid(activity.getActuuid());
+		part.setUuid(uuid);
+	}
+	/**
+	 * @description actGps信息设置
+	 */
+	private void saveActGpsInfo(String longitude, String latitude,
+			Date starttime, Activity activity, GpsActivityInfo gpsactivityinfo) {
 		double lat = Double.valueOf(latitude);
 		double lon = Double.valueOf(longitude);
 		String userGeoHash = new Geohash().encode(lat, lon);
@@ -278,27 +333,57 @@ public class ActivityService extends BaseService{
 		gpsactivityinfo.setLongitude(longitude);
 		gpsactivityinfo.setLatitude(latitude);
 		gpsactivityinfo.setGeohash(userGeoHash);
-		
-		try{
-			activityDao.save(activity);
-			gpsActivityInfoDao.save(gpsactivityinfo);
-		}catch(RuntimeException e){
-			e.printStackTrace();
+		gpsactivityinfo.setTime(starttime);
+	}
+	/**
+	 * @description activity属性信息设置完毕
+	 */
+	private void saveActInfo(String uuid, String longitude, String latitude,
+			String address, String info, int kilometer, Date starttime,
+			Activity activity) {
+		activity.setUuid(uuid);
+		activity.setActuuid(UUID.randomUUID().toString().replace("-", ""));
+		activity.setAddress(address);
+		activity.setLongitude(longitude);
+		activity.setLatitude(latitude);
+		activity.setInfo(info);
+		activity.setKilometer(kilometer);
+		activity.setTime(starttime);
+	}
+	/**
+	 * @param time
+	 * @return 将String类型的time转换成Date类型
+	 */
+	public Date TransferDate(String time){
+		SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date starttime = null;
+		try {
+			starttime = df.parse(time);
+		} catch (ParseException e1) {
+			e1.printStackTrace();
 		}
-		
+		return starttime;
 	}
 	
-	public GpsActivityInfo getGpsActivityInfo(String actuuid){
-		if(null==actuuid){
-			return new GpsActivityInfo();
-		}else{
-			List<GpsActivityInfo> gpsactivities = gpsActivityInfoDao.findByActUUID(actuuid);
+	/**
+	 * @param actuuid
+	 * @return 根据活动uuid返回活动的gps信息，没有则新建
+	 */
+	private GpsActivityInfo getGpsActivityInfo(String actuuid){
+		List<GpsActivityInfo> gpsactivities = gpsActivityInfoDao.findByActUUID(actuuid);
+		if(gpsactivities.size()>0){
 			return gpsactivities.get(0);
+		}else{
+			return new GpsActivityInfo();
 		}
 	}
 	
-	public Activity getActivity(String uuid){
-		List<Activity> activities = activityDao.findTodayByUUID(uuid, now);
+	/**
+	 * @param uuid
+	 * @return 返回time当天发布的活动，否则返回新建的活动对象
+	 */
+	public Activity getActivity(String uuid, Date time){
+		List<Activity> activities = activityDao.findDayByUUID(uuid, time);
 		if(activities.size()>0){
 			return activities.get(0);
 		}else{
@@ -351,7 +436,7 @@ public class ActivityService extends BaseService{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(date==null || activityDao.findTodayByUUID(uuid, date).size()>0){
+		if(date==null || activityDao.findDayByUUID(uuid, date).size()>0){
 			return false;
 		}else{
 			return true;

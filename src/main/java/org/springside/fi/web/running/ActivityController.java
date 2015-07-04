@@ -52,11 +52,14 @@ public class ActivityController extends BaseController{
 			@RequestParam(value = "info") String info,
 			@RequestParam(value = "kilometer") int kilometer){
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		Runner runner = getRunner();
-		String uuid = runner.getUuid();
+		String uuid = getRunnerUuid();
 		try{
-			activityService.saveActivity(uuid, longitude, latitude, address, time, info, kilometer);
-			map.put("result", "success");
+			String code = activityService.saveActivity(uuid, longitude, latitude, address, time, info, kilometer);
+			if("200".equals(code)){
+				map.put("result", "success");
+			}else{
+				map.put("result", "failed");
+			}
 			map.put("data", "");
 		}catch(RuntimeException e){
 			e.printStackTrace();
@@ -68,12 +71,11 @@ public class ActivityController extends BaseController{
 	
 	@ResponseBody
 	@RequestMapping(value="/getactivity")
-	public String getActivity(){
+	public String getActivity(@RequestParam(value="time") String time){
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		Runner runner = getRunner();
-		String uuid = runner.getUuid();
+		String uuid = getRunnerUuid();
 		try{
-			Activity activity = activityService.getActivity(uuid);
+			Activity activity = activityService.getActivity(uuid, activityService.TransferDate(time));
 			map.put("result", "success");
 			map.put("data", activity);
 		}catch(RuntimeException e){
@@ -88,8 +90,7 @@ public class ActivityController extends BaseController{
 	@RequestMapping(value="/gethistoryactivity")
 	public String getHistoryActivity(){
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		Runner runner = getRunner();
-		String uuid = runner.getUuid();
+		String uuid = getRunnerUuid();
 		try{
 			List<Activity> activities = activityService.getHistoryActivity(uuid);
 			map.put("result", "success");
@@ -105,8 +106,7 @@ public class ActivityController extends BaseController{
 	@ResponseBody
 	@RequestMapping(value="/deleteactivity")
 	public boolean delActivity(@RequestParam("actuuid") String actuuid){
-		Runner runner = getRunner();
-		String uuid = runner.getUuid();
+		String uuid = getRunnerUuid();
 		return activityService.delActivity(uuid, actuuid);
 	}
 	
@@ -117,13 +117,13 @@ public class ActivityController extends BaseController{
 	@ResponseBody
 	@RequestMapping(value="/checkActivity")
 	public boolean checkActivity(@RequestParam(value="time") String time){
-		Runner runner = getRunner();
-		String uuid = runner.getUuid();
+		String uuid = getRunnerUuid();
 		return activityService.findDayActivityByUUID(uuid, time);
 	}
 	
-	private Runner getRunner(){
+	private String getRunnerUuid(){
 		Long user_id = getCurrentUserId();
-		return runnerService.getRunner(user_id);
+		Runner runner = runnerService.getRunner(user_id);
+		return runner.getUuid();
 	}
 }

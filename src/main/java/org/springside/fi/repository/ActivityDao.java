@@ -23,7 +23,7 @@ public interface ActivityDao extends JpaSpecificationExecutor<Activity>,
 	
 	@Query("from Activity where uuid=?1 and TO_DAYS(time)=TO_DAYS(?2)")
 	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-	public List<Activity> findTodayByUUID(String uuid, Date now);
+	public List<Activity> findDayByUUID(String uuid, Date starttime);
 	
 	@Query("from Activity where uuid=?1 and time<?2")
 	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
