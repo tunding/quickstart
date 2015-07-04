@@ -52,8 +52,6 @@ public class ActivityService extends BaseService{
 	@Autowired
 	private RunnerDao runnerDao;
 	
-	private Date now = new Date();
-	
 	/**
 	 * @param distance 活动发起地点距离的最大范围
 	 * @param time 活动开始时间
@@ -132,7 +130,7 @@ public class ActivityService extends BaseService{
 			/*
 			 * 统计有效活动的参与人数participateCount
 			 */
-			Integer participateCount = participateDao.findUuidByActuuid(actuuid).size();
+			Integer participateCount = participateDao.findByActuuid(actuuid).size();
 			act.setParticipateCount(participateCount);
 			
 			if(runner.getUuid().equals(act.getUuid())){
@@ -391,33 +389,45 @@ public class ActivityService extends BaseService{
 		}
 	}
 	
-	public List<Activity> getHistoryActivity(String uuid){
-		List<Activity> activities = activityDao.findHistoryByUUID(uuid, now);
+	/**
+	 * @return 用户所有发布的活动
+	 */
+	public List<Activity> getPublicHistoryActivity(String uuid){
+//		List<Activity> activities = activityDao.findHistoryByUUID(uuid, now);
+		List<Activity> activities = activityDao.findHistoryByUUID(uuid);
 		return activities;
 	}
 	
-	public boolean delActivity(String uuid, String actuuid){
-		List<Activity> activities = activityDao.findSelfTodayByUUID(uuid);
-		try{
-			for(Activity activity:activities){
-				if(activity.getActuuid().equals(actuuid)){
-					gpsActivityInfoDao.delete(gpsActivityInfoDao.findByActUUID(actuuid).get(0));
-					activityDao.delete(activity);
-					return true;
-				}
+	public List<Activity> getParticipateHistoryActivity(String uuid){
+		
+	}
+	
+	/**
+	 * @param actuuid
+	 * 删除发布的有效活动，删除活动gps信息，删除活动所有参与人的信息
+	 */
+	public boolean delActivity(String actuuid){
+		List<Activity> activities = activityDao.findByACTUUID(actuuid);
+		if(activities.size()>0){
+			Activity act = activities.get(0);
+			try{
+				deletePGA(actuuid, act);
+				return true;
+			}catch(RuntimeException e){
+				e.printStackTrace();
 			}
-		}catch(RuntimeException e){
-			e.printStackTrace();
 		}
 		return false;
 	}
-	
-	public boolean findSelfTodayActivityByUUID(String uuid){
-		if(activityDao.findSelfTodayByUUID(uuid).size()>0){
-			return false;
-		}else{
-			return true;
-		}
+	/**
+	 * @param actuuid
+	 * @param act
+	 * @description 删除 参与者 part、活动gps gps、活动 act
+	 */
+	private void deletePGA(String actuuid, Activity act) {
+		participateDao.delete(participateDao.findByActuuid(actuuid));
+		gpsActivityInfoDao.delete(gpsActivityInfoDao.findByActUUID(actuuid).get(0));
+		activityDao.delete(act);
 	}
 	/**
 	 * @param uuid

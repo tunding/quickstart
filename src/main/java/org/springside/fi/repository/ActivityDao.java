@@ -17,15 +17,14 @@ public interface ActivityDao extends JpaSpecificationExecutor<Activity>,
 	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
 	public List<Activity> findByACTUUID(String actuuid);
 	
-	@Query("from Activity where uuid=?1")
-	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-	public List<Activity> findSelfTodayByUUID(String uuid);
-	
 	@Query("from Activity where uuid=?1 and TO_DAYS(time)=TO_DAYS(?2)")
 	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
 	public List<Activity> findDayByUUID(String uuid, Date starttime);
 	
-	@Query("from Activity where uuid=?1 and time<?2")
+//	@Query("from Activity where uuid=?1 and time<?2")
+//	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
+//	public List<Activity> findHistoryByUUID(String uuid, Date now);
+	@Query("from Activity where uuid=?1")
 	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-	public List<Activity> findHistoryByUUID(String uuid, Date now);
+	public List<Activity> findHistoryByUUID(String uuid);
 }

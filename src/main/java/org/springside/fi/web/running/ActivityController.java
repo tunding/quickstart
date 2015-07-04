@@ -69,6 +69,10 @@ public class ActivityController extends BaseController{
 		return jsonMapper.toJson(map);
 	}
 	
+	/**
+	 * @param time
+	 * @return 返回time表示当天的活动信息，信息中不包含活动参加的人数
+	 */
 	@ResponseBody
 	@RequestMapping(value="/getactivity")
 	public String getActivity(@RequestParam(value="time") String time){
@@ -86,13 +90,16 @@ public class ActivityController extends BaseController{
 		return jsonMapper.toJson(map);
 	}
 	
+	/**
+	 * @return 返回当前用户的所有发布的活动，包括未开始和已结束的活动
+	 */
 	@ResponseBody
-	@RequestMapping(value="/gethistoryactivity")
-	public String getHistoryActivity(){
+	@RequestMapping(value="/public/gethistoryactivity")
+	public String getPublicHistoryActivity(){
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		String uuid = getRunnerUuid();
 		try{
-			List<Activity> activities = activityService.getHistoryActivity(uuid);
+			List<Activity> activities = activityService.getPublicHistoryActivity(uuid);
 			map.put("result", "success");
 			map.put("data", activities);
 		}catch(RuntimeException e){
@@ -104,10 +111,30 @@ public class ActivityController extends BaseController{
 	}
 	
 	@ResponseBody
+	@RequestMapping(value="/participate/gethistoryactivity")
+	public String getParticipateHistoryActivity(){
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		String uuid = getRunnerUuid();
+		try{
+			List<Activity> activities = activityService.getParticipateHistoryActivity(uuid);
+			map.put("result", "success");
+			map.put("data", activities);
+		}catch(RuntimeException e){
+			e.printStackTrace();
+			map.put("result", "failed");
+			map.put("data", e.getMessage());
+		}
+		return jsonMapper.toJson(map);
+	}
+	
+	/**
+	 * @param actuuid
+	 * @description 删除发布的任意活动，需要删除默认参加活动，不能删除已发生的活动
+	 */
+	@ResponseBody
 	@RequestMapping(value="/deleteactivity")
 	public boolean delActivity(@RequestParam("actuuid") String actuuid){
-		String uuid = getRunnerUuid();
-		return activityService.delActivity(uuid, actuuid);
+		return activityService.delActivity(actuuid);
 	}
 	
 	/**
