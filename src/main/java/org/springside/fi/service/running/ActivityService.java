@@ -98,7 +98,7 @@ public class ActivityService extends BaseService{
 	private HashMap<String, Object> activitySub(int pageNumber, int pageSize,
 			ArrayList<Activity> activities, HashMap<String, Object> map) {
 		int start = (pageNumber-1) * pageSize;
-		int end   = pageNumber*pageSize - 1;
+		int end   = pageNumber*pageSize;
 		int size  = activities.size();
 		if(end<size){
 			map.put("acts", activities.subList(start, end));
@@ -187,7 +187,7 @@ public class ActivityService extends BaseService{
 		return DistanceUtil.getDistance(cen_latlng, run_latlng);
 	}
 	/**
-	 * @description 重写比较器
+	 * @description 重写距离比较器
 	 */
 	private void sortByDistance(ArrayList<Activity> acts){
 		Comparator<Activity> comparator = new Comparator<Activity>() {
@@ -270,7 +270,7 @@ public class ActivityService extends BaseService{
 		/*
 		 * 获取当前用户发布的活动，如果time日期没有发布活动则返回新建的Activity
 		 */
-		Activity activity = getActivity(uuid, starttime);
+		Activity activity = getDayActivity(uuid, starttime);
 		/*
 		 * 设置act的属性信息
 		 */
@@ -380,7 +380,7 @@ public class ActivityService extends BaseService{
 	 * @param uuid
 	 * @return 返回time当天发布的活动，否则返回新建的活动对象
 	 */
-	public Activity getActivity(String uuid, Date time){
+	private Activity getDayActivity(String uuid, Date time){
 		List<Activity> activities = activityDao.findDayByUUID(uuid, time);
 		if(activities.size()>0){
 			return activities.get(0);
@@ -390,17 +390,91 @@ public class ActivityService extends BaseService{
 	}
 	
 	/**
+	 * @param actuuid
+	 * @return 直接通过actuuid返回act
+	 */
+	public Activity getActUuidActivity(String uuid, String actuuid){
+		List<Activity> activities = activityDao.findByACTUUID(actuuid);
+		Integer participateCount = participateDao.findByActuuid(actuuid).size();
+		Activity act = activities.get(0);
+		act.setParticipateCount(participateCount);
+		if(uuid.equals(act.getUuid())){
+			act.setState(1);
+		}else{
+			act.setState(0);
+		}
+		return act;
+	}
+	
+	/**
+	 * @param uuid
+	 * @param pageNumber
+	 * @param pageSize
 	 * @return 用户所有发布的活动
 	 */
-	public List<Activity> getPublicHistoryActivity(String uuid){
+	public List<Activity> getPublicHistoryActivity(String uuid, int pageNumber, int pageSize){
 //		List<Activity> activities = activityDao.findHistoryByUUID(uuid, now);
-		List<Activity> activities = activityDao.findHistoryByUUID(uuid);
+		int start = (pageNumber-1) * pageSize;
+		int size  = pageSize;
+		List<Activity> activities = activityDao.findHistoryByUUID(uuid, start, size);
 		return activities;
 	}
 	
-	public List<Activity> getParticipateHistoryActivity(String uuid){
-		
+	/**
+	 * @param uuid
+	 * @param pageNumber
+	 * @param pageSize
+	 * @return 用户所有参与活动，按时间排序
+	 */
+	public List<Activity> getParticipateHistoryActivity(String uuid, int pageNumber, int pageSize){
+		int start = (pageNumber-1) * pageSize;
+		int end   = pageNumber*pageSize;
+		ArrayList<Activity> activities = getActByPart(uuid);
+		int size  = activities.size();
+		if(end<size){
+			return activities.subList(start, end);
+		}else if(start<size){
+			return activities.subList(start, size);
+		}else{
+			return null;
+		}
 	}
+	/**
+	 * @param uuid
+	 * @return 返回当前用户参与过的所有活动，按时间排序
+	 */
+	private ArrayList<Activity> getActByPart(String uuid) {
+		ArrayList<Activity> activities = new ArrayList<Activity>();
+		List<Participate> parts= participateDao.findByUuid(uuid);
+		for(Participate part : parts){
+			String actuuid = part.getActuuid();
+			activities.add(activityDao.findByACTUUID(actuuid).get(0));
+		}
+		sortByTime(activities);
+		return activities;
+	}
+	
+	/**
+	 * @description 时间排序
+	 */
+	private void sortByTime(ArrayList<Activity> acts){
+		Comparator<Activity> comparator = new Comparator<Activity>() {
+			
+			@Override
+			public int compare(Activity a1, Activity a2) {
+				// TODO Auto-generated method stub
+				if(a1.getTime().after(a2.getTime())){
+					return -1;
+				}if(a1.getTime().before(a2.getTime())){
+					return 0;
+				}else{
+					return 1;
+				}
+			}
+		};
+		Collections.sort(acts,comparator);
+	}
+	
 	
 	/**
 	 * @param actuuid

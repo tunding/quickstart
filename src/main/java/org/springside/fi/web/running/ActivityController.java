@@ -70,16 +70,16 @@ public class ActivityController extends BaseController{
 	}
 	
 	/**
-	 * @param time
-	 * @return 返回time表示当天的活动信息，信息中不包含活动参加的人数
+	 * @param actuuid
+	 * @return 返回活动详情，包含活动已参加的人数，当前用户是否参加
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getactivity")
-	public String getActivity(@RequestParam(value="time") String time){
+	public String getActivity(@RequestParam(value="actuuid") String actuuid){
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		String uuid = getRunnerUuid();
 		try{
-			Activity activity = activityService.getActivity(uuid, activityService.TransferDate(time));
+			Activity activity = activityService.getActUuidActivity(uuid, actuuid);
 			map.put("result", "success");
 			map.put("data", activity);
 		}catch(RuntimeException e){
@@ -91,15 +91,16 @@ public class ActivityController extends BaseController{
 	}
 	
 	/**
-	 * @return 返回当前用户的所有发布的活动，包括未开始和已结束的活动
+	 * @return 返回当前用户的所有发布的活动，包括未开始和已结束的活动，按活动开启时间排序
 	 */
 	@ResponseBody
 	@RequestMapping(value="/public/gethistoryactivity")
-	public String getPublicHistoryActivity(){
+	public String getPublicHistoryActivity(@RequestParam(value = "pageNum", defaultValue=DEFAULT_PAGE_NUMBER) int pageNumber,
+			@RequestParam(value = "pageSize", defaultValue=DEFAULT_PAGE_SIZE) int pageSize){
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		String uuid = getRunnerUuid();
 		try{
-			List<Activity> activities = activityService.getPublicHistoryActivity(uuid);
+			List<Activity> activities = activityService.getPublicHistoryActivity(uuid, pageNumber, pageSize);
 			map.put("result", "success");
 			map.put("data", activities);
 		}catch(RuntimeException e){
@@ -112,11 +113,12 @@ public class ActivityController extends BaseController{
 	
 	@ResponseBody
 	@RequestMapping(value="/participate/gethistoryactivity")
-	public String getParticipateHistoryActivity(){
+	public String getParticipateHistoryActivity(@RequestParam(value = "pageNum", defaultValue=DEFAULT_PAGE_NUMBER) int pageNumber,
+			@RequestParam(value = "pageSize", defaultValue=DEFAULT_PAGE_SIZE) int pageSize){
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		String uuid = getRunnerUuid();
 		try{
-			List<Activity> activities = activityService.getParticipateHistoryActivity(uuid);
+			List<Activity> activities = activityService.getParticipateHistoryActivity(uuid, pageNumber, pageSize);
 			map.put("result", "success");
 			map.put("data", activities);
 		}catch(RuntimeException e){
@@ -148,6 +150,9 @@ public class ActivityController extends BaseController{
 		return activityService.findDayActivityByUUID(uuid, time);
 	}
 	
+	/**
+	 * @return 获取当前用户uuid
+	 */
 	private String getRunnerUuid(){
 		Long user_id = getCurrentUserId();
 		Runner runner = runnerService.getRunner(user_id);

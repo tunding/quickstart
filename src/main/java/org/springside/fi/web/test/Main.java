@@ -1,7 +1,9 @@
 package org.springside.fi.web.test;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author tunding:wzc@tcl.com
@@ -14,8 +16,16 @@ public class Main {
 	 * @description
 	 */
 	public static void main(String[] args) {
-		Date now = new Date();
-		SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");
-		System.out.println(df.format(now));
+		List<String> test = new ArrayList<String>();
+		test.add("1");
+		test.add("2");
+		test.add("3");
+		test.add("4");
+		System.out.println(test);
+		System.out.println(test.get(0));
+		System.out.println(test.get(1));
+		System.out.println(test.get(2));
+		System.out.println(test.get(3));
+		System.out.println(test.subList(0, 3));
 	}
 }

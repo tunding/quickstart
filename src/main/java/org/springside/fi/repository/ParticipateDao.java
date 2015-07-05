@@ -22,4 +22,8 @@ public interface ParticipateDao extends
 	@Modifying
 	@Query("from Participate where actuuid=?1")
 	public List<Participate> findByActuuid(String actuuid);
+	
+	@Modifying
+	@Query("from Participate where uuid=?1")
+	public List<Participate> findByUuid(String uuid);
 }
