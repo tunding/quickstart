@@ -52,8 +52,6 @@ public class ActivityService extends BaseService{
 	@Autowired
 	private RunnerDao runnerDao;
 	
-	private Date now = new Date();
-	
 	/**
 	 * @param distance 活动发起地点距离的最大范围
 	 * @param time 活动开始时间
@@ -132,7 +130,7 @@ public class ActivityService extends BaseService{
 			/*
 			 * 统计有效活动的参与人数participateCount
 			 */
-			Integer participateCount = participateDao.findUuidByActuuid(actuuid).size();
+			Integer participateCount = participateDao.findByActuuid(actuuid).size();
 			act.setParticipateCount(participateCount);
 			
 			if(runner.getUuid().equals(act.getUuid())){
@@ -248,29 +246,84 @@ public class ActivityService extends BaseService{
 	}
 	
 	
-	public void saveActivity(String uuid, String longitude, String latitude, String address, String time, String info, int kilometer){
-		
-		Activity activity = getActivity(uuid);
-		GpsActivityInfo gpsactivityinfo = getGpsActivityInfo(activity.getActuuid());
-		
-		activity.setUuid(uuid);
-		activity.setActuuid(UUID.randomUUID().toString().replace("-", ""));
-		activity.setAddress(address);
-		activity.setLongitude(longitude);
-		activity.setLatitude(latitude);
-		SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date starttime;
-		try {
-			starttime = df.parse(time);
-			activity.setTime(starttime);
-		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+	/**
+	 * @param uuid
+	 * @param longitude
+	 * @param latitude
+	 * @param address
+	 * @param time
+	 * @param info
+	 * @param kilometer
+	 * @description 存储发布的活动，同时当前用户被默认为第一个参与者
+	 */
+	public String saveActivity(String uuid, String longitude, String latitude, String address, String time, String info, int kilometer){
+		/*
+		 * time转换为Date类型，赋值到starttime
+		 */
+		Date starttime = TransferDate(time);
+		/*
+		 * String转换Date失败，则返回null
+		 */
+		if(starttime == null){
+			return null;
 		}
-		activity.setInfo(info);
-		activity.setKilometer(kilometer);
+		/*
+		 * 获取当前用户发布的活动，如果time日期没有发布活动则返回新建的Activity
+		 */
+		Activity activity = getActivity(uuid, starttime);
+		/*
+		 * 设置act的属性信息
+		 */
+		saveActInfo(uuid, longitude, latitude, address, info, kilometer,
+				starttime, activity);
+		/*
+		 * 通过活动actuuid获取活动经纬度信息对象
+		 */
+		GpsActivityInfo gpsactivityinfo = getGpsActivityInfo(activity.getActuuid());
+		/*
+		 * 设置活动gps属性信息
+		 */
+		saveActGpsInfo(longitude, latitude, starttime, activity,
+				gpsactivityinfo);
+		/*
+		 * 通过活动uuid和用户uuid获得参与活动对象
+		 */
+		Participate part = getParticipate(uuid, activity.getActuuid());
+		/*
+		 * part如果原本就存在则不需要修改
+		 */
+		if(StringUtils.isBlank(part.getActuuid())){
+			savePartInfo(uuid, activity, part);
+			try{
+				participateDao.save(part);
+			}catch(RuntimeException e){
+				e.printStackTrace();
+				return "save participate failed";
+			}
+		}
 		
+		try{
+			activityDao.save(activity);
+			gpsActivityInfoDao.save(gpsactivityinfo);
+		}catch(RuntimeException e){
+			e.printStackTrace();;
+			return "save failed";
+		}
+		return "200";
 		
+	}
+	/**
+	 * @description participate信息设置完毕
+	 */
+	private void savePartInfo(String uuid, Activity activity, Participate part) {
+		part.setActuuid(activity.getActuuid());
+		part.setUuid(uuid);
+	}
+	/**
+	 * @description actGps信息设置
+	 */
+	private void saveActGpsInfo(String longitude, String latitude,
+			Date starttime, Activity activity, GpsActivityInfo gpsactivityinfo) {
 		double lat = Double.valueOf(latitude);
 		double lon = Double.valueOf(longitude);
 		String userGeoHash = new Geohash().encode(lat, lon);
@@ -278,27 +331,57 @@ public class ActivityService extends BaseService{
 		gpsactivityinfo.setLongitude(longitude);
 		gpsactivityinfo.setLatitude(latitude);
 		gpsactivityinfo.setGeohash(userGeoHash);
-		
-		try{
-			activityDao.save(activity);
-			gpsActivityInfoDao.save(gpsactivityinfo);
-		}catch(RuntimeException e){
-			e.printStackTrace();
+		gpsactivityinfo.setTime(starttime);
+	}
+	/**
+	 * @description activity属性信息设置完毕
+	 */
+	private void saveActInfo(String uuid, String longitude, String latitude,
+			String address, String info, int kilometer, Date starttime,
+			Activity activity) {
+		activity.setUuid(uuid);
+		activity.setActuuid(UUID.randomUUID().toString().replace("-", ""));
+		activity.setAddress(address);
+		activity.setLongitude(longitude);
+		activity.setLatitude(latitude);
+		activity.setInfo(info);
+		activity.setKilometer(kilometer);
+		activity.setTime(starttime);
+	}
+	/**
+	 * @param time
+	 * @return 将String类型的time转换成Date类型
+	 */
+	public Date TransferDate(String time){
+		SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date starttime = null;
+		try {
+			starttime = df.parse(time);
+		} catch (ParseException e1) {
+			e1.printStackTrace();
 		}
-		
+		return starttime;
 	}
 	
-	public GpsActivityInfo getGpsActivityInfo(String actuuid){
-		if(null==actuuid){
-			return new GpsActivityInfo();
-		}else{
-			List<GpsActivityInfo> gpsactivities = gpsActivityInfoDao.findByActUUID(actuuid);
+	/**
+	 * @param actuuid
+	 * @return 根据活动uuid返回活动的gps信息，没有则新建
+	 */
+	private GpsActivityInfo getGpsActivityInfo(String actuuid){
+		List<GpsActivityInfo> gpsactivities = gpsActivityInfoDao.findByActUUID(actuuid);
+		if(gpsactivities.size()>0){
 			return gpsactivities.get(0);
+		}else{
+			return new GpsActivityInfo();
 		}
 	}
 	
-	public Activity getActivity(String uuid){
-		List<Activity> activities = activityDao.findTodayByUUID(uuid, now);
+	/**
+	 * @param uuid
+	 * @return 返回time当天发布的活动，否则返回新建的活动对象
+	 */
+	public Activity getActivity(String uuid, Date time){
+		List<Activity> activities = activityDao.findDayByUUID(uuid, time);
 		if(activities.size()>0){
 			return activities.get(0);
 		}else{
@@ -306,44 +389,72 @@ public class ActivityService extends BaseService{
 		}
 	}
 	
-	public List<Activity> getHistoryActivity(String uuid){
-		List<Activity> activities = activityDao.findHistoryByUUID(uuid, now);
+	/**
+	 * @return 用户所有发布的活动
+	 */
+	public List<Activity> getPublicHistoryActivity(String uuid){
+//		List<Activity> activities = activityDao.findHistoryByUUID(uuid, now);
+		List<Activity> activities = activityDao.findHistoryByUUID(uuid);
 		return activities;
 	}
 	
-	public boolean delActivity(String uuid, String actuuid){
-		List<Activity> activities = activityDao.findSelfTodayByUUID(uuid);
-		try{
-			for(Activity activity:activities){
-				if(activity.getActuuid().equals(actuuid)){
-					gpsActivityInfoDao.delete(gpsActivityInfoDao.findByActUUID(actuuid).get(0));
-					activityDao.delete(activity);
-					return true;
-				}
+	public List<Activity> getParticipateHistoryActivity(String uuid){
+		
+	}
+	
+	/**
+	 * @param actuuid
+	 * 删除发布的有效活动，删除活动gps信息，删除活动所有参与人的信息
+	 */
+	public boolean delActivity(String actuuid){
+		List<Activity> activities = activityDao.findByACTUUID(actuuid);
+		if(activities.size()>0){
+			Activity act = activities.get(0);
+			try{
+				deletePGA(actuuid, act);
+				return true;
+			}catch(RuntimeException e){
+				e.printStackTrace();
 			}
-		}catch(RuntimeException e){
-			e.printStackTrace();
 		}
 		return false;
 	}
-	
-	public boolean findSelfTodayActivityByUUID(String uuid){
-		if(activityDao.findSelfTodayByUUID(uuid).size()>0){
+	/**
+	 * @param actuuid
+	 * @param act
+	 * @description 删除 参与者 part、活动gps gps、活动 act
+	 */
+	private void deletePGA(String actuuid, Activity act) {
+		participateDao.delete(participateDao.findByActuuid(actuuid));
+		gpsActivityInfoDao.delete(gpsActivityInfoDao.findByActUUID(actuuid).get(0));
+		activityDao.delete(act);
+	}
+	/**
+	 * @param uuid
+	 * @param time
+	 * @return
+	 * @description 判断未来某一天当前用户是否已经发布活动，发布则返回false，不允许用户再次发布活动 
+	 * 需要将time表示成yyyy-MM-dd，判断同一天。
+	 * 数据库TO_DAYS函数
+	 */
+	public boolean findDayActivityByUUID(String uuid, String time){
+		SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+		Date date = null;
+		try {
+			date = df.parse(time);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(date==null || activityDao.findDayByUUID(uuid, date).size()>0){
 			return false;
 		}else{
 			return true;
 		}
 	}
-	public boolean findTodayActivityByUUID(String uuid){
-		if(activityDao.findTodayByUUID(uuid, now).size()>0){
-			return false;
-		}else{
-			return true;
-		}
-	}
 	
-	/*
-	 * 获取当前用户对象
+	/**
+	 * 获取用户当前对象
 	 */
 	private Runner getRunner(Long id){
 		return runnerDao.findOne(id);
