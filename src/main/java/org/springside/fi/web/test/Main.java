@@ -15,7 +15,7 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		Date now = new Date();
-		SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");
 		System.out.println(df.format(now));
 	}
 }

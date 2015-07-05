@@ -1,4 +1,29 @@
-﻿108.880272,34.197078 wqj6t9khqjrh tunding
+一个人只能在一天发布一个活动，最多发布从今天算起七天后的活动
+需要提供我参与的活动查看、以及我参与的历史活动
+活动的删除都是假删除
+活动创建时候，默认创建者是参加啦该活动的
+
+/checkActivity
+活动检查未来某天是否已经发布过活动需要修改需求文档
+/saveactivity
+保存活动和编辑活动是一个接口，需要更新文档，加入time时间判断time当天活动
+/getactivity
+查看发布活动详情需要更新文档
+/deleteactivity
+删除发布活动，不能删除已发生的活动，修改文档
+/public/gethistoryactivity
+修改文档 参数需要pagenum pagesize
+/participate/gethistoryactivity
+新添加接口
+
+遗留问题：
+1.附近的活动sort排序字段只是备用
+2.附近的活动每次都是选择geohash值的头4位相同的返回
+3.附近活动每次请求，就计算一次附近所有活动，出现重复计算的现象
+
+
+
+108.880272,34.197078 wqj6t9khqjrh tunding
 108.874421,34.184215 wqj6mrpcmzs3 gaufy
 116.355071,39.898637 wx4dzxr4mtj2 line
 108.933161,34.24063 wqj6yc6dnsh1 grass
