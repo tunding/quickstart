@@ -142,6 +142,7 @@ public class ActivityController extends BaseController{
 	/**
 	 * @param time time表示的日期，作为判断某天发布活动没有的时间依据
 	 * @return true表示time当天没有活动发布，可以创建time时间当天的活动
+	 * 数据库中只能保持一天当前用户最多一个有效活动和一个已经删除多活动
 	 */
 	@ResponseBody
 	@RequestMapping(value="/checkActivity")

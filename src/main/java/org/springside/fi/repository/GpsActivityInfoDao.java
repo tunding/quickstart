@@ -13,7 +13,7 @@ import org.springside.fi.entity.GpsActivityInfo;
 
 public interface GpsActivityInfoDao extends PagingAndSortingRepository<GpsActivityInfo, Long>,
 		JpaSpecificationExecutor<GpsActivityInfo> {
-	@Query("from GpsActivityInfo where geohash like ?1% and time>?2")
+	@Query("from GpsActivityInfo where delFlag=1 and geohash like ?1% and time>?2")
 	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
 	public List<GpsActivityInfo> findByGeohash(String geohash, Date time);
 	

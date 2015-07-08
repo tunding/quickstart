@@ -226,9 +226,11 @@ public class ActivityService extends BaseService{
 		if("in".equals(opt)){
 			part.setActuuid(actuuid);
 			part.setUuid(uuid);
+			part.setDelFlag(1);
 			participateDao.save(part);
 		}else if("out".equals(opt)){
-			participateDao.delete(part);
+			part.setDelFlag(0);
+			participateDao.save(part);
 		}
 	}
 	/**
@@ -318,6 +320,7 @@ public class ActivityService extends BaseService{
 	private void savePartInfo(String uuid, Activity activity, Participate part) {
 		part.setActuuid(activity.getActuuid());
 		part.setUuid(uuid);
+		part.setDelFlag(1);
 	}
 	/**
 	 * @description actGps信息设置
@@ -332,6 +335,7 @@ public class ActivityService extends BaseService{
 		gpsactivityinfo.setLatitude(latitude);
 		gpsactivityinfo.setGeohash(userGeoHash);
 		gpsactivityinfo.setTime(starttime);
+		gpsactivityinfo.setDelFlag(1);
 	}
 	/**
 	 * @description activity属性信息设置完毕
@@ -347,6 +351,7 @@ public class ActivityService extends BaseService{
 		activity.setInfo(info);
 		activity.setKilometer(kilometer);
 		activity.setTime(starttime);
+		activity.setDelFlag(1);
 	}
 	/**
 	 * @param time
@@ -499,9 +504,20 @@ public class ActivityService extends BaseService{
 	 * @description 删除 参与者 part、活动gps gps、活动 act
 	 */
 	private void deletePGA(String actuuid, Activity act) {
-		participateDao.delete(participateDao.findByActuuid(actuuid));
-		gpsActivityInfoDao.delete(gpsActivityInfoDao.findByActUUID(actuuid).get(0));
-		activityDao.delete(act);
+		List<Participate> parts = participateDao.findByActuuid(actuuid);
+		if(parts.size()>0){
+			Participate part = parts.get(0);
+			part.setDelFlag(0);
+			participateDao.save(part);
+		}
+		List<GpsActivityInfo> gpsActInfo = gpsActivityInfoDao.findByActUUID(actuuid);
+		if(gpsActInfo.size()>0){
+			GpsActivityInfo gps = gpsActInfo.get(0);
+			gps.setDelFlag(0);
+			gpsActivityInfoDao.delete(gps);
+		}
+		act.setDelFlag(0);
+		activityDao.save(act);
 	}
 	/**
 	 * @param uuid
@@ -520,7 +536,7 @@ public class ActivityService extends BaseService{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(date==null || activityDao.findDayByUUID(uuid, date).size()>0){
+		if(date==null || activityDao.findDayByUUID(uuid, date).size()>1){
 			return false;
 		}else{
 			return true;
