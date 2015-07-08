@@ -15,6 +15,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 /**
@@ -38,6 +39,7 @@ public class Activity extends BaseEntity{
 	private double distance;
 	private Integer state;
 	private Integer participateCount;
+	private Integer delFlag;
 	@Column(name="uuid")
 	public String getUuid() {
 		return uuid;
@@ -116,5 +118,12 @@ public class Activity extends BaseEntity{
 	}
 	public void setParticipateCount(Integer participateCount) {
 		this.participateCount = participateCount;
+	}
+	@JsonIgnore
+	public Integer getDelFlag() {
+		return delFlag;
+	}
+	public void setDelFlag(Integer delFlag) {
+		this.delFlag = delFlag;
 	}
 }

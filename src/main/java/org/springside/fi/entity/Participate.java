@@ -9,6 +9,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="activity_participate")
 @DynamicInsert
@@ -17,6 +19,7 @@ import org.hibernate.annotations.DynamicUpdate;
 public class Participate extends BaseEntity{
 	private String uuid;
 	private String actuuid;
+	private Integer delFlag;
 	@Column(name="uuid")
 	public String getUuid() {
 		return uuid;
@@ -30,5 +33,13 @@ public class Participate extends BaseEntity{
 	}
 	public void setActuuid(String actuuid) {
 		this.actuuid = actuuid;
+	}
+	@Column(name="delFlag")
+	@JsonIgnore
+	public Integer getDelFlag(){
+		return delFlag;
+	}
+	public void setDelFlag(Integer delFlag){
+		this.delFlag = delFlag;
 	}
 }

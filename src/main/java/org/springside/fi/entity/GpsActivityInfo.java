@@ -14,6 +14,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "gps_activity_info")
@@ -25,6 +26,7 @@ public class GpsActivityInfo extends BaseEntity {
 	private String latitude;
 	private String geohash;
 	private Date time;
+	private Integer delFlag;
 	public String getActuuid() {
 		return actuuid;
 	}
@@ -57,5 +59,13 @@ public class GpsActivityInfo extends BaseEntity {
 	}
 	public void setTime(Date time) {
 		this.time = time;
+	}
+	@Column(name="delFlag")
+	@JsonIgnore
+	public Integer getDelFlag() {
+		return delFlag;
+	}
+	public void setDelFlag(Integer delFlag) {
+		this.delFlag = delFlag;
 	}
 }
