@@ -25,6 +25,7 @@ import org.springside.fi.repository.ActivityDao;
 import org.springside.fi.repository.GpsActivityInfoDao;
 import org.springside.fi.repository.ParticipateDao;
 import org.springside.fi.repository.RunnerDao;
+import org.springside.fi.service.third.RongCloudService;
 
 
 
@@ -51,6 +52,9 @@ public class ActivityService extends BaseService{
 	
 	@Autowired
 	private RunnerDao runnerDao;
+	
+	@Autowired
+	private RongCloudService rongCloudService;
 	
 	/**
 	 * @param distance 活动发起地点距离的最大范围
@@ -485,12 +489,12 @@ public class ActivityService extends BaseService{
 	 * @param actuuid
 	 * 删除发布的有效活动，删除活动gps信息，删除活动所有参与人的信息
 	 */
-	public boolean delActivity(String actuuid){
+	public boolean delActivity(String uuid, String actuuid, String msg){
 		List<Activity> activities = activityDao.findByACTUUID(actuuid);
 		if(activities.size()>0){
 			Activity act = activities.get(0);
 			try{
-				deletePGA(actuuid, act);
+				deletePGA(uuid, actuuid, act, msg);
 				return true;
 			}catch(RuntimeException e){
 				e.printStackTrace();
@@ -503,18 +507,20 @@ public class ActivityService extends BaseService{
 	 * @param act
 	 * @description 删除 参与者 part、活动gps gps、活动 act
 	 */
-	private void deletePGA(String actuuid, Activity act) {
+	private void deletePGA(String uuid, String actuuid, Activity act, String msg) {
 		List<Participate> parts = participateDao.findByActuuid(actuuid);
-		if(parts.size()>0){
-			Participate part = parts.get(0);
+		for(Participate part : parts){
 			part.setDelFlag(0);
 			participateDao.save(part);
+			if(!uuid.equals(part.getUuid())){
+				rongCloudService.sendPartCancel(uuid, part.getUuid(), msg);
+			}
 		}
 		List<GpsActivityInfo> gpsActInfo = gpsActivityInfoDao.findByActUUID(actuuid);
 		if(gpsActInfo.size()>0){
 			GpsActivityInfo gps = gpsActInfo.get(0);
 			gps.setDelFlag(0);
-			gpsActivityInfoDao.delete(gps);
+			gpsActivityInfoDao.save(gps);
 		}
 		act.setDelFlag(0);
 		activityDao.save(act);

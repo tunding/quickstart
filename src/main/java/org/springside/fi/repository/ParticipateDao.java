@@ -20,7 +20,7 @@ public interface ParticipateDao extends
 	public List<Participate> findpart(String uuid, String activityId);
 	
 	@Modifying
-	@Query("from Participate where actuuid=?1")
+	@Query("from Participate where actuuid=?1 and delFlag=1")
 	public List<Participate> findByActuuid(String actuuid);
 	
 	@Modifying

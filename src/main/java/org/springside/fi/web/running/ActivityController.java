@@ -135,8 +135,10 @@ public class ActivityController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value="/deleteactivity")
-	public boolean delActivity(@RequestParam("actuuid") String actuuid){
-		return activityService.delActivity(actuuid);
+	public boolean delActivity(@RequestParam(value = "actuuid") String actuuid,
+			@RequestParam(value = "msg", defaultValue="活动组织者取消活动") String msg){
+		String uuid = getRunnerUuid();
+		return activityService.delActivity(uuid, actuuid, msg);
 	}
 	
 	/**
