@@ -56,10 +56,11 @@ public class Runner extends IdEntity {
 	public String getLoginName() {
 		return loginName;
 	}
-
+	
 	public void setLoginName(String loginName) {
 		this.loginName = loginName;
 	}
+	@JsonIgnore
 	public String getSalt() {
 		return salt;
 	}
@@ -67,6 +68,7 @@ public class Runner extends IdEntity {
 	public void setSalt(String salt) {
 		this.salt = salt;
 	}
+	@JsonIgnore
 	public String getRoles() {
 		return roles;
 	}
@@ -92,6 +94,7 @@ public class Runner extends IdEntity {
 	public void setDistance(double distance) {
 		this.distance = distance;
 	}
+	@JsonIgnore
 	@Column(name="password")
 	public String getPassword() {
 		return password;
