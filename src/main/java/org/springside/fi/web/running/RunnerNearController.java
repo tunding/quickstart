@@ -7,6 +7,7 @@ import javax.servlet.ServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,6 +58,19 @@ public class RunnerNearController extends BaseController{
 			map.put("result", "failed");
 			map.put("data", "");
 		}
+		return jsonMapper.toJson(map);
+	}
+	
+	/**
+	 * @return 返回附近的人属性信息
+	 */
+	@ResponseBody
+	@RequestMapping(value="/info")
+	public String getRunnerInfo(@RequestParam(value="uuid") String uuid) {
+		Runner runner = runnerService.getRunnerByUUID(uuid);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("result", "success");
+		map.put("data", runner);
 		return jsonMapper.toJson(map);
 	}
 	
