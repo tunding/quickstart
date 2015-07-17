@@ -36,17 +36,17 @@ public class RunnerService {
 	@Autowired
 	private GpsRunnerInfoDao gpsRunnerInfoDao;
 	
-	public List<Runner> getAllRunner(Long user_id, int distance, int pageNumber, int pageSize, String sex, String age, String time, String sort){
+	public List<Runner> getAllRunner(Long user_id, String longitude, String latitude, int distance, int pageNumber, int pageSize, String sex, String age, String time, String sort){
 		Runner currentUser = getRunner(user_id);
 		String loginName = currentUser.getLoginName();
-		GpsRunnerInfo gps = getGpsRunnerInfo(currentUser.getUuid());
-		String longitude = gps.getLongitude();
-		String latitude = gps.getLatitude();
-		if(StringUtils.isEmpty(longitude)){
-			return null;
-		}
-		if(StringUtils.isEmpty(latitude)){
-			return null;
+		
+		if(StringUtils.isBlank(longitude) || StringUtils.isBlank(latitude)){
+			GpsRunnerInfo gps = getGpsRunnerInfo(currentUser.getUuid());
+			longitude = gps.getLongitude();
+			latitude = gps.getLatitude();
+			if(StringUtils.isBlank(longitude) || StringUtils.isBlank(latitude)){
+				return null;
+			}
 		}
 		double lat = Double.valueOf(latitude);
 		double lon = Double.valueOf(longitude);

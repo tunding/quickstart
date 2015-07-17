@@ -36,6 +36,8 @@ public class RunnerNearController extends BaseController{
 	@ResponseBody
 	@RequestMapping(value={"/list", "/", ""})
 	public String  getNearPerson(ServletRequest request,
+			@RequestParam(value = "longitude", defaultValue="") String longitude,
+			@RequestParam(value = "latitude", defaultValue="") String latitude,
 			@RequestParam(value = "distance", defaultValue=DEFAULT_DISTANCE) int distance,
 			@RequestParam(value = "pageNum", defaultValue=DEFAULT_PAGE_NUMBER) int pageNumber,
 			@RequestParam(value = "pageSize", defaultValue=DEFAULT_PAGE_SIZE) int pageSize,
@@ -46,7 +48,7 @@ public class RunnerNearController extends BaseController{
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		Long user_id = getCurrentUserId();
 		try{
-			List<Runner> runners = runnerService.getAllRunner(user_id, distance, pageNumber, pageSize, sex, age, time, sort);
+			List<Runner> runners = runnerService.getAllRunner(user_id, longitude, latitude, distance, pageNumber, pageSize, sex, age, time, sort);
 			map.put("result", "success");
 			if(runners!=null&&!runners.isEmpty()){
 				map.put("data", runners);
