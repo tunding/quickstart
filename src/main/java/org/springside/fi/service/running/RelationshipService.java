@@ -111,6 +111,25 @@ public class RelationshipService extends BaseThirdService{
 		}
 		return jsonMapper.toJson(map);
 	}
+	/**
+	 * @param id
+	 * @param passiveAttentionUuid
+	 * @description 不发送消息，只在本地数据库关注双方
+	 */
+	public String attentionRelationship(long id, String passiveAttentionUuid){
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		String attentionUuid = getUuid(id);
+		if(isFriend(id, passiveAttentionUuid)){
+			map.put("code", RestErrorCode.REST_ISFRIEND_CODE);
+			map.put("data", "已经关注过对方");
+		}else{
+			agree(attentionUuid, passiveAttentionUuid);
+			agree(passiveAttentionUuid, attentionUuid);
+			map.put("code", RestErrorCode.REST_SUCCESS_CODE);
+			map.put("data", "已关注对方");
+		}
+		return jsonMapper.toJson(map);
+	}
 	
 	/**
 	 * 添加好友需要A->B和B->A两层好友关系

@@ -63,11 +63,12 @@ public class RelationshipController extends BaseController{
 	@ResponseBody
 	@RequestMapping(value="/attention")
 	public String AttentionFriendship(@RequestParam(value="passiveAttentionUuid") String passiveAttentionUuid,
-			@RequestParam(value="message") String msg){
+			@RequestParam(value="message", defaultValue="") String msg){
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		Long user_id = getCurrentUserId();
 		try{
-			return relationshipService.attentionRelationship(user_id, passiveAttentionUuid, msg);
+			//return relationshipService.attentionRelationship(user_id, passiveAttentionUuid, msg);
+			return relationshipService.attentionRelationship(user_id, passiveAttentionUuid);
 		}catch(RuntimeException e){
 			e.printStackTrace();
 			map.put("result", "failed");
