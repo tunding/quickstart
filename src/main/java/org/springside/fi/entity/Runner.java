@@ -53,6 +53,7 @@ public class Runner extends IdEntity {
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
+	@JsonIgnore
 	public String getLoginName() {
 		return loginName;
 	}
@@ -139,6 +140,7 @@ public class Runner extends IdEntity {
 		this.signature = signature;
 	}
 	@Column(name="cloudToken")
+	@JsonIgnore
 	public String getCloudToken() {
 		return cloudToken;
 	}

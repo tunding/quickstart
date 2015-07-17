@@ -22,6 +22,7 @@ public class BaseEntity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonIgnore
 	public Long getId() {
 		return id;
 	}

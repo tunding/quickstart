@@ -9,6 +9,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="runner_relationship")
 @DynamicInsert @DynamicUpdate
@@ -32,6 +34,7 @@ public class Relationship extends BaseEntity{
 		this.passiveAttentionUuid = passiveAttentionUuid;
 	}
 	@Column(name="state")
+	@JsonIgnore
 	public Integer getState() {
 		return state;
 	}
