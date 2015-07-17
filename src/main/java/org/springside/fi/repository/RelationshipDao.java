@@ -22,12 +22,20 @@ public interface RelationshipDao extends
 	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
 	public List<Relationship> findRelationshipBlack(String attentionUuid, String passiveAttentionUuid);
 	
-	@Query("from Relationship where attentionUuid=?1 and passiveAttentionUuid=?2 and state=1")
+	@Query("from Relationship where attentionUuid=?1 and passiveAttentionUuid=?2 and state=1 and delFlag=1")
 	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
 	public List<Relationship> findRelationshipFriend(String attentionUuid, String passiveAttentionUuid);
 	
 	@Query("from Relationship where attentionUuid=?1 and state=1")
 	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
 	public List<Relationship> findListFriend(String attentionUuid);
+	
+	@Query("from Relationship where attentionUuid=?1 and state=1 and delFlag=1")
+	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
+	public List<Relationship> findIAttention(String attentionUuid);
+	
+	@Query("from Relationship where passiveAttentionUuid=?1 and state=1 and delFlag=1")
+	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
+	public List<Relationship> findAttentionMe(String passiveAttentionUuid);
 	
 }

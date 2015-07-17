@@ -71,6 +71,45 @@ public class RelationshipService extends BaseThirdService{
 		return jsonMapper.toJson(friends);
 	}
 	
+	public String iattention(long id){
+		String attentionUuid = getUuid(id);
+		List<Relationship> relationships = relationshipDao.findIAttention(attentionUuid);
+		List<Runner> friends = new ArrayList<Runner>();
+		boolean iorme = true;
+		getFriends(relationships, friends, iorme);
+		return jsonMapper.toJson(friends);
+	}
+	public String attentionme(long id){
+		String attentionUuid = getUuid(id);
+		List<Relationship> relationships = relationshipDao.findAttentionMe(attentionUuid);
+		List<Runner> friends = new ArrayList<Runner>();
+		boolean iorme = false;
+		getFriends(relationships, friends, iorme);
+		return jsonMapper.toJson(friends);
+	}
+
+	private void getFriends(List<Relationship> relationships,
+			List<Runner> friends, boolean iorme) {
+		for(Relationship relationship : relationships){
+			Runner runner = null;
+			if(iorme){
+				runner = runnerService.getRunnerByUUID(relationship.getPassiveAttentionUuid());
+			}else{
+				runner = runnerService.getRunnerByUUID(relationship.getAttentionUuid());
+			}
+			if(runner!=null){
+				//创建runner,将需要返回的好友信息存储
+				Runner newrunner = new Runner();
+				newrunner.setName(runner.getName());
+				newrunner.setAge(runner.getAge());
+				newrunner.setSex(runner.getSex());
+				newrunner.setSignature(runner.getSignature());
+				
+				friends.add(newrunner);
+			}
+		}
+	}
+	
 	/**
 	 * 本地删除好友关系
 	 */
@@ -84,6 +123,20 @@ public class RelationshipService extends BaseThirdService{
 		}
 		removeAttention(attentionUuid, passiveAttentionUuid);
 		removeAttention(passiveAttentionUuid, attentionUuid);
+	}
+	
+	/**
+	 * 本地假删除好友关系
+	 */
+	public void removeRelationshipFlag(long id, String passiveAttentionUuid){
+		String attentionUuid = getUuid(id);
+		removeAttentionFlag(attentionUuid, passiveAttentionUuid);
+	}
+	
+	private void removeAttentionFlag(String attentionUuid, String passiveAttentionUuid){
+		Relationship relationship = getRelationship(attentionUuid, passiveAttentionUuid);
+		relationship.setDelFlag(0);
+		relationshipDao.save(relationship);
 	}
 	
 	/**
@@ -114,7 +167,7 @@ public class RelationshipService extends BaseThirdService{
 	/**
 	 * @param id
 	 * @param passiveAttentionUuid
-	 * @description 不发送消息，只在本地数据库关注双方
+	 * @description 不发送消息，只在本地数据库关注双方,存储表明当前用户关注了哪个用户
 	 */
 	public String attentionRelationship(long id, String passiveAttentionUuid){
 		HashMap<String, Object> map = new HashMap<String, Object>();
@@ -124,7 +177,6 @@ public class RelationshipService extends BaseThirdService{
 			map.put("data", "已经关注过对方");
 		}else{
 			agree(attentionUuid, passiveAttentionUuid);
-			agree(passiveAttentionUuid, attentionUuid);
 			map.put("code", RestErrorCode.REST_SUCCESS_CODE);
 			map.put("data", "已关注对方");
 		}
@@ -198,7 +250,7 @@ public class RelationshipService extends BaseThirdService{
 	}
 	
 	/**
-	 * state为1的有效好友
+	 * state为1的有效好友 delFlag为1的为有效好友
 	 */
 	public boolean isFriend(long id, String passiveAttentionUuid){
 		String attentionUuid = getUuid(id);
@@ -290,6 +342,7 @@ public class RelationshipService extends BaseThirdService{
 		Relationship relationship = getRelationship(attentionUuid, passiveAttentionUuid);
 		relationship.setAttentionUuid(attentionUuid);
 		relationship.setPassiveAttentionUuid(passiveAttentionUuid);
+		relationship.setDelFlag(1);
 		relationshipDao.save(relationship);
 	}
 	

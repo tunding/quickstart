@@ -68,6 +68,7 @@ public class RelationshipController extends BaseController{
 		Long user_id = getCurrentUserId();
 		try{
 			//return relationshipService.attentionRelationship(user_id, passiveAttentionUuid, msg);
+			//只关注，不发送验证消息
 			return relationshipService.attentionRelationship(user_id, passiveAttentionUuid);
 		}catch(RuntimeException e){
 			e.printStackTrace();
@@ -157,5 +158,18 @@ public class RelationshipController extends BaseController{
 	public String listFriend(){
 		Long user_id = getCurrentUserId();
 		return relationshipService.listFriend(user_id);
+	}
+	@ResponseBody
+	@RequestMapping(value="/iattention")
+	public String iattention(){
+		Long user_id = getCurrentUserId();
+		return relationshipService.iattention(user_id);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="attentionme")
+	public String attentionme(){
+		Long user_id = getCurrentUserId();
+		return relationshipService.attentionme(user_id);
 	}
 }

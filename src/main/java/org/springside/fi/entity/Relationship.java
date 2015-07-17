@@ -19,6 +19,7 @@ public class Relationship extends BaseEntity{
 	private String attentionUuid;
 	private String passiveAttentionUuid;
 	private Integer state;
+	private Integer delFlag;
 	@Column(name="attention_uuid")
 	public String getAttentionUuid() {
 		return attentionUuid;
@@ -40,5 +41,12 @@ public class Relationship extends BaseEntity{
 	}
 	public void setState(Integer state) {
 		this.state = state;
+	}
+	@JsonIgnore
+	public Integer getDelFlag() {
+		return delFlag;
+	}
+	public void setDelFlag(Integer delFlag) {
+		this.delFlag = delFlag;
 	}
 }
