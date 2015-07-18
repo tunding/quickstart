@@ -87,7 +87,8 @@ public class RelationshipController extends BaseController{
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		Long user_id = getCurrentUserId();
 		try{
-			relationshipService.removeRelationship(user_id, passiveAttentionUuid);
+			//relationshipService.removeRelationship(user_id, passiveAttentionUuid);
+			relationshipService.removeRelationshipFlag(user_id, passiveAttentionUuid);
 			map.put("result", "success");
 			map.put("data", "");
 		}catch(RuntimeException e){
