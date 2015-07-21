@@ -13,11 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springside.fi.entity.GpsRunnerInfo;
+import org.springside.fi.entity.Relationship;
 import org.springside.fi.entity.Runner;
 import org.springside.fi.map.common.Geohash;
 import org.springside.fi.map.module.LatLng;
 import org.springside.fi.map.utils.DistanceUtil;
 import org.springside.fi.repository.GpsRunnerInfoDao;
+import org.springside.fi.repository.RelationshipDao;
 import org.springside.fi.repository.RunnerDao;
 import org.springside.fi.service.account.AccountService;
 import org.springside.fi.service.third.object.RongCloudToken;
@@ -35,6 +37,8 @@ public class RunnerService {
 	private RunnerDao runnerDao;
 	@Autowired
 	private GpsRunnerInfoDao gpsRunnerInfoDao;
+	@Autowired
+	private RelationshipDao relationshipDao;
 	
 	public List<Runner> getAllRunner(Long user_id, String longitude, String latitude, int distance, int pageNumber, int pageSize, String sex, String age, String time, String sort){
 		Runner currentUser = getRunner(user_id);
@@ -55,7 +59,7 @@ public class RunnerService {
 		ArrayList<Runner> runners = new ArrayList<Runner>();
 		for(GpsRunnerInfo gpsrunnerinfo : gpsrunnerinfos) {
 			String uuid = gpsrunnerinfo.getUuid();
-			Runner runner = getRunnerByUUID(uuid);
+			Runner runner = getRunnerWithAttentionFlag(currentUser.getUuid(), uuid);
 			if(loginName.equals(runner.getLoginName())){
 				continue;
 			}
@@ -121,7 +125,17 @@ public class RunnerService {
 		}
 		return userGeoHash;
 	}
-	
+	public Runner getRunnerWithAttentionFlag(String currentUuid, String uuid){
+		Runner runner = getRunnerByUUID(uuid);
+		//设置用户是否被当前用户关注，0：未关注，1：已关注
+		List<Relationship> relations = relationshipDao.findRelationshipFriend(currentUuid, uuid);
+		if(relations.size()>0){
+			runner.setAttentionFlag(1);
+		}else{
+			runner.setAttentionFlag(0);
+		}
+		return runner;
+	}
 	public Runner getRunnerByUUID(String uuid){
 		return runnerDao.findByUUID(uuid);
 	}

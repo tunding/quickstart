@@ -40,6 +40,7 @@ public class Runner extends IdEntity {
 	private String cloudToken;
 	private Date createTime;//记录创建的时间
 	private Date lastUpdateTime;//记录最后更新的时间
+	private Integer attentionFlag;
 
 	public Runner() {
 	}
@@ -168,6 +169,15 @@ public class Runner extends IdEntity {
 		this.lastUpdateTime = lastUpdateTime;
 	}
 	
+	@Transient
+	public Integer getAttentionFlag() {
+		return attentionFlag;
+	}
+
+	public void setAttentionFlag(Integer attentionFlag) {
+		this.attentionFlag = attentionFlag;
+	}
+
 	@Transient
 	@JsonIgnore
 	public List<String> getRoleList() {
