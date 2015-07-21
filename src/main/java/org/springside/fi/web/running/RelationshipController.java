@@ -158,19 +158,46 @@ public class RelationshipController extends BaseController{
 	@RequestMapping(value="/listfriend")
 	public String listFriend(){
 		Long user_id = getCurrentUserId();
-		return relationshipService.listFriend(user_id);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		try{
+			map.put("result", "success");
+			map.put("data",relationshipService.listFriend(user_id));
+		}catch(RuntimeException e){
+			e.printStackTrace();
+			map.put("result", "failed");
+			map.put("data", e.getMessage());
+		}
+		return jsonMapper.toJson(map);
 	}
 	@ResponseBody
 	@RequestMapping(value="/iattention")
 	public String iattention(){
 		Long user_id = getCurrentUserId();
-		return relationshipService.iattention(user_id);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		try{
+			map.put("result", "success");
+			map.put("data",relationshipService.iattention(user_id));
+		}catch(RuntimeException e){
+			e.printStackTrace();
+			map.put("result", "failed");
+			map.put("data", e.getMessage());
+		}
+		return jsonMapper.toJson(map);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="attentionme")
 	public String attentionme(){
 		Long user_id = getCurrentUserId();
-		return relationshipService.attentionme(user_id);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		try{
+			map.put("result", "success");
+			map.put("data", relationshipService.attentionme(user_id));
+		}catch(RuntimeException e){
+			e.printStackTrace();
+			map.put("result", "failed");
+			map.put("data", e.getMessage());
+		}
+		return jsonMapper.toJson(map);
 	}
 }
