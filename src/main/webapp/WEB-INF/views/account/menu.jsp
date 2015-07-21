@@ -56,6 +56,7 @@
 						<td>上报活动信息</td>
 						<td>
 						<form action="${ ctx }/activity/info/saveactivity" method="post">
+						  <p>活动名称: <input type="text" name="name" /></p>
 						  <p>纬度: <input type="text" name="latitude" /></p>
 						  <p>经度: <input type="text" name="longitude" /></p>
 						  <p>地址: <input type="text" name="address" /></p>

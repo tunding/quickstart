@@ -45,7 +45,8 @@ public class ActivityController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value="/saveactivity")
-	public String saveActivity(@RequestParam(value = "longitude") String longitude,
+	public String saveActivity(@RequestParam(value = "name", defaultValue="") String name,
+			@RequestParam(value = "longitude") String longitude,
 			@RequestParam(value = "latitude") String latitude,
 			@RequestParam(value = "address") String address,
 			@RequestParam(value = "time") String time,
@@ -54,7 +55,7 @@ public class ActivityController extends BaseController{
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		String uuid = getRunnerUuid();
 		try{
-			String code = activityService.saveActivity(uuid, longitude, latitude, address, time, info, kilometer);
+			String code = activityService.saveActivity(name, uuid, longitude, latitude, address, time, info, kilometer);
 			if("200".equals(code)){
 				map.put("result", "success");
 			}else{

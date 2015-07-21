@@ -28,6 +28,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @DynamicUpdate
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Activity extends BaseEntity{
+	private String name;
 	private String uuid;
 	private String actuuid;
 	private String info;
@@ -40,6 +41,13 @@ public class Activity extends BaseEntity{
 	private Integer state;
 	private Integer participateCount;
 	private Integer delFlag;
+	@Column(name="name")
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
 	@Column(name="uuid")
 	public String getUuid() {
 		return uuid;

@@ -262,7 +262,7 @@ public class ActivityService extends BaseService{
 	 * @param kilometer
 	 * @description 存储发布的活动，同时当前用户被默认为第一个参与者
 	 */
-	public String saveActivity(String uuid, String longitude, String latitude, String address, String time, String info, int kilometer){
+	public String saveActivity(String name, String uuid, String longitude, String latitude, String address, String time, String info, int kilometer){
 		/*
 		 * time转换为Date类型，赋值到starttime
 		 */
@@ -280,7 +280,7 @@ public class ActivityService extends BaseService{
 		/*
 		 * 设置act的属性信息
 		 */
-		saveActInfo(uuid, longitude, latitude, address, info, kilometer,
+		saveActInfo(name, uuid, longitude, latitude, address, info, kilometer,
 				starttime, activity);
 		/*
 		 * 通过活动actuuid获取活动经纬度信息对象
@@ -344,9 +344,10 @@ public class ActivityService extends BaseService{
 	/**
 	 * @description activity属性信息设置完毕
 	 */
-	private void saveActInfo(String uuid, String longitude, String latitude,
+	private void saveActInfo(String name, String uuid, String longitude, String latitude,
 			String address, String info, int kilometer, Date starttime,
 			Activity activity) {
+		activity.setName(name);
 		activity.setUuid(uuid);
 		activity.setActuuid(UUID.randomUUID().toString().replace("-", ""));
 		activity.setAddress(address);
