@@ -71,21 +71,21 @@ public class RelationshipService extends BaseThirdService{
 		return jsonMapper.toJson(friends);
 	}
 	
-	public String iattention(long id){
+	public List<Runner> iattention(long id){
 		String attentionUuid = getUuid(id);
 		List<Relationship> relationships = relationshipDao.findIAttention(attentionUuid);
 		List<Runner> friends = new ArrayList<Runner>();
 		boolean iorme = true;
 		getFriends(relationships, friends, iorme);
-		return jsonMapper.toJson(friends);
+		return friends;
 	}
-	public String attentionme(long id){
+	public List<Runner> attentionme(long id){
 		String attentionUuid = getUuid(id);
 		List<Relationship> relationships = relationshipDao.findAttentionMe(attentionUuid);
 		List<Runner> friends = new ArrayList<Runner>();
 		boolean iorme = false;
 		getFriends(relationships, friends, iorme);
-		return jsonMapper.toJson(friends);
+		return friends;
 	}
 
 	private void getFriends(List<Relationship> relationships,
