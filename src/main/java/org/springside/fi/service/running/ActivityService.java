@@ -458,7 +458,8 @@ public class ActivityService extends BaseService{
 		List<Participate> parts= participateDao.findByUuid(uuid);
 		for(Participate part : parts){
 			String actuuid = part.getActuuid();
-			activities.add(activityDao.findByACTUUID(actuuid).get(0));
+			Activity act = activityDao.findByACTUUID(actuuid).get(0);
+			activities.add(act);
 		}
 		sortByTime(activities);
 		return activities;

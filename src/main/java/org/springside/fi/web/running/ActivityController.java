@@ -112,6 +112,11 @@ public class ActivityController extends BaseController{
 		return jsonMapper.toJson(map);
 	}
 	
+	/**
+	 * @param pageNumber
+	 * @param pageSize
+	 * @return 返回当前用户参加的活动
+	 */
 	@ResponseBody
 	@RequestMapping(value="/participate/gethistoryactivity")
 	public String getParticipateHistoryActivity(@RequestParam(value = "pageNum", defaultValue=DEFAULT_PAGE_NUMBER) int pageNumber,

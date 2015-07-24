@@ -169,6 +169,9 @@ public class RelationshipController extends BaseController{
 		}
 		return jsonMapper.toJson(map);
 	}
+	/**
+	 * @return 返回我关注的好友列表
+	 */
 	@ResponseBody
 	@RequestMapping(value="/iattention")
 	public String iattention(){
@@ -185,6 +188,9 @@ public class RelationshipController extends BaseController{
 		return jsonMapper.toJson(map);
 	}
 	
+	/**
+	 * @return 返回关注我的朋友列表
+	 */
 	@ResponseBody
 	@RequestMapping(value="attentionme")
 	public String attentionme(){
