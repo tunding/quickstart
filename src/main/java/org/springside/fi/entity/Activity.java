@@ -41,6 +41,8 @@ public class Activity extends BaseEntity{
 	private Integer state;
 	private Integer participateCount;
 	private Integer delFlag;
+	private Integer limitCount;
+	private String tag;
 	@Column(name="name")
 	public String getName() {
 		return name;
@@ -133,5 +135,19 @@ public class Activity extends BaseEntity{
 	}
 	public void setDelFlag(Integer delFlag) {
 		this.delFlag = delFlag;
+	}
+	@Column(name="limit_count")
+	public Integer getLimitCount() {
+		return limitCount;
+	}
+	public void setLimitCount(Integer limitCount) {
+		this.limitCount = limitCount;
+	}
+	@Column(name="tag")
+	public String getTag() {
+		return tag;
+	}
+	public void setTag(String tag) {
+		this.tag = tag;
 	}
 }

@@ -1,10 +1,17 @@
+
 package org.springside.fi.web.running;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -12,7 +19,15 @@ import org.springside.fi.entity.Activity;
 import org.springside.fi.entity.Runner;
 import org.springside.fi.service.running.ActivityService;
 import org.springside.fi.service.running.RunnerService;
+import org.springside.fi.web.exception.RestExceptionCode;
+import org.springside.fi.web.params.CheckActivityParam;
+import org.springside.fi.web.params.SaveActivityParam;
+import org.springside.fi.web.vo.ActivityVo;
+import org.springside.fi.web.vo.CheckACtivityVo;
+import org.springside.fi.web.vo.SaveActivityVo;
 import org.springside.modules.mapper.JsonMapper;
+
+import com.sun.jna.platform.unix.X11.XClientMessageEvent.Data;
 
 /**
  * 创建时间：2015年7月3日 下午10:05:17  
@@ -34,40 +49,35 @@ public class ActivityController extends BaseController{
 	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
 	
 	/**
-	 * @param longitude 经度
-	 * @param latitude 纬度
-	 * @param address 活动地址
-	 * @param time 活动发起时间
-	 * @param info 活动具体信息
-	 * @param kilometer 活动跑步距离，以km单位
+	 * @param actParam 发布活动信息详情
 	 * @return
 	 * @description 现阶段只要求存储活动是一个，而不是数组形式的多个活动存储
 	 */
 	@ResponseBody
 	@RequestMapping(value="/saveactivity")
-	public String saveActivity(@RequestParam(value = "name", defaultValue="") String name,
-			@RequestParam(value = "longitude") String longitude,
-			@RequestParam(value = "latitude") String latitude,
-			@RequestParam(value = "address") String address,
-			@RequestParam(value = "time") String time,
-			@RequestParam(value = "info") String info,
-			@RequestParam(value = "kilometer") int kilometer){
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		String uuid = getRunnerUuid();
-		try{
-			String code = activityService.saveActivity(name, uuid, longitude, latitude, address, time, info, kilometer);
-			if("200".equals(code)){
-				map.put("result", "success");
-			}else{
-				map.put("result", "failed");
+	public String saveActivity(@Valid SaveActivityParam actParam,
+			BindingResult bindResult){
+		SaveActivityVo saveActVo = new SaveActivityVo();
+		if(bindResult.hasErrors()){
+			bindErrorRes(bindResult, saveActVo);
+		}else{
+			String uuid = getRunnerUuid();
+			try{
+				String code = activityService.saveActivity(actParam, uuid);
+				if("200".equals(code)){
+					saveActVo.setResult(RestExceptionCode.REST_SUCCESS_CODE);
+					saveActVo.setData(RestExceptionCode.REST_SUCCESS_MSG);
+				}else{
+					saveActVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
+					saveActVo.setData(code);
+				}
+			}catch(RuntimeException e){
+				e.printStackTrace();
+				saveActVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
+				saveActVo.setData(RestExceptionCode.REST_SYSTEM_ERROR_MSG);
 			}
-			map.put("data", "");
-		}catch(RuntimeException e){
-			e.printStackTrace();
-			map.put("result", "failed");
-			map.put("data", e.getMessage());
 		}
-		return jsonMapper.toJson(map);
+		return jsonMapper.toJson(saveActVo);
 	}
 	
 	/**
@@ -148,15 +158,33 @@ public class ActivityController extends BaseController{
 	}
 	
 	/**
-	 * @param time time表示的日期，作为判断某天发布活动没有的时间依据
-	 * @return true表示time当天没有活动发布，可以创建time时间当天的活动
+	 * @param actTime 判断某天发布活动没有的时间依据
+	 * @return false表示time当天没有活动发布，可以创建time时间当天的活动
 	 * 数据库中只能保持一天当前用户最多一个有效活动和一个已经删除多活动
+	 * 需要将actTime表示成yyyyMMddhhmmss
 	 */
 	@ResponseBody
 	@RequestMapping(value="/checkActivity")
-	public boolean checkActivity(@RequestParam(value="time") String time){
-		String uuid = getRunnerUuid();
-		return activityService.findDayActivityByUUID(uuid, time);
+	public String checkActivity(@Valid CheckActivityParam actTime,
+			BindingResult bindResult){
+		CheckACtivityVo actVo = new CheckACtivityVo();
+		if(bindResult.hasErrors()){
+			bindErrorRes(bindResult, actVo);
+		}else{
+			SimpleDateFormat df=new SimpleDateFormat("yyyyMMddhhmmss");
+			Date date = null;
+			try {
+				date = df.parse(actTime.getActTime());
+			} catch (ParseException e) {
+				actVo.setResult(RestExceptionCode.REST_PARAMETER_ERROR_CODE);
+				actVo.setData("日期格式错误");
+				return jsonMapper.toJson(actVo);
+			}
+			String uuid = getRunnerUuid();
+			actVo.setResult(RestExceptionCode.REST_SUCCESS_CODE);
+			actVo.setData(activityService.findDayActivityByUUID(uuid, date));
+		}
+		return jsonMapper.toJson(actVo);
 	}
 	
 	/**
@@ -167,4 +195,5 @@ public class ActivityController extends BaseController{
 		Runner runner = runnerService.getRunner(user_id);
 		return runner.getUuid();
 	}
+	
 }

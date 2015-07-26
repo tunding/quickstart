@@ -8,7 +8,7 @@ import java.util.Date;
  * @version 1.0
  * @date 创建时间：2015年7月24日 下午9:26:02
  */
-public class ActivityVo {
+public class ActivityVo extends BaseVo{
 	private String actUuid;//uuid
 	private String actName;//名称
 	private String pubUuid;//发布者uuid

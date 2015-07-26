@@ -26,6 +26,7 @@ import org.springside.fi.repository.GpsActivityInfoDao;
 import org.springside.fi.repository.ParticipateDao;
 import org.springside.fi.repository.RunnerDao;
 import org.springside.fi.service.third.RongCloudService;
+import org.springside.fi.web.params.SaveActivityParam;
 
 
 
@@ -254,24 +255,19 @@ public class ActivityService extends BaseService{
 	
 	/**
 	 * @param uuid
-	 * @param longitude
-	 * @param latitude
-	 * @param address
-	 * @param time
-	 * @param info
-	 * @param kilometer
+	 * @param act
 	 * @description 存储发布的活动，同时当前用户被默认为第一个参与者
 	 */
-	public String saveActivity(String name, String uuid, String longitude, String latitude, String address, String time, String info, int kilometer){
+	public String saveActivity(SaveActivityParam act, String uuid){
 		/*
 		 * time转换为Date类型，赋值到starttime
 		 */
-		Date starttime = TransferDate(time);
+		Date starttime = TransferDate(act.getTime());
 		/*
 		 * String转换Date失败，则返回null
 		 */
 		if(starttime == null){
-			return null;
+			return "time 格式有误";
 		}
 		/*
 		 * 获取当前用户发布的活动，如果time日期没有发布活动则返回新建的Activity
@@ -280,8 +276,8 @@ public class ActivityService extends BaseService{
 		/*
 		 * 设置act的属性信息
 		 */
-		saveActInfo(name, uuid, longitude, latitude, address, info, kilometer,
-				starttime, activity);
+		saveActInfo(act.getName(), uuid, act.getLongitude(), act.getLatitude(), act.getAddress(), act.getInfo()
+				, act.getKilometer(), act.getLimitCount(), act.getTag(), starttime, activity);
 		/*
 		 * 通过活动actuuid获取活动经纬度信息对象
 		 */
@@ -289,7 +285,7 @@ public class ActivityService extends BaseService{
 		/*
 		 * 设置活动gps属性信息
 		 */
-		saveActGpsInfo(longitude, latitude, starttime, activity,
+		saveActGpsInfo(act.getLongitude(), act.getLatitude(), starttime, activity,
 				gpsactivityinfo);
 		/*
 		 * 通过活动uuid和用户uuid获得参与活动对象
@@ -313,7 +309,7 @@ public class ActivityService extends BaseService{
 			gpsActivityInfoDao.save(gpsactivityinfo);
 		}catch(RuntimeException e){
 			e.printStackTrace();;
-			return "save failed";
+			return "save activity failed";
 		}
 		return "200";
 		
@@ -345,7 +341,7 @@ public class ActivityService extends BaseService{
 	 * @description activity属性信息设置完毕
 	 */
 	private void saveActInfo(String name, String uuid, String longitude, String latitude,
-			String address, String info, int kilometer, Date starttime,
+			String address, String info, int kilometer, int limitCount, String tag, Date starttime,
 			Activity activity) {
 		activity.setName(name);
 		activity.setUuid(uuid);
@@ -355,6 +351,8 @@ public class ActivityService extends BaseService{
 		activity.setLatitude(latitude);
 		activity.setInfo(info);
 		activity.setKilometer(kilometer);
+		activity.setLimitCount(limitCount);
+		activity.setTag(tag);
 		activity.setTime(starttime);
 		activity.setDelFlag(1);
 	}
@@ -363,7 +361,7 @@ public class ActivityService extends BaseService{
 	 * @return 将String类型的time转换成Date类型
 	 */
 	public Date TransferDate(String time){
-		SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat df=new SimpleDateFormat("yyyyMMddHHmmss");
 		Date starttime = null;
 		try {
 			starttime = df.parse(time);
@@ -529,25 +527,16 @@ public class ActivityService extends BaseService{
 	}
 	/**
 	 * @param uuid
-	 * @param time
+	 * @param actTime
 	 * @return
-	 * @description 判断未来某一天当前用户是否已经发布活动，发布则返回false，不允许用户再次发布活动 
-	 * 需要将time表示成yyyy-MM-dd，判断同一天。
-	 * 数据库TO_DAYS函数
+	 * @description 判断未来某一天当前用户是否已经发布活动，发布则返回true，不允许用户再次发布活动
+	 * 判断同一天,数据库TO_DAYS函数
 	 */
-	public boolean findDayActivityByUUID(String uuid, String time){
-		SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");
-		Date date = null;
-		try {
-			date = df.parse(time);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if(date==null || activityDao.findDayByUUID(uuid, date).size()>1){
-			return false;
-		}else{
+	public boolean findDayActivityByUUID(String uuid, Date date){
+		if(activityDao.findDayByUUID(uuid, date).size()>0){
 			return true;
+		}else{
+			return false;
 		}
 	}
 	
