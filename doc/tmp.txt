@@ -29,6 +29,10 @@ actuuid=301a42613e6241d9b4941f198224f9f9
 actuuid=a5679a02f5db4767b838b0eff99f110f
 {"result":1000,"data":{"name":"","uuid":"a5679a02f5db4767b838b0eff99f110f","actuuid":"a5679a02f5db4767b838b0eff99f110f","info":"123456","time":"2015-06-08 21:00:00","address":"清凉寺","kilometer":10,"longitude":"108.937884","latitude":"34.180789","state":0,"participateCount":0,"limitCount":0,"participateFlag":0,"tag":"8"}}
 
+http://localhost:8080/running/activity/info//public/gethistoryactivity
+{"result":1000,"data":[{"uuid":"c362342ab6de44d0b5ec91234a54e585","actuuid":"301a42613e6241d9b4941f198224f9f9","info":"路程远","time":"2015-07-31 23:59:00","address":"西安雁塔区小寨十字东北角赛格国际购物中心","kilometer":8,"longitude":"108.953876","latitude":"34.229684","participateCount":1,"limitCount":5,"participateFlag":1,"tag":"慢跑"},{"name":"","uuid":"c362342ab6de44d0b5ec91234a54e585","actuuid":"63d42fe44c71427caf0c7914d012c8bf","info":"test running","time":"2015-07-30 23:59:00","address":"高新逸品","kilometer":10,"longitude":"108.862443","latitude":"34.208155","participateCount":0,"limitCount":0,"participateFlag":1,"tag":"9"},{"name":"","uuid":"c362342ab6de44d0b5ec91234a54e585","actuuid":"8cdd321daaa84aed85e901236e9a0bce","info":"丈八东路311号","time":"2015-07-20 23:59:00","address":"陕西省游泳馆暑期游泳培训班","kilometer":5,"longitude":"108.896228","latitude":"34.205908","participateCount":1,"limitCount":0,"participateFlag":1,"tag":"10"}]}
+pageNum=2&pageSize=1
+{"result":1000,"data":[{"name":"","uuid":"c362342ab6de44d0b5ec91234a54e585","actuuid":"63d42fe44c71427caf0c7914d012c8bf","info":"test running","time":"2015-07-30 23:59:00","address":"高新逸品","kilometer":10,"longitude":"108.862443","latitude":"34.208155","participateCount":0,"limitCount":0,"participateFlag":1,"tag":"9"}]}
 
 actUuid;
 actName;

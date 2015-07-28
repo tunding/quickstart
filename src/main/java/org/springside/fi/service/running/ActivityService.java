@@ -433,6 +433,12 @@ public class ActivityService extends BaseService{
 		int start = (pageNumber-1) * pageSize;
 		int size  = pageSize;
 		List<Activity> activities = activityDao.findHistoryByUUID(uuid, start, size);
+		for(Activity act : activities){
+			act.setParticipateFlag(1);
+			List<Participate> parts = participateDao.findByActuuid(act.getActuuid());
+			Integer participateCount = parts.size();
+			act.setParticipateCount(participateCount);
+		}
 		return activities;
 	}
 	
