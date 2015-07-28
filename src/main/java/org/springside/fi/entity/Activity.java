@@ -42,6 +42,7 @@ public class Activity extends BaseEntity{
 	private Integer participateCount;
 	private Integer delFlag;
 	private Integer limitCount;
+	private Integer participateFlag;
 	private String tag;
 	@Column(name="name")
 	public String getName() {
@@ -142,6 +143,13 @@ public class Activity extends BaseEntity{
 	}
 	public void setLimitCount(Integer limitCount) {
 		this.limitCount = limitCount;
+	}
+	@Transient
+	public Integer getParticipateFlag() {
+		return participateFlag;
+	}
+	public void setParticipateFlag(Integer participateFlag) {
+		this.participateFlag = participateFlag;
 	}
 	@Column(name="tag")
 	public String getTag() {

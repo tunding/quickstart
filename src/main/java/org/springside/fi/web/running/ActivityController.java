@@ -20,14 +20,13 @@ import org.springside.fi.entity.Runner;
 import org.springside.fi.service.running.ActivityService;
 import org.springside.fi.service.running.RunnerService;
 import org.springside.fi.web.exception.RestExceptionCode;
+import org.springside.fi.web.params.ActuuidParam;
 import org.springside.fi.web.params.CheckActivityParam;
 import org.springside.fi.web.params.SaveActivityParam;
-import org.springside.fi.web.vo.ActivityVo;
 import org.springside.fi.web.vo.CheckACtivityVo;
+import org.springside.fi.web.vo.GetActivityVo;
 import org.springside.fi.web.vo.SaveActivityVo;
 import org.springside.modules.mapper.JsonMapper;
-
-import com.sun.jna.platform.unix.X11.XClientMessageEvent.Data;
 
 /**
  * 创建时间：2015年7月3日 下午10:05:17  
@@ -86,19 +85,24 @@ public class ActivityController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getactivity")
-	public String getActivity(@RequestParam(value="actuuid") String actuuid){
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		String uuid = getRunnerUuid();
-		try{
-			Activity activity = activityService.getActUuidActivity(uuid, actuuid);
-			map.put("result", "success");
-			map.put("data", activity);
-		}catch(RuntimeException e){
-			e.printStackTrace();
-			map.put("result", "failed");
-			map.put("data", e.getMessage());
+	public String getActivity(@Valid ActuuidParam actuuidparam,
+			BindingResult bindResult){
+		GetActivityVo getActivityVo = new GetActivityVo();
+		if(bindResult.hasErrors()){
+			bindErrorRes(bindResult, getActivityVo);
+		}else{
+			String uuid = getRunnerUuid();
+			try{
+				Activity activity = activityService.getActUuidActivity(uuid, actuuidparam.getActuuid());
+				getActivityVo.setResult(RestExceptionCode.REST_SUCCESS_CODE);
+				getActivityVo.setData(activity);
+			}catch(RuntimeException e){
+				e.printStackTrace();
+				getActivityVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
+				getActivityVo.setData(RestExceptionCode.REST_SYSTEM_ERROR_MSG);
+			}
 		}
-		return jsonMapper.toJson(map);
+		return jsonMapper.toJson(getActivityVo);
 	}
 	
 	/**
@@ -108,18 +112,18 @@ public class ActivityController extends BaseController{
 	@RequestMapping(value="/public/gethistoryactivity")
 	public String getPublicHistoryActivity(@RequestParam(value = "pageNum", defaultValue=DEFAULT_PAGE_NUMBER) int pageNumber,
 			@RequestParam(value = "pageSize", defaultValue=DEFAULT_PAGE_SIZE) int pageSize){
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		GetActivityVo getActivityVo = new GetActivityVo();
 		String uuid = getRunnerUuid();
 		try{
 			List<Activity> activities = activityService.getPublicHistoryActivity(uuid, pageNumber, pageSize);
-			map.put("result", "success");
-			map.put("data", activities);
+			getActivityVo.setResult(RestExceptionCode.REST_SUCCESS_CODE);
+			getActivityVo.setData(activities);
 		}catch(RuntimeException e){
 			e.printStackTrace();
-			map.put("result", "failed");
-			map.put("data", e.getMessage());
+			getActivityVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
+			getActivityVo.setData(RestExceptionCode.REST_SYSTEM_ERROR_MSG);
 		}
-		return jsonMapper.toJson(map);
+		return jsonMapper.toJson(getActivityVo);
 	}
 	
 	/**

@@ -1,5 +1,54 @@
+http://localhost:8080/running/activity/info/checkActivity
+{"result":1001,"data":"[actTime] 活动时间为空"}
+actTime=2015jsdfadfaweqe0730235900
+{"result":1001,"data":"日期格式错误"}
+actTime=20150730235900
+true当天有发布的活动
+{"result":1000,"data":true}
+actTime=20150731235900
+false当天没有发布的活动
+{"result":1000,"data":false}
+
+saveActivity接口
+活动数据库
+添加limit_count、tag字段
+http://localhost:8080/running/activity/info/saveactivity
+address=西安雁塔区小寨十字东北角赛格国际购物中心&limitCount=5&kilometer=8&info=路程远&latitude=34.229684&longitude=108.953876&tag=慢跑&time=20150731235900
+{"result":1000,"data":"success"}
+address=西安雁塔区小寨十字东北角赛格国际购物中心&limitCount=5&kilometer=8&info=路程远&latitude=34.229684&longitude=108.953876&tag=慢跑&time=幅卡桑德拉饭卡还是离开过哈说
+{"result":1002,"data":"time 格式有误"}
+无
+{"result":1001,"data":"[time] 不能为空"}
+
+http://localhost:8080/running/activity/info/getactivity
+{"result":1001,"data":"[actuuid] 不能为空"}
+当前用户参与该活动
+actuuid=301a42613e6241d9b4941f198224f9f9
+{"result":1000,"data":{"uuid":"c362342ab6de44d0b5ec91234a54e585","actuuid":"301a42613e6241d9b4941f198224f9f9","info":"路程远","time":"2015-07-31 23:59:00","address":"西安雁塔区小寨十字东北角赛格国际购物中心","kilometer":8,"longitude":"108.953876","latitude":"34.229684","state":1,"participateCount":1,"limitCount":5,"participateFlag":1,"tag":"慢跑"}}
+当前用户没有参与该活动
+actuuid=a5679a02f5db4767b838b0eff99f110f
+{"result":1000,"data":{"name":"","uuid":"a5679a02f5db4767b838b0eff99f110f","actuuid":"a5679a02f5db4767b838b0eff99f110f","info":"123456","time":"2015-06-08 21:00:00","address":"清凉寺","kilometer":10,"longitude":"108.937884","latitude":"34.180789","state":0,"participateCount":0,"limitCount":0,"participateFlag":0,"tag":"8"}}
+
+
+actUuid;
+actName;
+pubUuid;
+pubName;
+actTime;
+pubTime;
+address;
+distance;
+longitude;
+latitude;
+info;
+limitCount;
+participateCount;
+participateFlag;
+tag;
+
 用户查询附近都会提交经纬度，但不一定能成功，不成功也要更新时间，0最后的返回的jason串加上这个用户的最后使用时间
 返回的活动列表中每项 加上该活动的 ”发起人名字“
+我再提几个：1. 参与和取消参与做成两个接口吧，跟关注与被关注一样，这样统一点。2. 参与和取消参与不用提交uuid了吧，接口文档改一下。 3. 关注的返回结果有个code字段，改成result吧，为了接口格式统一。
 我关注谁，谁关注我返回数据格式修改
 上次与王笑讨论的时候，加了一些内容。我在这说一下，请你们了解。臀你想想后台怎么实现。
 1. 对用户属性增加了标签功能，即他的特长特点，如”长跑、马拉松、白天跑、夜晚跑、奥森公园“等，这个增加在用户资料里，具体是系统提供选择还是用户自己输入，请你们和王笑给出意见。

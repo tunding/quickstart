@@ -403,8 +403,16 @@ public class ActivityService extends BaseService{
 	 */
 	public Activity getActUuidActivity(String uuid, String actuuid){
 		List<Activity> activities = activityDao.findByACTUUID(actuuid);
-		Integer participateCount = participateDao.findByActuuid(actuuid).size();
+		List<Participate> parts = participateDao.findByActuuid(actuuid);
+		Integer participateCount = parts.size();
 		Activity act = activities.get(0);
+		act.setParticipateFlag(0);//没有参与该活动
+		for(Participate part : parts){
+			if(part.getUuid().equals(uuid)){
+				act.setParticipateFlag(1);//参与该活动
+				break;
+			}
+		}
 		act.setParticipateCount(participateCount);
 		if(uuid.equals(act.getUuid())){
 			act.setState(1);
