@@ -416,11 +416,12 @@ public class ActivityService extends BaseService{
 			}
 		}
 		act.setParticipateCount(participateCount);
-		if(uuid.equals(act.getUuid())){
+		if(uuid.equals(act.getUuid())){//是否为当前用户发起的活动
 			act.setState(1);
 		}else{
 			act.setState(0);
 		}
+		act.setPublishName(runnerDao.findByUUID(act.getUuid()).getName());//发布者姓名
 		return act;
 	}
 	
@@ -440,6 +441,7 @@ public class ActivityService extends BaseService{
 			List<Participate> parts = participateDao.findByActuuid(act.getActuuid());
 			Integer participateCount = parts.size();
 			act.setParticipateCount(participateCount);
+			act.setPublishName(runnerDao.findByUUID(act.getUuid()).getName());//发布者姓名
 		}
 		return activities;
 	}
@@ -459,6 +461,7 @@ public class ActivityService extends BaseService{
 			List<Participate> parts = participateDao.findByActuuid(act.getActuuid());
 			Integer participateCount = parts.size();
 			act.setParticipateCount(participateCount);
+			act.setPublishName(runnerDao.findByUUID(act.getUuid()).getName());//发布者姓名
 		}
 		int size  = activities.size();
 		if(end<size){

@@ -44,6 +44,7 @@ public class Activity extends BaseEntity{
 	private Integer limitCount;
 	private Integer participateFlag;
 	private String tag;
+	private String publishName;
 	@Column(name="name")
 	public String getName() {
 		return name;
@@ -157,5 +158,12 @@ public class Activity extends BaseEntity{
 	}
 	public void setTag(String tag) {
 		this.tag = tag;
+	}
+	@Transient
+	public String getPublishName() {
+		return publishName;
+	}
+	public void setPublishName(String publishName) {
+		this.publishName = publishName;
 	}
 }
