@@ -4,7 +4,6 @@ package org.springside.fi.web.running;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -22,8 +21,10 @@ import org.springside.fi.service.running.RunnerService;
 import org.springside.fi.web.exception.RestExceptionCode;
 import org.springside.fi.web.params.ActuuidParam;
 import org.springside.fi.web.params.CheckActivityParam;
+import org.springside.fi.web.params.DelActivityParam;
 import org.springside.fi.web.params.SaveActivityParam;
 import org.springside.fi.web.vo.CheckACtivityVo;
+import org.springside.fi.web.vo.DelActivityVo;
 import org.springside.fi.web.vo.GetActivityVo;
 import org.springside.fi.web.vo.SaveActivityVo;
 import org.springside.modules.mapper.JsonMapper;
@@ -135,18 +136,18 @@ public class ActivityController extends BaseController{
 	@RequestMapping(value="/participate/gethistoryactivity")
 	public String getParticipateHistoryActivity(@RequestParam(value = "pageNum", defaultValue=DEFAULT_PAGE_NUMBER) int pageNumber,
 			@RequestParam(value = "pageSize", defaultValue=DEFAULT_PAGE_SIZE) int pageSize){
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		GetActivityVo getActivityVo = new GetActivityVo();
 		String uuid = getRunnerUuid();
 		try{
 			List<Activity> activities = activityService.getParticipateHistoryActivity(uuid, pageNumber, pageSize);
-			map.put("result", "success");
-			map.put("data", activities);
+			getActivityVo.setResult(RestExceptionCode.REST_SUCCESS_CODE);
+			getActivityVo.setData(activities);
 		}catch(RuntimeException e){
 			e.printStackTrace();
-			map.put("result", "failed");
-			map.put("data", e.getMessage());
+			getActivityVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
+			getActivityVo.setData(RestExceptionCode.REST_SYSTEM_ERROR_MSG);
 		}
-		return jsonMapper.toJson(map);
+		return jsonMapper.toJson(getActivityVo);
 	}
 	
 	/**
@@ -155,10 +156,16 @@ public class ActivityController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value="/deleteactivity")
-	public boolean delActivity(@RequestParam(value = "actuuid") String actuuid,
-			@RequestParam(value = "msg", defaultValue="活动组织者取消活动") String msg){
-		String uuid = getRunnerUuid();
-		return activityService.delActivity(uuid, actuuid, msg);
+	public String delActivity(@Valid DelActivityParam delActivityParam,
+			BindingResult bindResult){
+		DelActivityVo delActivityVo = new DelActivityVo();
+		if(bindResult.hasErrors()){
+			bindErrorRes(bindResult, delActivityVo);
+		}else{
+			String uuid = getRunnerUuid();
+			activityService.delActivity(uuid, delActivityParam.getActuuid(), delActivityParam.getMsg(), delActivityVo);
+		}
+		return jsonMapper.toJson(delActivityVo);
 	}
 	
 	/**

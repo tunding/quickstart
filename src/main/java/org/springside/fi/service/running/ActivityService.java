@@ -25,8 +25,10 @@ import org.springside.fi.repository.ActivityDao;
 import org.springside.fi.repository.GpsActivityInfoDao;
 import org.springside.fi.repository.ParticipateDao;
 import org.springside.fi.repository.RunnerDao;
+import org.springside.fi.rest.RestErrorCode;
 import org.springside.fi.service.third.RongCloudService;
 import org.springside.fi.web.params.SaveActivityParam;
+import org.springside.fi.web.vo.DelActivityVo;
 
 
 
@@ -452,6 +454,12 @@ public class ActivityService extends BaseService{
 		int start = (pageNumber-1) * pageSize;
 		int end   = pageNumber*pageSize;
 		ArrayList<Activity> activities = getActByPart(uuid);
+		for(Activity act : activities){
+			act.setParticipateFlag(1);
+			List<Participate> parts = participateDao.findByActuuid(act.getActuuid());
+			Integer participateCount = parts.size();
+			act.setParticipateCount(participateCount);
+		}
 		int size  = activities.size();
 		if(end<size){
 			return activities.subList(start, end);
@@ -503,18 +511,22 @@ public class ActivityService extends BaseService{
 	 * @param actuuid
 	 * 删除发布的有效活动，删除活动gps信息，删除活动所有参与人的信息
 	 */
-	public boolean delActivity(String uuid, String actuuid, String msg){
+	public void delActivity(String uuid, String actuuid, String msg, DelActivityVo delActivityVo){
 		List<Activity> activities = activityDao.findByACTUUID(actuuid);
 		if(activities.size()>0){
 			Activity act = activities.get(0);
 			try{
 				deletePGA(uuid, actuuid, act, msg);
-				return true;
+				delActivityVo.setResult(RestErrorCode.REST_SUCCESS_CODE);
+				delActivityVo.setData(RestErrorCode.REST_SUCCESS_MSG);
 			}catch(RuntimeException e){
-				e.printStackTrace();
+				delActivityVo.setResult(RestErrorCode.REST_INTERNAL_ERROR_CODE);
+				delActivityVo.setData(RestErrorCode.REST_INTERNAL_ERROR_MSG);
 			}
+		}else{
+			delActivityVo.setResult(RestErrorCode.REST_SUCCESS_CODE);
+			delActivityVo.setData("此活动不存在");
 		}
-		return false;
 	}
 	/**
 	 * @param actuuid
