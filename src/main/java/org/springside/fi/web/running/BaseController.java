@@ -1,9 +1,13 @@
 package org.springside.fi.web.running;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Validator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +56,11 @@ public class BaseController {
 		return user.id;
 	}
 	
+	/**
+	 * @param bindResult
+	 * @param baseVo
+	 * @description 出现参数绑定异常，写入baseVo中的result和data
+	 */
 	public void bindErrorRes(BindingResult bindResult, BaseVo baseVo){
 		FieldError fieldError = bindResult.getFieldError();
 		List<ObjectError> errorList = bindResult.getAllErrors();
@@ -59,4 +68,20 @@ public class BaseController {
     	baseVo.setResult(RestExceptionCode.REST_PARAMETER_ERROR_CODE);
     	baseVo.setData(errormsg);
 	}
+	
+	public Date validDateParam(String timeStr) throws ParseException{
+		Date now = new Date();
+		if(!StringUtils.isBlank(timeStr)){
+			SimpleDateFormat df=new SimpleDateFormat("yyyyMMddhhmmss");
+			Date timeDate = df.parse(timeStr);
+			if( now.after(timeDate) ){//传入时间在当前时间之前则以当前时间为准
+				timeDate = now;
+			}
+			return timeDate;
+		}else{//时间串为空，返回当前时间
+			return now;
+		}
+		
+	}
+	
 }

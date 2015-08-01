@@ -1,5 +1,6 @@
 package org.springside.fi.web.test;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,16 +17,13 @@ public class Main {
 	 * @description
 	 */
 	public static void main(String[] args) {
-		List<String> test = new ArrayList<String>();
-		test.add("1");
-		test.add("2");
-		test.add("3");
-		test.add("4");
-		System.out.println(test);
-		System.out.println(test.get(0));
-		System.out.println(test.get(1));
-		System.out.println(test.get(2));
-		System.out.println(test.get(3));
-		System.out.println(test.subList(0, 3));
+		String time = null;
+		SimpleDateFormat df=new SimpleDateFormat("yyyyMMddhhmmss");
+		try {
+			Date date = df.parse(time);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

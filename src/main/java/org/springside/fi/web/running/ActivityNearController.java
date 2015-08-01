@@ -1,17 +1,24 @@
 package org.springside.fi.web.running;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springside.fi.entity.Activity;
 import org.springside.fi.service.running.ActivityService;
+import org.springside.fi.web.exception.RestExceptionCode;
+import org.springside.fi.web.params.NearActivityListParam;
+import org.springside.fi.web.vo.NearActivityListVo;
 import org.springside.modules.mapper.JsonMapper;
 
 /**
@@ -31,22 +38,26 @@ public class ActivityNearController extends BaseController{
 	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
 	
 	/**
-	 * @param time 传入时间串，如"2015-07-01 21:00:00",也可以为空
-	 * @return
-	 * @description sort 作为保留字段
+	 * @param NearActivityListParam
+	 * @description 获取附近所有有效活动，默认由近及远排序
 	 */
 	@ResponseBody
 	@RequestMapping(value={"/list", "/", ""})
-	public String getNearActivity(ServletRequest request,
-			@RequestParam(value = "longitude") String longitude,
-			@RequestParam(value = "latitude") String latitude,
-			@RequestParam(value = "distance", defaultValue=DEFAULT_DISTANCE) int distance,
-			@RequestParam(value = "pageNum", defaultValue=DEFAULT_PAGE_NUMBER) int pageNumber,
-			@RequestParam(value = "pageSize", defaultValue=DEFAULT_PAGE_SIZE) int pageSize,
-			@RequestParam(value = "time", defaultValue = "") String time,
-			@RequestParam(value = "sort", defaultValue = "") String sort){
-		Long user_id = getCurrentUserId();
-		HashMap<String, Object> map = new HashMap<String, Object>();
+	public String getNearActivityList(@Valid NearActivityListParam nearActListParam,
+			BindingResult bindResult){
+		NearActivityListVo nearActListVo = new NearActivityListVo();
+		if(bindResult.hasErrors()){
+			bindErrorRes(bindResult, nearActListVo);//参数绑定异常，经纬度为空
+		}else{
+			try{
+				Date start_time = validDateParam(nearActListParam.getStart_time());//验证传入的时间格式,返回Date类型时间
+				activityService.getAllActivity(getCurrentUserId(), nearActListParam);
+			}catch(ParseException e){//时间格式解析验证错误抛出异常
+				nearActListVo.setResult(RestExceptionCode.REST_PARAMETER_ERROR_CODE);
+				nearActListVo.setData("日期格式错误");
+			}
+		}
+		
 		try{
 			HashMap<String, Object> res = activityService.getAllActivity(user_id, longitude, latitude, distance, pageNumber, pageSize, time, sort);
 			@SuppressWarnings("unchecked")

@@ -27,6 +27,7 @@ import org.springside.fi.repository.ParticipateDao;
 import org.springside.fi.repository.RunnerDao;
 import org.springside.fi.rest.RestErrorCode;
 import org.springside.fi.service.third.RongCloudService;
+import org.springside.fi.web.params.NearActivityListParam;
 import org.springside.fi.web.params.SaveActivityParam;
 import org.springside.fi.web.vo.DelActivityVo;
 
@@ -65,7 +66,13 @@ public class ActivityService extends BaseService{
 	 * @param sort 排序字段，一般都为空，自动以距离作为返回
 	 * @return 附近活动列表
 	 */
-	public HashMap<String, Object> getAllActivity(long user_id, String longitude, String latitude, int distance, int pageNumber, int pageSize, String time, String sort){
+	public HashMap<String, Object> getAllActivity(long user_id, NearActivityListParam nearActListParam){
+		String longitude  = nearActListParam.getLongitude();
+		String latitude   = nearActListParam.getLatitude();
+		String start_time = nearActListParam.getStart_time();
+		int distance      = nearActListParam.getDistance();
+		int pageNumber    = nearActListParam.getPageNum();
+		int pageSize      = nearActListParam.getPageSize();
 		
 		Runner runner = getRunner(user_id);
 		/*
@@ -75,7 +82,7 @@ public class ActivityService extends BaseService{
 		/*
 		 * 获取时间标志设置为Date类型，供后续有效时间调用
 		 */
-		Date starttime = getStartTime(time);
+		Date starttime = getStartTime(start_time);
 		/*
 		 * geohash值取得附近九块地区的时间有效所有活动的gps信息（包括当前用户创建到活动）
 		 */
