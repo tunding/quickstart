@@ -66,27 +66,21 @@ public class ActivityService extends BaseService{
 	 * @param sort 排序字段，一般都为空，自动以距离作为返回
 	 * @return 附近活动列表
 	 */
-	public HashMap<String, Object> getAllActivity(long user_id, NearActivityListParam nearActListParam){
+	public HashMap<String, Object> getAllActivity(long user_id, NearActivityListParam nearActListParam, Date startTime){
 		String longitude  = nearActListParam.getLongitude();
 		String latitude   = nearActListParam.getLatitude();
-		String start_time = nearActListParam.getStart_time();
 		int distance      = nearActListParam.getDistance();
 		int pageNumber    = nearActListParam.getPageNum();
 		int pageSize      = nearActListParam.getPageSize();
-		
 		Runner runner = getRunner(user_id);
 		/*
 		 * 目标地址geohash值
 		 */
 		String actGeoHash = getGps(longitude, latitude);
 		/*
-		 * 获取时间标志设置为Date类型，供后续有效时间调用
-		 */
-		Date starttime = getStartTime(start_time);
-		/*
 		 * geohash值取得附近九块地区的时间有效所有活动的gps信息（包括当前用户创建到活动）
 		 */
-		List<GpsActivityInfo> gpsactinfos = getGeoHash(actGeoHash, starttime);
+		List<GpsActivityInfo> gpsactinfos = getGeoHash(actGeoHash, startTime);
 		/*
 		 * 遍历geohash返回的附近活动信息，筛选符合条件的插入到activities
 		 */
@@ -125,18 +119,18 @@ public class ActivityService extends BaseService{
 		}
 	}
 	/**
-	 * @description 赋值activities对象
+	 * @description 向activities中添加有效的活动内容
 	 */
 	private void activityAdd(String longitude, String latitude, int distance,
 			Runner runner, List<GpsActivityInfo> gpsactinfos,
 			ArrayList<Activity> activities) {
-		for(GpsActivityInfo gpsactivityinfo : gpsactinfos){
-			String actuuid = gpsactivityinfo.getActuuid();
+		for(GpsActivityInfo gpsactinfo : gpsactinfos){
+			String actuuid = gpsactinfo.getActuuid();
 			Activity act = activityDao.findByACTUUID(actuuid).get(0);
 			/*
 			 * 计算activity和给定地点的实际距离，只有在给定distance范围内的活动才会被插入到activities
 			 */
-			double apart_distance = getDistance(latitude, longitude, gpsactivityinfo.getLatitude(), gpsactivityinfo.getLongitude());
+			double apart_distance = getDistance(latitude, longitude, gpsactinfo.getLatitude(), gpsactinfo.getLongitude());
 			act.setDistance(apart_distance);
 			if(distance<apart_distance){
 				continue;
@@ -155,22 +149,7 @@ public class ActivityService extends BaseService{
 			activities.add(act);
 		}
 	}
-	/**
-	 * @param time
-	 * @return 获取时间标志
-	 */
-	private Date getStartTime(String time) {
-		SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date starttime = new Date();
-		if(!StringUtils.isEmpty(time)){
-			try {
-				starttime = df.parse(time);
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-		}
-		return starttime;
-	}
+	
 	/**
 	 * @param longitude
 	 * @param latitude
@@ -225,8 +204,8 @@ public class ActivityService extends BaseService{
 	 * @param time
 	 * @return 获取geohash前四位相同的附近活动，并且time有效
 	 */
-	private List<GpsActivityInfo> getGeoHash(String actGeoHash, Date time){
-		return gpsActivityInfoDao.findByGeohash(actGeoHash.subSequence(0, 4).toString(), time);
+	private List<GpsActivityInfo> getGeoHash(String actGeoHash, Date startTime){
+		return gpsActivityInfoDao.findByGeohash(actGeoHash.subSequence(0, 4).toString(), startTime);
 	}
 	
 	
@@ -335,7 +314,7 @@ public class ActivityService extends BaseService{
 	 * @description actGps信息设置
 	 */
 	private void saveActGpsInfo(String longitude, String latitude,
-			Date starttime, Activity activity, GpsActivityInfo gpsactivityinfo) {
+			Date startTime, Activity activity, GpsActivityInfo gpsactivityinfo) {
 		double lat = Double.valueOf(latitude);
 		double lon = Double.valueOf(longitude);
 		String userGeoHash = new Geohash().encode(lat, lon);
@@ -343,7 +322,7 @@ public class ActivityService extends BaseService{
 		gpsactivityinfo.setLongitude(longitude);
 		gpsactivityinfo.setLatitude(latitude);
 		gpsactivityinfo.setGeohash(userGeoHash);
-		gpsactivityinfo.setTime(starttime);
+		gpsactivityinfo.setStart_time(startTime);
 		gpsactivityinfo.setDelFlag(1);
 	}
 	/**

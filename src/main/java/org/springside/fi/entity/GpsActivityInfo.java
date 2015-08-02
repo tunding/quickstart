@@ -16,17 +16,21 @@ import org.hibernate.annotations.DynamicUpdate;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * @author wangzhichao
+ * @description 发布的活动gps信息表
+ */
 @Entity
 @Table(name = "gps_activity_info")
 @DynamicInsert @DynamicUpdate
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class GpsActivityInfo extends BaseEntity {
-	private String actuuid;
-	private String longitude;
-	private String latitude;
-	private String geohash;
-	private Date time;
-	private Integer delFlag;
+	private String actuuid;//活动uuid
+	private String longitude;//经度
+	private String latitude;//纬度
+	private String geohash;//计算得到的活动geoHash值
+	private Date start_time;//活动开始时间
+	private Integer delFlag;//假删除标志位
 	public String getActuuid() {
 		return actuuid;
 	}
@@ -51,14 +55,14 @@ public class GpsActivityInfo extends BaseEntity {
 	public void setGeohash(String geohash) {
 		this.geohash = geohash;
 	}
-	@Column(name="time")
+	@Column(name="start_time")
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+08:00")
 	@Temporal(TemporalType.TIMESTAMP)
-	public Date getTime() {
-		return time;
+	public Date getStart_time() {
+		return start_time;
 	}
-	public void setTime(Date time) {
-		this.time = time;
+	public void setStart_time(Date start_time) {
+		this.start_time = start_time;
 	}
 	@Column(name="delFlag")
 	@JsonIgnore

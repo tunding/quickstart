@@ -50,33 +50,17 @@ public class ActivityNearController extends BaseController{
 			bindErrorRes(bindResult, nearActListVo);//参数绑定异常，经纬度为空
 		}else{
 			try{
-				Date start_time = validDateParam(nearActListParam.getStart_time());//验证传入的时间格式,返回Date类型时间
-				activityService.getAllActivity(getCurrentUserId(), nearActListParam);
+				Date startTime = validDateParam(nearActListParam.getStart_time());//验证传入的时间格式,返回Date类型时间表示此刻之后点活动才能被筛选出来
+				activityService.getAllActivity(getCurrentUserId(), nearActListParam, startTime);
 			}catch(ParseException e){//时间格式解析验证错误抛出异常
 				nearActListVo.setResult(RestExceptionCode.REST_PARAMETER_ERROR_CODE);
 				nearActListVo.setData("日期格式错误");
+			}catch(RuntimeException e){
+				nearActListVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
+				nearActListVo.setData(RestExceptionCode.REST_SYSTEM_ERROR_MSG);
 			}
 		}
-		
-		try{
-			HashMap<String, Object> res = activityService.getAllActivity(user_id, longitude, latitude, distance, pageNumber, pageSize, time, sort);
-			@SuppressWarnings("unchecked")
-			List<Activity> activities = (List<Activity>)res.get("acts");
-			map.put("result", "success");
-			if(activities!=null&&!activities.isEmpty()){
-				map.put("total", res.get("total"));
-				map.put("data", activities);
-			}else{
-				map.put("total", 0);
-				map.put("data", null);
-			}
-		}catch(RuntimeException e){
-			e.printStackTrace();
-			map.put("result", "failed");
-			map.put("data", e.getMessage());
-		}
-		
-		return jsonMapper.toJson(map);
+		return jsonMapper.toJson(nearActListVo);
 	}
 	
 	/**
