@@ -20,13 +20,14 @@ import org.springside.fi.service.account.ShiroDbRealm.ShiroUser;
 import org.springside.fi.web.exception.RestExceptionCode;
 import org.springside.fi.web.vo.BaseVo;
 import org.springside.modules.beanvalidator.BeanValidators;
+import org.springside.modules.mapper.JsonMapper;
 
 public class BaseController {
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	protected static final String DEFAULT_PAGE_NUMBER="1";
 	protected static final String DEFAULT_PAGE_SIZE="10";
 	protected static final String DEFAULT_DISTANCE="10000";
-	
+	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
     @Autowired
     protected Validator validator;
     /**
@@ -69,7 +70,12 @@ public class BaseController {
     	baseVo.setData(errormsg);
 	}
 	
-	public Date validDateParam(String timeStr) throws ParseException{
+	/**
+	 * @param timeStr
+	 * @return 传入时间为空或者在当前时间之前，返回当前时间。
+	 * @throws ParseException
+	 */
+	public Date validDateParamByNow(String timeStr) throws ParseException{
 		Date now = new Date();
 		if(!StringUtils.isBlank(timeStr)){
 			SimpleDateFormat df=new SimpleDateFormat("yyyyMMddhhmmss");
@@ -81,7 +87,16 @@ public class BaseController {
 		}else{//时间串为空，返回当前时间
 			return now;
 		}
-		
 	}
 	
+	/**
+	 * @param timeStr
+	 * @return 返回时间串解析后的日期
+	 * @throws ParseException
+	 */
+	public Date validDateParam(String timeStr) throws ParseException{
+		SimpleDateFormat df=new SimpleDateFormat("yyyyMMddhhmmss");
+		Date timeDate = df.parse(timeStr);
+		return timeDate;
+	}
 }

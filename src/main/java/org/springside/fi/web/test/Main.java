@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springside.fi.map.common.Geohash;
+
 /**
  * @author tunding:wzc@tcl.com
  * @description 用来测试一些基本调用的java application
@@ -17,13 +20,9 @@ public class Main {
 	 * @description
 	 */
 	public static void main(String[] args) {
-		String time = null;
-		SimpleDateFormat df=new SimpleDateFormat("yyyyMMddhhmmss");
-		try {
-			Date date = df.parse(time);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		double lat = 34.208152D;
+		double lon = 108.862443D;
+		String actGeoHash = new Geohash().encode(lat, lon);
+		System.out.println(actGeoHash);
 	}
 }

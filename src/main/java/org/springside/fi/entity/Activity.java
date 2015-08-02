@@ -38,7 +38,7 @@ public class Activity extends BaseEntity{
 	private String longitude;
 	private String latitude;
 	private double distance;
-	private Integer state;
+	private Integer state;//是否为当前用户发起的活动，1：是，2：不是
 	private Integer participateCount;
 	private Integer delFlag;
 	private Integer limitCount;

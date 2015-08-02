@@ -3,9 +3,7 @@ package org.springside.fi.web.running;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
-import javax.servlet.ServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +12,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springside.fi.entity.Activity;
 import org.springside.fi.service.running.ActivityService;
 import org.springside.fi.web.exception.RestExceptionCode;
 import org.springside.fi.web.params.NearActivityListParam;
@@ -50,7 +47,7 @@ public class ActivityNearController extends BaseController{
 			bindErrorRes(bindResult, nearActListVo);//参数绑定异常，经纬度为空
 		}else{
 			try{
-				Date startTime = validDateParam(nearActListParam.getStart_time());//验证传入的时间格式,返回Date类型时间表示此刻之后点活动才能被筛选出来
+				Date startTime = validDateParamByNow(nearActListParam.getStart_time());//验证传入的时间格式,返回Date类型时间表示此刻之后点活动才能被筛选出来
 				activityService.getAllActivity(getCurrentUserId(), nearActListParam, startTime);
 			}catch(ParseException e){//时间格式解析验证错误抛出异常
 				nearActListVo.setResult(RestExceptionCode.REST_PARAMETER_ERROR_CODE);

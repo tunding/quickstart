@@ -1,5 +1,8 @@
 package org.springside.fi.service.running;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 import javax.transaction.Transactional;
@@ -35,5 +38,19 @@ public class BaseService {
 		Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
 		Specification<T> spec = DynamicSpecifications.bySearchFilter(filters.values(), clazz);
 		return spec;
+	}
+	/**
+	 * @param time
+	 * @return 将String类型的time转换成Date类型
+	 */
+	public Date TransferDate(String time){
+		SimpleDateFormat df=new SimpleDateFormat("yyyyMMddHHmmss");
+		Date starttime = null;
+		try {
+			starttime = df.parse(time);
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+		}
+		return starttime;
 	}
 }

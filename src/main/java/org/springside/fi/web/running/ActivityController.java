@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springside.fi.entity.Activity;
 import org.springside.fi.entity.Runner;
+import org.springside.fi.service.running.ActivityInfoService;
 import org.springside.fi.service.running.ActivityService;
 import org.springside.fi.service.running.RunnerService;
 import org.springside.fi.web.exception.RestExceptionCode;
@@ -27,7 +28,6 @@ import org.springside.fi.web.vo.CheckACtivityVo;
 import org.springside.fi.web.vo.DelActivityVo;
 import org.springside.fi.web.vo.GetActivityVo;
 import org.springside.fi.web.vo.SaveActivityVo;
-import org.springside.modules.mapper.JsonMapper;
 
 /**
  * 创建时间：2015年7月3日 下午10:05:17  
@@ -45,8 +45,8 @@ public class ActivityController extends BaseController{
 	private ActivityService activityService;
 	@Autowired
 	private RunnerService runnerService;
-	
-	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
+	@Autowired
+	private ActivityInfoService actInfoService;
 	
 	/**
 	 * @param actParam 发布活动信息详情
@@ -55,15 +55,16 @@ public class ActivityController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value="/saveactivity")
-	public String saveActivity(@Valid SaveActivityParam actParam,
-			BindingResult bindResult){
+	public String saveActivity(@Valid SaveActivityParam actParam, BindingResult bindResult){
 		SaveActivityVo saveActVo = new SaveActivityVo();
 		if(bindResult.hasErrors()){
 			bindErrorRes(bindResult, saveActVo);
 		}else{
-			String uuid = getRunnerUuid();
 			try{
-				String code = activityService.saveActivity(actParam, uuid);
+				Date startTime = validDateParam(actParam.getStart_time());
+				String currentUuid = getCurrentRunnerUuid();
+				
+				String code = actInfoService.saveActivity(actParam, currentUuid, startTime);
 				if("200".equals(code)){
 					saveActVo.setResult(RestExceptionCode.REST_SUCCESS_CODE);
 					saveActVo.setData(RestExceptionCode.REST_SUCCESS_MSG);
@@ -71,6 +72,9 @@ public class ActivityController extends BaseController{
 					saveActVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
 					saveActVo.setData(code);
 				}
+			}catch(ParseException e){
+				saveActVo.setResult(RestExceptionCode.REST_PARAMETER_ERROR_CODE);
+				saveActVo.setData("日期格式错误");
 			}catch(RuntimeException e){
 				e.printStackTrace();
 				saveActVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
@@ -92,9 +96,9 @@ public class ActivityController extends BaseController{
 		if(bindResult.hasErrors()){
 			bindErrorRes(bindResult, getActivityVo);
 		}else{
-			String uuid = getRunnerUuid();
+			String currentUuid = getCurrentRunnerUuid();
 			try{
-				Activity activity = activityService.getActUuidActivity(uuid, actuuidparam.getActuuid());
+				Activity activity = activityService.getActUuidActivity(currentUuid, actuuidparam.getActuuid());
 				getActivityVo.setResult(RestExceptionCode.REST_SUCCESS_CODE);
 				getActivityVo.setData(activity);
 			}catch(RuntimeException e){
@@ -114,9 +118,9 @@ public class ActivityController extends BaseController{
 	public String getPublicHistoryActivity(@RequestParam(value = "pageNum", defaultValue=DEFAULT_PAGE_NUMBER) int pageNumber,
 			@RequestParam(value = "pageSize", defaultValue=DEFAULT_PAGE_SIZE) int pageSize){
 		GetActivityVo getActivityVo = new GetActivityVo();
-		String uuid = getRunnerUuid();
+		String currentUuid = getCurrentRunnerUuid();
 		try{
-			List<Activity> activities = activityService.getPublicHistoryActivity(uuid, pageNumber, pageSize);
+			List<Activity> activities = activityService.getPublicHistoryActivity(currentUuid, pageNumber, pageSize);
 			getActivityVo.setResult(RestExceptionCode.REST_SUCCESS_CODE);
 			getActivityVo.setData(activities);
 		}catch(RuntimeException e){
@@ -137,9 +141,9 @@ public class ActivityController extends BaseController{
 	public String getParticipateHistoryActivity(@RequestParam(value = "pageNum", defaultValue=DEFAULT_PAGE_NUMBER) int pageNumber,
 			@RequestParam(value = "pageSize", defaultValue=DEFAULT_PAGE_SIZE) int pageSize){
 		GetActivityVo getActivityVo = new GetActivityVo();
-		String uuid = getRunnerUuid();
+		String currentUuid = getCurrentRunnerUuid();
 		try{
-			List<Activity> activities = activityService.getParticipateHistoryActivity(uuid, pageNumber, pageSize);
+			List<Activity> activities = activityService.getParticipateHistoryActivity(currentUuid, pageNumber, pageSize);
 			getActivityVo.setResult(RestExceptionCode.REST_SUCCESS_CODE);
 			getActivityVo.setData(activities);
 		}catch(RuntimeException e){
@@ -162,8 +166,8 @@ public class ActivityController extends BaseController{
 		if(bindResult.hasErrors()){
 			bindErrorRes(bindResult, delActivityVo);
 		}else{
-			String uuid = getRunnerUuid();
-			activityService.delActivity(uuid, delActivityParam.getActuuid(), delActivityParam.getMsg(), delActivityVo);
+			String currentUuid = getCurrentRunnerUuid();
+			activityService.delActivity(currentUuid, delActivityParam.getActuuid(), delActivityParam.getMsg(), delActivityVo);
 		}
 		return jsonMapper.toJson(delActivityVo);
 	}
@@ -191,9 +195,9 @@ public class ActivityController extends BaseController{
 				actVo.setData("日期格式错误");
 				return jsonMapper.toJson(actVo);
 			}
-			String uuid = getRunnerUuid();
+			String currentUuid = getCurrentRunnerUuid();
 			actVo.setResult(RestExceptionCode.REST_SUCCESS_CODE);
-			actVo.setData(activityService.findDayActivityByUUID(uuid, date));
+			actVo.setData(activityService.findDayActivityByUUID(currentUuid, date));
 		}
 		return jsonMapper.toJson(actVo);
 	}
@@ -201,7 +205,7 @@ public class ActivityController extends BaseController{
 	/**
 	 * @return 获取当前用户uuid
 	 */
-	private String getRunnerUuid(){
+	private String getCurrentRunnerUuid(){
 		Long user_id = getCurrentUserId();
 		Runner runner = runnerService.getRunner(user_id);
 		return runner.getUuid();
