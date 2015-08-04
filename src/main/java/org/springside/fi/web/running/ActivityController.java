@@ -47,11 +47,10 @@ public class ActivityController extends BaseController{
 	private RunnerService runnerService;
 	@Autowired
 	private ActivityInfoService actInfoService;
-	
 	/**
 	 * @param actParam 发布活动信息详情
 	 * @return
-	 * @description 现阶段只要求存储活动是一个，而不是数组形式的多个活动存储
+	 * @description 现阶段只要求存储活动是一个，而不是数组形式的多个活动存储。不能修改活动！
 	 */
 	@ResponseBody
 	@RequestMapping(value="/saveactivity")
@@ -63,7 +62,6 @@ public class ActivityController extends BaseController{
 			try{
 				Date startTime = validDateParam(actParam.getStart_time());
 				String currentUuid = getCurrentRunnerUuid();
-				
 				String code = actInfoService.saveActivity(actParam, currentUuid, startTime);
 				if("200".equals(code)){
 					saveActVo.setResult(RestExceptionCode.REST_SUCCESS_CODE);
@@ -85,7 +83,7 @@ public class ActivityController extends BaseController{
 	}
 	
 	/**
-	 * @param actuuid
+	 * @param actuuidparam
 	 * @return 返回活动详情，包含活动已参加的人数，当前用户是否参加
 	 */
 	@ResponseBody

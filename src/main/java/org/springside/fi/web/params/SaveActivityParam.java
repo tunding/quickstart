@@ -13,6 +13,7 @@ import org.hibernate.validator.constraints.NotBlank;
 * 类说明：  保存activity需要的信息参数
 */
 public class SaveActivityParam {
+	@NotBlank
 	private String name;//活动名称
 	@NotBlank
 	private String longitude;//经度

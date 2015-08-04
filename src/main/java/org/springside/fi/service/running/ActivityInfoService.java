@@ -48,49 +48,52 @@ public class ActivityInfoService extends BaseService{
 		int kilometer  = actParam.getKilometer();
 		int limitCount = actParam.getLimitCount();
 		String tag  = actParam.getTag();
+		boolean isPublish = false;//默认此活动没有发布,true为此活动已发布，不能修改actuuid，part，gps等非参数传递的信息
+		
+		//活动开始时间早于当前北京时间，建议修改
+		if(startTime.before(new Date())){
+			return "活动开始时间早于当前北京时间，建议修改";
+		}
 		/*
-		 * 获取当前用户发布的活动，如果time日期没有发布活动则返回新建的Activity
+		 * 查看开始时间是否用户已经发布活动，false没有，true已发布活动
 		 */
-		Activity activity = getDayActivity(uuid, startTime);
+		isPublish = getDayActivity(uuid, startTime);
+		//不能修改活动，只能新建活动
+		if(isPublish==true){
+			return "当天已发布活动，请删除后重新发布";
+		}
+		Activity activity = new Activity();
 		/*
 		 * 设置act的属性信息
 		 */
 		saveActInfo(name, uuid, lon, lat, address, info, kilometer, limitCount, tag, startTime, activity);
 		/*
-		 * 通过活动actuuid获取活动经纬度信息对象
-		 */
-		GpsActivityInfo gpsactivityinfo = getGpsActivityInfo(activity.getActuuid());
-		/*
 		 * 设置活动gps属性信息
 		 */
-		saveActGpsInfo(act.getLongitude(), act.getLatitude(), starttime, activity,
+		GpsActivityInfo gpsactivityinfo = new GpsActivityInfo();
+		saveActGpsInfo(actParam.getLongitude(), actParam.getLatitude(), startTime, activity,
 				gpsactivityinfo);
 		/*
-		 * 通过活动uuid和用户uuid获得参与活动对象
+		 * 设置参与part属性信息
 		 */
-		Participate part = partActService.getParticipate(uuid, activity.getActuuid());
-		/*
-		 * part如果原本就存在则不需要修改
-		 */
-		if(StringUtils.isBlank(part.getActuuid())){
-			savePartInfo(uuid, activity, part);
-			try{
-				partDao.save(part);
-			}catch(RuntimeException e){
-				e.printStackTrace();
-				return "save participate failed";
-			}
+		Participate part = new Participate();
+		savePartInfo(uuid, activity, part);
+		try{
+			partDao.save(part);
+		}catch(RuntimeException e){
+			e.printStackTrace();
+			return "保存活动参与者时出现错误";
 		}
-		
 		try{
 			actDao.save(activity);
 			gpsActInfoDao.save(gpsactivityinfo);
 		}catch(RuntimeException e){
 			e.printStackTrace();;
-			return "save activity failed";
+			return "保存活动信息出现错误";
 		}
 		return "200";
 	}
+	
 	/**
 	 * @description participate信息设置完毕
 	 */
@@ -133,29 +136,17 @@ public class ActivityInfoService extends BaseService{
 		activity.setTime(starttime);
 		activity.setDelFlag(1);
 	}
-	/**
-	 * @param actuuid
-	 * @return 根据活动uuid返回活动的gps信息，没有则新建
-	 */
-	private GpsActivityInfo getGpsActivityInfo(String actuuid){
-		List<GpsActivityInfo> gpsactivities = gpsActInfoDao.findByActUUID(actuuid);
-		if(gpsactivities.size()>0){
-			return gpsactivities.get(0);
-		}else{
-			return new GpsActivityInfo();
-		}
-	}
 	
 	/**
 	 * @param uuid
 	 * @return 返回time当天发布的活动，否则返回新建的活动对象
 	 */
-	private Activity getDayActivity(String uuid, Date time){
+	private boolean getDayActivity(String uuid, Date time){
 		List<Activity> activities = actDao.findDayByUUID(uuid, time);
 		if(activities.size()>0){
-			return activities.get(0);
+			return true;
 		}else{
-			return new Activity();
+			return false;
 		}
 	}
 }

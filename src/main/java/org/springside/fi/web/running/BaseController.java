@@ -27,7 +27,7 @@ public class BaseController {
 	protected static final String DEFAULT_PAGE_NUMBER="1";
 	protected static final String DEFAULT_PAGE_SIZE="10";
 	protected static final String DEFAULT_DISTANCE="10000";
-	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
+	protected JsonMapper jsonMapper = JsonMapper.nonEmptyMapper();
     @Autowired
     protected Validator validator;
     /**

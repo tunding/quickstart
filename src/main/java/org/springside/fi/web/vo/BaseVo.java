@@ -1,4 +1,7 @@
 package org.springside.fi.web.vo;
+
+import org.springside.fi.web.exception.RestExceptionCode;
+
 /**  
  * 创建时间：2015年7月25日 上午2:29:35  
  * 项目名称：running  
@@ -8,8 +11,8 @@ package org.springside.fi.web.vo;
  * 类说明：  
  */
 public class BaseVo {
-	private Integer result;
-	private Object data;
+	private Integer result = RestExceptionCode.REST_SUCCESS_CODE;
+	private Object data = RestExceptionCode.REST_SUCCESS_MSG;
 	public Integer getResult() {
 		return result;
 	}
