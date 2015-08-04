@@ -9,17 +9,18 @@ package org.springside.fi.web.exception;
  */
 public class RestExceptionCode {
     public final static int REST_SUCCESS_CODE = 1000;
-    public final static String REST_SUCCESS_MSG = "success";
+    public final static String REST_SUCCESS_MSG = "成功";
 
     public final static int REST_PARAMETER_ERROR_CODE = 1001;
-    public final static String REST_INPUT_PARAMETER_ERROR_MSG = "input parameter error";
+    public final static String REST_INPUT_PARAMETER_ERROR_MSG = "输入参数有误";
     
     public final static int REST_SYSTEM_ERROR_CODE = 1002;
-    public final static String REST_SYSTEM_ERROR_MSG = "system error";
+    public final static String REST_SYSTEM_ERROR_MSG = "系统内部错误";
     
     public final static int REST_SIGNATURE_ERROR_CODE = 1004;
-    public final static String REST_SIGNATURE_ERROR_MSG = "authentication failure about digital signature";
+    public final static String REST_SIGNATURE_ERROR_MSG = "数字签名验证错误";
     
     public final static int REST_DUPLICATION_ERROR_CODE = 1005;
-    public final static String REST_DUPLICATION_ERROR_MSG = "duplicated data";
+    public final static String REST_DUPLICATION_ERROR_MSG = "重复数据";
+    
 }
