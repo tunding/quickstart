@@ -6,13 +6,18 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springside.fi.entity.Runner;
+import org.springside.fi.rest.RestErrorCode;
 import org.springside.fi.service.account.AccountService;
+import org.springside.fi.web.params.account.CheckLoginNameParam;
+import org.springside.fi.web.running.BaseController;
+import org.springside.fi.web.vo.account.CheckLoginNameVo;
 import org.springside.modules.mapper.JsonMapper;
 
 /**
@@ -22,12 +27,12 @@ import org.springside.modules.mapper.JsonMapper;
  */
 @Controller
 @RequestMapping(value = "/register")
-public class RegisterController {
+public class RegisterController extends BaseController{
 
 	@Autowired
 	private AccountService accountService;
 	
-	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
+	protected JsonMapper jsonMapper = JsonMapper.nonEmptyMapper();
 	protected HashMap<String, Object> map = new HashMap<String, Object>();
 
 /*	@RequestMapping(method = RequestMethod.GET)
@@ -54,13 +59,20 @@ public class RegisterController {
 	/**
 	 * Ajax请求校验loginName是否唯一。
 	 */
-	@RequestMapping(value = "checkLoginName")
+	@RequestMapping(value = "/checkLoginName")
 	@ResponseBody
-	public String checkLoginName(@RequestParam("loginName") String loginName) {
-		if (accountService.findUserByLoginName(loginName) == null) {
-			return "true";
-		} else {
-			return "false";
+	public String checkLoginName(@Valid CheckLoginNameParam checkLoginNameParam, BindingResult bindResult) {
+		CheckLoginNameVo checkLoginNameVo = new CheckLoginNameVo();
+		if(bindResult.hasErrors()){
+			bindErrorRes(bindResult, checkLoginNameVo);//参数绑定异常，loginName为空
+		}else{
+			String loginName = checkLoginNameParam.getLoginName();
+			if (accountService.findUserByLoginName(loginName) == null) {
+				checkLoginNameVo.setData("true");
+			} else {
+				checkLoginNameVo.setData("false");
+			}
 		}
+		return jsonMapper.toJson(checkLoginNameVo);
 	}
 }
