@@ -2,12 +2,17 @@ package org.springside.fi.web.running;
 
 import java.util.HashMap;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springside.fi.service.running.RelationshipService;
+import org.springside.fi.web.params.attention.AttentionParam;
+import org.springside.fi.web.vo.attention.AttentionVo;
 import org.springside.modules.mapper.JsonMapper;
 
 /**
@@ -30,9 +35,6 @@ import org.springside.modules.mapper.JsonMapper;
 @Controller
 @RequestMapping(value="/ralationship/friendship")
 public class RelationshipController extends BaseController{
-	
-	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
-	
 	@Autowired
 	private RelationshipService relationshipService;
 	
@@ -62,20 +64,27 @@ public class RelationshipController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value="/attention")
-	public String AttentionFriendship(@RequestParam(value="passiveAttentionUuid") String passiveAttentionUuid,
-			@RequestParam(value="message", defaultValue="") String msg){
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		Long user_id = getCurrentUserId();
-		try{
-			//return relationshipService.attentionRelationship(user_id, passiveAttentionUuid, msg);
-			//只关注，不发送验证消息
-			return relationshipService.attentionRelationship(user_id, passiveAttentionUuid);
-		}catch(RuntimeException e){
-			e.printStackTrace();
-			map.put("result", "failed");
-			map.put("data", e.getMessage());
-			return jsonMapper.toJson(map);
+	public String AttentionFriendship(@Valid AttentionParam attentionParam, BindingResult bindResult){
+		AttentionVo attentionVo = new AttentionVo();
+		if(bindResult.hasErrors()){
+			bindErrorRes(bindResult, attentionVo);//参数绑定异常，经纬度为空
+		}else{
+			String passiveAttentionUuid = attentionParam.getPassiveAttentionUuid();
+			String msg = attentionParam.getMessage();
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			Long user_id = getCurrentUserId();
+			try{
+				//return relationshipService.attentionRelationship(user_id, passiveAttentionUuid, msg);
+				//只关注，不发送验证消息
+				return relationshipService.attentionRelationship(user_id, passiveAttentionUuid);
+			}catch(RuntimeException e){
+				e.printStackTrace();
+				map.put("result", "failed");
+				map.put("data", e.getMessage());
+				return jsonMapper.toJson(map);
+			}
 		}
+		return jsonMapper.toJson(attentionVo);
 	}
 	
 	/**
