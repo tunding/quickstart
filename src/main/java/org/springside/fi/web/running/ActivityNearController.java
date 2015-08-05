@@ -10,12 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springside.fi.service.running.ActivityParticipateService;
 import org.springside.fi.service.running.ActivityService;
 import org.springside.fi.web.exception.RestExceptionCode;
 import org.springside.fi.web.params.NearActivityListParam;
+import org.springside.fi.web.params.acitvity.PartParam;
 import org.springside.fi.web.vo.NearActivityListVo;
+import org.springside.fi.web.vo.activity.PartVo;
 import org.springside.modules.mapper.JsonMapper;
 
 /**
@@ -30,10 +32,9 @@ import org.springside.modules.mapper.JsonMapper;
 @RequestMapping(value="/activity/near")
 public class ActivityNearController extends BaseController{
 	@Autowired
-	private ActivityService activityService;
-	
-	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
-	
+	private ActivityService actService;
+	@Autowired
+	private ActivityParticipateService actPartService;
 	/**
 	 * @param NearActivityListParam
 	 * @description 获取附近所有有效活动，默认由近及远排序
@@ -48,7 +49,7 @@ public class ActivityNearController extends BaseController{
 		}else{
 			try{
 				Date startTime = validDateParamByNow(nearActListParam.getStart_time());//验证传入的时间格式,返回Date类型时间表示此刻之后点活动才能被筛选出来
-				activityService.getAllActivity(getCurrentUserId(), nearActListParam, startTime);
+				actService.getAllActivity(getCurrentUserId(), nearActListParam, startTime);
 			}catch(ParseException e){//时间格式解析验证错误抛出异常
 				nearActListVo.setResult(RestExceptionCode.REST_PARAMETER_ERROR_CODE);
 				nearActListVo.setData("日期格式错误");
@@ -61,26 +62,50 @@ public class ActivityNearController extends BaseController{
 	}
 	
 	/**
-	 * @param uuid
-	 * @param actuuid
-	 * @param opt in参与，out取消参与
-	 * @description 参与或取消附近的活动
+	 * @param partIn
+	 * @desctiption 参与附近的活动
 	 */
 	@ResponseBody
-	@RequestMapping(value="/participate")
-	public String participateActivity(@RequestParam(value="uuid") String uuid,
-			@RequestParam(value="actuuid") String actuuid,
-			@RequestParam(value="controller") String opt){
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		try{
-			activityService.participate(uuid, actuuid, opt);
-			map.put("result", "success");
-		}catch(RuntimeException e){
-			e.printStackTrace();
-			map.put("result", "error");
-			map.put("msg", e.getMessage());
+	@RequestMapping(value="/participate/in")
+	public String partActivityIn(@Valid PartParam partIn, BindingResult bindResult){
+		PartVo partVo = new PartVo();
+		if(bindResult.hasErrors()){
+			bindErrorRes(bindResult, partVo);
+		}else{
+			String uuid = partIn.getUuid();
+			String actuuid = partIn.getActuuid();
+			try{
+				actPartService.participateIn(uuid, actuuid);
+			}catch(RuntimeException e){
+				e.printStackTrace();
+				partVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
+				partVo.setData(RestExceptionCode.REST_SYSTEM_ERROR_MSG);
+			}
 		}
-		return jsonMapper.toJson(map);
+		return jsonMapper.toJson(partVo);
+	}
+	/**
+	 * @param partOut
+	 * @desctiption 取消参与附近的活动
+	 */
+	@ResponseBody
+	@RequestMapping(value="/participate/out")
+	public String partActivityOut(@Valid PartParam partOut, BindingResult bindResult){
+		PartVo partVo = new PartVo();
+		if(bindResult.hasErrors()){
+			bindErrorRes(bindResult, partVo);
+		}else{
+			String uuid = partOut.getUuid();
+			String actuuid = partOut.getActuuid();
+			try{
+				actPartService.participateOut(uuid, actuuid);
+			}catch(RuntimeException e){
+				e.printStackTrace();
+				partVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
+				partVo.setData(RestExceptionCode.REST_SYSTEM_ERROR_MSG);
+			}
+		}
+		return jsonMapper.toJson(partVo);
 	}
 	
 }
