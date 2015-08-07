@@ -23,4 +23,10 @@ public class RestExceptionCode {
     public final static int REST_DUPLICATION_ERROR_CODE = 1005;
     public final static String REST_DUPLICATION_ERROR_MSG = "重复数据";
     
+    public final static int REST_ATTENTION_SUCCESS_CODE = 2000;
+    public final static String REST_ATTENTION_SUCCESS_MSG = "关注成功";
+    
+	public final static int REST_ALREADY_ATTENTION_CODE = 2001;
+	public final static String REST_ALREADY_ATTENTION_MSG = "已经关注过对方";
+    
 }

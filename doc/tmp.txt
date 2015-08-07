@@ -1,3 +1,7 @@
+http://localhost:8080/running/ralationship/friendship/attention?passiveAttentionUuid=16c71b7da2404ec09d5c2be1df9b50b6
+{"result":2001,"data":"已经关注过对方"}
+{"result":2000,"data":"关注成功"}
+
 保存活动参数time改为start_time
 
 修改传入时间格式

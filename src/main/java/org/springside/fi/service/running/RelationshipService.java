@@ -148,7 +148,7 @@ public class RelationshipService extends BaseThirdService{
 	public String attentionRelationship(long id, String passiveAttentionUuid, String content) {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		String attentionUuid = getUuid(id);
-		if(isFriend(id, passiveAttentionUuid)){
+		if(isAttention(id, passiveAttentionUuid)){
 			map.put("code", RestErrorCode.REST_ISFRIEND_CODE);
 			map.put("data", RestErrorCode.REST_ISFRIEND_MSG);
 		}else if(isblack(id, passiveAttentionUuid)){
@@ -164,32 +164,14 @@ public class RelationshipService extends BaseThirdService{
 		}
 		return jsonMapper.toJson(map);
 	}
-	/**
-	 * @param id
-	 * @param passiveAttentionUuid
-	 * @description 不发送消息，只在本地数据库关注双方,存储表明当前用户关注了哪个用户
-	 */
-	public String attentionRelationship(long id, String passiveAttentionUuid){
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		String attentionUuid = getUuid(id);
-		if(isFriend(id, passiveAttentionUuid)){
-			map.put("code", RestErrorCode.REST_ISFRIEND_CODE);
-			map.put("data", "已经关注过对方");
-		}else{
-			agree(attentionUuid, passiveAttentionUuid);
-			map.put("code", RestErrorCode.REST_SUCCESS_CODE);
-			map.put("data", "已关注对方");
-		}
-		return jsonMapper.toJson(map);
-	}
 	
 	/**
 	 * 添加好友需要A->B和B->A两层好友关系
 	 */
 	public void agreeRelationship(long id, String passiveAttentionUuid){
 		String attentionUuid = getUuid(id);
-		agree(attentionUuid, passiveAttentionUuid);
-		agree(passiveAttentionUuid, attentionUuid);
+		attention(attentionUuid, passiveAttentionUuid);
+		attention(passiveAttentionUuid, attentionUuid);
 	}
 	
 	public String submitBlack(long id, String passiveAttentionUuid){
@@ -250,9 +232,10 @@ public class RelationshipService extends BaseThirdService{
 	}
 	
 	/**
+	 * 是否关注，true表示已关注，false表示未关注
 	 * state为1的有效好友 delFlag为1的为有效好友
 	 */
-	public boolean isFriend(long id, String passiveAttentionUuid){
+	public boolean isAttention(long id, String passiveAttentionUuid){
 		String attentionUuid = getUuid(id);
 		List<Relationship> relationships = relationshipDao.findRelationshipFriend(attentionUuid, passiveAttentionUuid);
 		if(relationships.size()>0){
@@ -338,7 +321,7 @@ public class RelationshipService extends BaseThirdService{
 	 * @param passiveAttentionUuid
 	 * attentionUuid添加passiveAttentionUuid为好友，纪录好友信息到数据库
 	 */
-	private void agree(String attentionUuid, String passiveAttentionUuid){
+	public void attention(String attentionUuid, String passiveAttentionUuid){
 		Relationship relationship = getRelationship(attentionUuid, passiveAttentionUuid);
 		relationship.setAttentionUuid(attentionUuid);
 		relationship.setPassiveAttentionUuid(passiveAttentionUuid);

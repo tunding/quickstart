@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Relationship extends BaseEntity{
 	private String attentionUuid;
 	private String passiveAttentionUuid;
-	private Integer state;
+	private Integer state;//黑名单
 	private Integer delFlag;
 	@Column(name="attention_uuid")
 	public String getAttentionUuid() {
