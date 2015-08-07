@@ -96,20 +96,24 @@ public class RelationshipController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value="/attentionremove")
-	public String RemoveFriendship(@RequestParam(value="passiveAttentionUuid") String passiveAttentionUuid){
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		Long user_id = getCurrentUserId();
-		try{
-			//relationshipService.removeRelationship(user_id, passiveAttentionUuid);
-			relationshipService.removeRelationshipFlag(user_id, passiveAttentionUuid);
-			map.put("result", "success");
-			map.put("data", "");
-		}catch(RuntimeException e){
-			e.printStackTrace();
-			map.put("result", "failed");
-			map.put("data", e.getMessage());
+	public String RemoveFriendship(@Valid AttentionParam attentionParam, BindingResult bindResult){
+		AttentionVo attentionVo = new AttentionVo();
+		if(bindResult.hasErrors()){
+			bindErrorRes(bindResult, attentionVo);//参数绑定异常，uuid为空
+		}else{
+			Long user_id = getCurrentUserId();
+			try{
+				String passiveAttentionUuid = attentionParam.getPassiveAttentionUuid();
+				//relationshipService.removeRelationship(user_id, passiveAttentionUuid);
+				attentionService.removeRelationshipFlag(user_id, passiveAttentionUuid);
+				attentionVo.setResult(RestExceptionCode.REST_REMOVE_ATTENTION_CODE);
+				attentionVo.setData(RestExceptionCode.REST_REMOVE_ATTENTION_MSG);
+			}catch(RuntimeException e){
+				attentionVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
+				attentionVo.setData(RestExceptionCode.REST_SYSTEM_ERROR_MSG);
+			}
 		}
-		return jsonMapper.toJson(map);
+		return jsonMapper.toJson(attentionVo);
 	}
 	
 	/**
@@ -182,9 +186,8 @@ public class RelationshipController extends BaseController{
 		}
 		return jsonMapper.toJson(map);
 	}
-	/**
-	 * @return 返回我关注的好友列表
-	 */
+	
+	//返回我关注的好友列表，不需要参数
 	@ResponseBody
 	@RequestMapping(value="/iattention")
 	public String iattention(){

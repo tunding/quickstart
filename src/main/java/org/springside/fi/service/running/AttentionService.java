@@ -2,6 +2,7 @@ package org.springside.fi.service.running;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springside.fi.entity.Relationship;
 import org.springside.fi.entity.Runner;
 import org.springside.fi.web.exception.RestExceptionCode;
 import org.springside.fi.web.vo.attention.AttentionVo;
@@ -25,11 +26,23 @@ public class AttentionService {
 			attentionVo.setResult(RestExceptionCode.REST_ALREADY_ATTENTION_CODE);
 			attentionVo.setData(RestExceptionCode.REST_ALREADY_ATTENTION_MSG);
 		}else{
-			relationshipService.attention(attentionUuid, passiveAttentionUuid);
+			relationshipService.saveAttention(attentionUuid, passiveAttentionUuid);
 			attentionVo.setResult(RestExceptionCode.REST_ATTENTION_SUCCESS_CODE);
 			attentionVo.setData(RestExceptionCode.REST_ATTENTION_SUCCESS_MSG);
 		}
 	}
+	
+	//假删除本地关注记录
+	public void removeRelationshipFlag(long id, String passiveAttentionUuid){
+		String attentionUuid = getUuid(id);
+		removeAttentionFlag(attentionUuid, passiveAttentionUuid);
+	}
+	private void removeAttentionFlag(String attentionUuid, String passiveAttentionUuid){
+		Relationship relationship = relationshipService.getRelationship(attentionUuid, passiveAttentionUuid);
+		relationship.setDelFlag(0);
+		relationshipService.removeAttention(relationship);
+	}
+	
 	//通过id获取用户的uuid
 	private String getUuid(long id){
 		Runner runner = runnerService.getRunner(id);

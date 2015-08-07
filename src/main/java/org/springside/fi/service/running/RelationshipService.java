@@ -126,20 +126,6 @@ public class RelationshipService extends BaseThirdService{
 	}
 	
 	/**
-	 * 本地假删除好友关系
-	 */
-	public void removeRelationshipFlag(long id, String passiveAttentionUuid){
-		String attentionUuid = getUuid(id);
-		removeAttentionFlag(attentionUuid, passiveAttentionUuid);
-	}
-	
-	private void removeAttentionFlag(String attentionUuid, String passiveAttentionUuid){
-		Relationship relationship = getRelationship(attentionUuid, passiveAttentionUuid);
-		relationship.setDelFlag(0);
-		relationshipDao.save(relationship);
-	}
-	
-	/**
 	 * 请求添加好友
 	 * 如果原本当前用户是请求对象的好友，则返回。
 	 * 如果原本当前用户在请求对象的黑名单里，则返回。
@@ -170,8 +156,8 @@ public class RelationshipService extends BaseThirdService{
 	 */
 	public void agreeRelationship(long id, String passiveAttentionUuid){
 		String attentionUuid = getUuid(id);
-		attention(attentionUuid, passiveAttentionUuid);
-		attention(passiveAttentionUuid, attentionUuid);
+		saveAttention(attentionUuid, passiveAttentionUuid);
+		saveAttention(passiveAttentionUuid, attentionUuid);
 	}
 	
 	public String submitBlack(long id, String passiveAttentionUuid){
@@ -321,11 +307,15 @@ public class RelationshipService extends BaseThirdService{
 	 * @param passiveAttentionUuid
 	 * attentionUuid添加passiveAttentionUuid为好友，纪录好友信息到数据库
 	 */
-	public void attention(String attentionUuid, String passiveAttentionUuid){
+	public void saveAttention(String attentionUuid, String passiveAttentionUuid){
 		Relationship relationship = getRelationship(attentionUuid, passiveAttentionUuid);
 		relationship.setAttentionUuid(attentionUuid);
 		relationship.setPassiveAttentionUuid(passiveAttentionUuid);
 		relationship.setDelFlag(1);
+		relationshipDao.save(relationship);
+	}
+	//假删除取消关注接口
+	public void removeAttention(Relationship relationship){
 		relationshipDao.save(relationship);
 	}
 	
@@ -334,9 +324,8 @@ public class RelationshipService extends BaseThirdService{
 	 * @param passiveAttentionUuid 被动uuid
 	 * 获取好友对象
 	 */
-	private Relationship getRelationship(String attentionUuid, String passiveAttentionUuid){
+	public Relationship getRelationship(String attentionUuid, String passiveAttentionUuid){
 		List<Relationship> relationships = relationshipDao.findRelationship(attentionUuid, passiveAttentionUuid);
-		System.out.println(relationships.size()>0);
 		if(relationships.size()>0){
 			return relationships.get(0);
 		}else{
