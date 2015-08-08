@@ -28,7 +28,7 @@ import com.google.common.collect.ImmutableList;
 public class Runner extends IdEntity {
 	private String loginName;
 	private String plainPassword;
-	private double distance;
+	private Double distance;
 	private String salt;
 	private String roles;
 	private String uuid;
@@ -89,11 +89,11 @@ public class Runner extends IdEntity {
 		this.plainPassword = plainPassword;
 	}
 	@Transient
-	public double getDistance() {
+	public Double getDistance() {
 		return distance;
 	}
 
-	public void setDistance(double distance) {
+	public void setDistance(Double distance) {
 		this.distance = distance;
 	}
 	@JsonIgnore

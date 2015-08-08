@@ -1,5 +1,7 @@
 package org.springside.fi.service.running;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springside.fi.entity.Relationship;
@@ -41,6 +43,23 @@ public class AttentionService {
 		Relationship relationship = relationshipService.getRelationship(attentionUuid, passiveAttentionUuid);
 		relationship.setDelFlag(0);
 		relationshipService.removeAttention(relationship);
+	}
+	
+	//返回我关注的好友列表
+	public List<Runner> iattention(long id){
+		String attentionUuid = getUuid(id);
+		boolean iorme = true;
+		List<Relationship> relationships = relationshipService.getRelationships(attentionUuid, iorme);
+		List<Runner> friends = relationshipService.getFriends(relationships, iorme);
+		return friends;
+	}
+	//返回关注我的好友列表
+	public List<Runner> attentionme(long id){
+		String attentionUuid = getUuid(id);
+		boolean iorme = false;
+		List<Relationship> relationships = relationshipService.getRelationships(attentionUuid, iorme);
+		List<Runner> friends = relationshipService.getFriends(relationships, iorme);
+		return friends;
 	}
 	
 	//通过id获取用户的uuid

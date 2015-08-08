@@ -71,30 +71,13 @@ public class RelationshipService extends BaseThirdService{
 		return jsonMapper.toJson(friends);
 	}
 	
-	public List<Runner> iattention(long id){
-		String attentionUuid = getUuid(id);
-		List<Relationship> relationships = relationshipDao.findIAttention(attentionUuid);
+	public List<Runner> getFriends(List<Relationship> relationships, boolean iorme) {
 		List<Runner> friends = new ArrayList<Runner>();
-		boolean iorme = true;
-		getFriends(relationships, friends, iorme);
-		return friends;
-	}
-	public List<Runner> attentionme(long id){
-		String attentionUuid = getUuid(id);
-		List<Relationship> relationships = relationshipDao.findAttentionMe(attentionUuid);
-		List<Runner> friends = new ArrayList<Runner>();
-		boolean iorme = false;
-		getFriends(relationships, friends, iorme);
-		return friends;
-	}
-
-	private void getFriends(List<Relationship> relationships,
-			List<Runner> friends, boolean iorme) {
 		for(Relationship relationship : relationships){
 			Runner runner = null;
-			if(iorme){
+			if(iorme){//我关注的
 				runner = runnerService.getRunnerByUUID(relationship.getPassiveAttentionUuid());
-			}else{
+			}else{//关注我的
 				runner = runnerService.getRunnerByUUID(relationship.getAttentionUuid());
 			}
 			if(runner!=null){
@@ -104,9 +87,16 @@ public class RelationshipService extends BaseThirdService{
 				newrunner.setAge(runner.getAge());
 				newrunner.setSex(runner.getSex());
 				newrunner.setSignature(runner.getSignature());
-				
 				friends.add(newrunner);
 			}
+		}
+		return friends;
+	}
+	public List<Relationship> getRelationships(String attentionUuid, boolean iorme){
+		if(iorme){//我关注的关注关系
+			return relationshipDao.findIAttention(attentionUuid);
+		}else{//关注我的关注关系
+			return relationshipDao.findAttentionMe(attentionUuid);
 		}
 	}
 	

@@ -15,6 +15,7 @@ import org.springside.fi.service.running.AttentionService;
 import org.springside.fi.service.running.RelationshipService;
 import org.springside.fi.web.exception.RestExceptionCode;
 import org.springside.fi.web.params.attention.AttentionParam;
+import org.springside.fi.web.vo.attention.AttentionListVo;
 import org.springside.fi.web.vo.attention.AttentionVo;
 
 /**
@@ -191,17 +192,15 @@ public class RelationshipController extends BaseController{
 	@ResponseBody
 	@RequestMapping(value="/iattention")
 	public String iattention(){
+		AttentionListVo attentionListVo = new AttentionListVo();
 		Long user_id = getCurrentUserId();
-		HashMap<String, Object> map = new HashMap<String, Object>();
 		try{
-			map.put("result", "success");
-			map.put("data",relationshipService.iattention(user_id));
+			attentionListVo.setData(attentionService.iattention(user_id));
 		}catch(RuntimeException e){
-			e.printStackTrace();
-			map.put("result", "failed");
-			map.put("data", e.getMessage());
+			attentionListVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
+			attentionListVo.setData(RestExceptionCode.REST_SYSTEM_ERROR_MSG);
 		}
-		return jsonMapper.toJson(map);
+		return jsonMapper.toJson(attentionListVo);
 	}
 	
 	/**
@@ -210,16 +209,14 @@ public class RelationshipController extends BaseController{
 	@ResponseBody
 	@RequestMapping(value="attentionme")
 	public String attentionme(){
+		AttentionListVo attentionListVo = new AttentionListVo();
 		Long user_id = getCurrentUserId();
-		HashMap<String, Object> map = new HashMap<String, Object>();
 		try{
-			map.put("result", "success");
-			map.put("data", relationshipService.attentionme(user_id));
+			attentionListVo.setData(attentionService.attentionme(user_id));
 		}catch(RuntimeException e){
-			e.printStackTrace();
-			map.put("result", "failed");
-			map.put("data", e.getMessage());
+			attentionListVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
+			attentionListVo.setData(RestExceptionCode.REST_SYSTEM_ERROR_MSG);
 		}
-		return jsonMapper.toJson(map);
+		return jsonMapper.toJson(attentionListVo);
 	}
 }
