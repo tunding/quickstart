@@ -1,14 +1,11 @@
 package org.springside.fi.service.running;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +25,6 @@ import org.springside.fi.repository.RunnerDao;
 import org.springside.fi.rest.RestErrorCode;
 import org.springside.fi.service.third.RongCloudService;
 import org.springside.fi.web.params.NearActivityListParam;
-import org.springside.fi.web.params.SaveActivityParam;
 import org.springside.fi.web.vo.DelActivityVo;
 
 
@@ -55,8 +51,6 @@ public class ActivityService extends BaseService{
 	private RunnerDao runnerDao;
 	@Autowired
 	private RongCloudService rongCloudService;
-	@Autowired
-	private ParticipateActivityService partActService;
 	/**
 	 * @param distance 活动发起地点距离的最大范围
 	 * @param time 活动开始时间
@@ -87,6 +81,7 @@ public class ActivityService extends BaseService{
 		 * 返回结果中包含，附近活动数量
 		 */
 		HashMap<String, Object> map = new HashMap<String, Object>();
+		System.out.println(activities.size());
 		map.put("total", activities.size());
 		//调用重写的比较器，根据distance进行升序排序
 		sortByDistance(activities);
@@ -112,7 +107,8 @@ public class ActivityService extends BaseService{
 			map.put("acts", activities.subList(start, size));
 			return map;
 		}else{
-			return null;
+			map.put("acts", new ArrayList<Activity>());
+			return map;
 		}
 	}
 	/**
@@ -204,59 +200,6 @@ public class ActivityService extends BaseService{
 	 */
 	private List<GpsActivityInfo> getGeoHash(String actGeoHash, Date startTime){
 		return gpsActivityInfoDao.findByGeohash(actGeoHash.subSequence(0, 4).toString(), startTime);
-	}
-	
-	
-	/**
-	 * @param uuid
-	 * @param actuuid
-	 * @param opt in参与,out取消参与,真删除
-	 */
-	public void participate(String uuid, String actuuid, String opt){
-		Participate part = partActService.getParticipate(uuid, actuuid);
-		if("in".equals(opt)){
-			part.setActuuid(actuuid);
-			part.setUuid(uuid);
-			part.setDelFlag(1);
-			participateDao.save(part);
-		}else if("out".equals(opt)){
-			part.setDelFlag(0);
-			participateDao.save(part);
-		}
-	}
-
-	
-	
-
-
-
-	
-
-	
-	/**
-	 * @param actuuid
-	 * @return 直接通过actuuid返回act
-	 */
-	public Activity getActUuidActivity(String uuid, String actuuid){
-		List<Activity> activities = activityDao.findByACTUUID(actuuid);
-		List<Participate> parts = participateDao.findByActuuid(actuuid);
-		Integer participateCount = parts.size();
-		Activity act = activities.get(0);
-		act.setParticipateFlag(0);//没有参与该活动
-		for(Participate part : parts){
-			if(part.getUuid().equals(uuid)){
-				act.setParticipateFlag(1);//参与该活动
-				break;
-			}
-		}
-		act.setParticipateCount(participateCount);
-		if(uuid.equals(act.getUuid())){//是否为当前用户发起的活动
-			act.setState(1);
-		}else{
-			act.setState(0);
-		}
-		act.setPublishName(runnerDao.findByUUID(act.getUuid()).getName());//发布者姓名
-		return act;
 	}
 	
 	/**

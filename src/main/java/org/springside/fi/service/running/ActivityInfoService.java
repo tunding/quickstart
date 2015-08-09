@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +14,7 @@ import org.springside.fi.map.common.Geohash;
 import org.springside.fi.repository.ActivityDao;
 import org.springside.fi.repository.GpsActivityInfoDao;
 import org.springside.fi.repository.ParticipateDao;
+import org.springside.fi.repository.RunnerDao;
 import org.springside.fi.web.params.SaveActivityParam;
 
 /**
@@ -34,10 +34,13 @@ public class ActivityInfoService extends BaseService{
 	private ParticipateDao partDao;
 	@Autowired
 	private ParticipateActivityService partActService;
+	@Autowired
+	private RunnerDao runnerDao;
+	//<!-- 保存活动 -->
 	/**
 	 * @param uuid
 	 * @param act
-	 * @description 存储发布的活动，同时当前用户被默认为第一个参与者
+	 * @description 存储发布的活动，同时当前用户被默认为第一个参与者,不能修改活动，只能删除活动
 	 */
 	public String saveActivity(SaveActivityParam actParam, String uuid, Date startTime){
 		String name = actParam.getName();
@@ -93,7 +96,6 @@ public class ActivityInfoService extends BaseService{
 		}
 		return "200";
 	}
-	
 	/**
 	 * @description participate信息设置完毕
 	 */
@@ -136,7 +138,6 @@ public class ActivityInfoService extends BaseService{
 		activity.setTime(starttime);
 		activity.setDelFlag(1);
 	}
-	
 	/**
 	 * @param uuid
 	 * @return 返回time当天发布的活动，否则返回新建的活动对象
@@ -149,4 +150,32 @@ public class ActivityInfoService extends BaseService{
 			return false;
 		}
 	}
+	//<!-- 保存活动结束 -->
+	//<!-- 获取活动信息 -->
+	/**
+	 * @param actuuid
+	 * @return 直接通过actuuid返回act
+	 */
+	public Activity getActUuidActivity(String uuid, String actuuid){
+		List<Activity> activities = actDao.findByACTUUID(actuuid);
+		List<Participate> parts = partDao.findByActuuid(actuuid);
+		Integer participateCount = parts.size();
+		Activity act = activities.get(0);
+		act.setParticipateFlag(0);//没有参与该活动
+		for(Participate part : parts){
+			if(part.getUuid().equals(uuid)){
+				act.setParticipateFlag(1);//参与该活动
+				break;
+			}
+		}
+		act.setParticipateCount(participateCount);
+		if(uuid.equals(act.getUuid())){//是否为当前用户发起的活动，1发起，0别人发起
+			act.setState(1);
+		}else{
+			act.setState(0);
+		}
+		act.setPublishName(runnerDao.findByUUID(act.getUuid()).getName());//发布者姓名
+		return act;
+	}
+	//<!-- 获取活动信息 -->
 }

@@ -2,7 +2,6 @@ package org.springside.fi.web.running;
 
 import java.text.ParseException;
 import java.util.Date;
-import java.util.HashMap;
 
 import javax.validation.Valid;
 
@@ -18,7 +17,6 @@ import org.springside.fi.web.params.NearActivityListParam;
 import org.springside.fi.web.params.acitvity.PartParam;
 import org.springside.fi.web.vo.NearActivityListVo;
 import org.springside.fi.web.vo.activity.PartVo;
-import org.springside.modules.mapper.JsonMapper;
 
 /**
 * @author tunding:wzc@tcl.com
@@ -49,7 +47,7 @@ public class ActivityNearController extends BaseController{
 		}else{
 			try{
 				Date startTime = validDateParamByNow(nearActListParam.getStart_time());//验证传入的时间格式,返回Date类型时间表示此刻之后点活动才能被筛选出来
-				actService.getAllActivity(getCurrentUserId(), nearActListParam, startTime);
+				nearActListVo.setData(actService.getAllActivity(getCurrentUserId(), nearActListParam, startTime));
 			}catch(ParseException e){//时间格式解析验证错误抛出异常
 				nearActListVo.setResult(RestExceptionCode.REST_PARAMETER_ERROR_CODE);
 				nearActListVo.setData("日期格式错误");
@@ -77,7 +75,6 @@ public class ActivityNearController extends BaseController{
 			try{
 				actPartService.participateIn(uuid, actuuid);
 			}catch(RuntimeException e){
-				e.printStackTrace();
 				partVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
 				partVo.setData(RestExceptionCode.REST_SYSTEM_ERROR_MSG);
 			}
@@ -100,7 +97,6 @@ public class ActivityNearController extends BaseController{
 			try{
 				actPartService.participateOut(uuid, actuuid);
 			}catch(RuntimeException e){
-				e.printStackTrace();
 				partVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
 				partVo.setData(RestExceptionCode.REST_SYSTEM_ERROR_MSG);
 			}

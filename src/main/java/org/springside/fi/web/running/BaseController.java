@@ -75,7 +75,7 @@ public class BaseController {
 	 * @return 传入时间为空或者在当前时间之前，返回当前时间。
 	 * @throws ParseException
 	 */
-	public Date validDateParamByNow(String timeStr) throws ParseException{
+	protected Date validDateParamByNow(String timeStr) throws ParseException{
 		Date now = new Date();
 		if(!StringUtils.isBlank(timeStr)){
 			SimpleDateFormat df=new SimpleDateFormat("yyyyMMddhhmmss");
@@ -94,9 +94,21 @@ public class BaseController {
 	 * @return 返回时间串解析后的日期
 	 * @throws ParseException
 	 */
-	public Date validDateParam(String timeStr) throws ParseException{
+	protected Date getDate(String timeStr) throws ParseException{
 		SimpleDateFormat df=new SimpleDateFormat("yyyyMMddhhmmss");
-		Date timeDate = df.parse(timeStr);
-		return timeDate;
+		return df.parse(timeStr);
+	}
+	
+	/**
+	 * @param timeStr
+	 * @return 验证日期格式是否正确
+	 */
+	protected boolean validDate(String timeStr){
+		try {
+			getDate(timeStr);
+			return false;
+		} catch (ParseException e) {
+			return true;
+		}
 	}
 }

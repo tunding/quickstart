@@ -1,7 +1,6 @@
 保存活动参数time改为start_time
 
 修改传入时间格式
-修改gpsactiinfo为start_time
 
 actUuid;
 actName;

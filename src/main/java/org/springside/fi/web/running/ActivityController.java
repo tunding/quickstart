@@ -58,21 +58,20 @@ public class ActivityController extends BaseController{
 		SaveActivityVo saveActVo = new SaveActivityVo();
 		if(bindResult.hasErrors()){
 			bindErrorRes(bindResult, saveActVo);
-		}else{
+		}else if(validDate(actParam.getStart_time())){
+			saveActVo.setResult(RestExceptionCode.REST_PARAMETER_ERROR_CODE);
+			saveActVo.setData("日期格式错误");
+		}else {
 			try{
-				Date startTime = validDateParam(actParam.getStart_time());
+				Date startTime = getDate(actParam.getStart_time());
 				String currentUuid = getCurrentRunnerUuid();
 				String code = actInfoService.saveActivity(actParam, currentUuid, startTime);
-				if("200".equals(code)){
-					saveActVo.setResult(RestExceptionCode.REST_SUCCESS_CODE);
-					saveActVo.setData(RestExceptionCode.REST_SUCCESS_MSG);
-				}else{
+				if(!"200".equals(code)){
 					saveActVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
 					saveActVo.setData(code);
 				}
 			}catch(ParseException e){
-				saveActVo.setResult(RestExceptionCode.REST_PARAMETER_ERROR_CODE);
-				saveActVo.setData("日期格式错误");
+				System.out.println("日期格式错误");
 			}catch(RuntimeException e){
 				e.printStackTrace();
 				saveActVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
@@ -96,7 +95,7 @@ public class ActivityController extends BaseController{
 		}else{
 			String currentUuid = getCurrentRunnerUuid();
 			try{
-				Activity activity = activityService.getActUuidActivity(currentUuid, actuuidparam.getActuuid());
+				Activity activity = actInfoService.getActUuidActivity(currentUuid, actuuidparam.getActuuid());
 				getActivityVo.setResult(RestExceptionCode.REST_SUCCESS_CODE);
 				getActivityVo.setData(activity);
 			}catch(RuntimeException e){
@@ -177,7 +176,7 @@ public class ActivityController extends BaseController{
 	 * 需要将actTime表示成yyyyMMddhhmmss
 	 */
 	@ResponseBody
-	@RequestMapping(value="/checkActivity")
+	@RequestMapping(value="/checkactivity")
 	public String checkActivity(@Valid CheckActivityParam actTime,
 			BindingResult bindResult){
 		CheckACtivityVo actVo = new CheckACtivityVo();
