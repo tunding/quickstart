@@ -56,7 +56,10 @@ public class ProfileController {
 	public String update(@Valid @ModelAttribute("user") Runner user) {
 		accountService.updateUser(user);
 		updateCurrentUserName(user.getName());
-		return "redirect:/";
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("result", "success");
+		return jsonMapper.toJson(map);
+		//return "redirect:/";
 	}
 
 	/**

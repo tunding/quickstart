@@ -41,7 +41,7 @@ public class Runner extends IdEntity {
 	private Date createTime;//记录创建的时间
 	private Date lastUpdateTime;//记录最后更新的时间
 	private Integer attentionFlag;
-	private String portraitUri="static/images/face_default_m.jpg";//注册头像
+	private String portraitUri;//注册头像
 
 	public Runner() {
 	}
@@ -141,6 +141,13 @@ public class Runner extends IdEntity {
 	public void setSignature(String signature) {
 		this.signature = signature;
 	}
+	@Column(name="portraitUri")
+	public String getPortraitUri() {
+		return portraitUri;
+	}
+	public void setPortraitUri(String portraitUri) {
+		this.portraitUri = portraitUri;
+	}
 	@Column(name="cloudToken")
 	@JsonIgnore
 	public String getCloudToken() {
@@ -184,12 +191,5 @@ public class Runner extends IdEntity {
 	public List<String> getRoleList() {
 		// 角色列表在数据库中实际以逗号分隔字符串存储，因此返回不能修改的List.
 		return ImmutableList.copyOf(StringUtils.split(roles, ","));
-	}
-
-	public String getPortraitUri() {
-		return portraitUri;
-	}
-	public void setPortraitUri(String portraitUri) {
-		this.portraitUri = portraitUri;
 	}
 }

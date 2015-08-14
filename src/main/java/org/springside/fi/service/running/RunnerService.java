@@ -115,7 +115,7 @@ public class RunnerService {
 		try{
 			Runner runner = runnerDao.findOne(user_id);
 			GpsRunnerInfo gpsrunnerinfo = getGpsRunnerInfo(runner.getUuid());
-			gpsrunnerinfo.setUuid(runner.getUuid());;
+			gpsrunnerinfo.setUuid(runner.getUuid());
 			gpsrunnerinfo.setLatitude(latitude);
 			gpsrunnerinfo.setLongitude(longitude);
 			gpsrunnerinfo.setGeohash(userGeoHash);

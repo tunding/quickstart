@@ -22,7 +22,7 @@ public class RunnerNearController extends BaseController{
 	@Autowired
 	private RunnerService runnerService;
 	
-	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
+	protected JsonMapper jsonMapper = JsonMapper.nonEmptyMapper();
 	@ResponseBody
 	@RequestMapping(value="/test", method = RequestMethod.GET)
 	public String test() {
