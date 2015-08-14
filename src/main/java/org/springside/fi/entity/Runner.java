@@ -166,7 +166,6 @@ public class Runner extends IdEntity {
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
-	@JsonIgnore
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+08:00")
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="lastUpdateTime")
