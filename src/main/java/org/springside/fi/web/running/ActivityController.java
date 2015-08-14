@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ import org.springside.fi.web.exception.RestExceptionCode;
 import org.springside.fi.web.params.ActuuidParam;
 import org.springside.fi.web.params.CheckActivityParam;
 import org.springside.fi.web.params.DelActivityParam;
+import org.springside.fi.web.params.PageParam;
 import org.springside.fi.web.params.SaveActivityParam;
 import org.springside.fi.web.vo.CheckACtivityVo;
 import org.springside.fi.web.vo.DelActivityVo;
@@ -112,18 +114,22 @@ public class ActivityController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value="/public/gethistoryactivity")
-	public String getPublicHistoryActivity(@RequestParam(value = "pageNum", defaultValue=DEFAULT_PAGE_NUMBER) int pageNumber,
-			@RequestParam(value = "pageSize", defaultValue=DEFAULT_PAGE_SIZE) int pageSize){
+	public String getPublicHistoryActivity(@Valid PageParam pageParam, BindingResult bindResult){
 		GetActivityVo getActivityVo = new GetActivityVo();
-		String currentUuid = getCurrentRunnerUuid();
-		try{
-			List<Activity> activities = activityService.getPublicHistoryActivity(currentUuid, pageNumber, pageSize);
-			getActivityVo.setResult(RestExceptionCode.REST_SUCCESS_CODE);
-			getActivityVo.setData(activities);
-		}catch(RuntimeException e){
-			e.printStackTrace();
-			getActivityVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
-			getActivityVo.setData(RestExceptionCode.REST_SYSTEM_ERROR_MSG);
+		if(bindResult.hasErrors()){
+			bindErrorRes(bindResult, getActivityVo);
+		}else{
+			String currentUuid = getCurrentRunnerUuid();
+			int pageNumber = pageParam.getPageNum();
+			int pageSize   = pageParam.getPageSize();
+			try{
+				getActivityVo.setData(activityService.getPublicHistoryActivity(currentUuid, pageNumber, pageSize));
+				getActivityVo.setResult(RestExceptionCode.REST_SUCCESS_CODE);
+			}catch(RuntimeException e){
+				e.printStackTrace();
+				getActivityVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
+				getActivityVo.setData(RestExceptionCode.REST_SYSTEM_ERROR_MSG);
+			}
 		}
 		return jsonMapper.toJson(getActivityVo);
 	}
@@ -135,18 +141,22 @@ public class ActivityController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value="/participate/gethistoryactivity")
-	public String getParticipateHistoryActivity(@RequestParam(value = "pageNum", defaultValue=DEFAULT_PAGE_NUMBER) int pageNumber,
-			@RequestParam(value = "pageSize", defaultValue=DEFAULT_PAGE_SIZE) int pageSize){
+	public String getParticipateHistoryActivity(@Valid PageParam pageParam, BindingResult bindResult){
 		GetActivityVo getActivityVo = new GetActivityVo();
-		String currentUuid = getCurrentRunnerUuid();
-		try{
-			List<Activity> activities = activityService.getParticipateHistoryActivity(currentUuid, pageNumber, pageSize);
-			getActivityVo.setResult(RestExceptionCode.REST_SUCCESS_CODE);
-			getActivityVo.setData(activities);
-		}catch(RuntimeException e){
-			e.printStackTrace();
-			getActivityVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
-			getActivityVo.setData(RestExceptionCode.REST_SYSTEM_ERROR_MSG);
+		if(bindResult.hasErrors()){
+			bindErrorRes(bindResult, getActivityVo);
+		}else{
+			String currentUuid = getCurrentRunnerUuid();
+			int pageNumber = pageParam.getPageNum();
+			int pageSize   = pageParam.getPageSize();
+			try{
+				getActivityVo.setData(activityService.getParticipateHistoryActivity(currentUuid, pageNumber, pageSize));
+				getActivityVo.setResult(RestExceptionCode.REST_SUCCESS_CODE);
+			}catch(RuntimeException e){
+				e.printStackTrace();
+				getActivityVo.setResult(RestExceptionCode.REST_SYSTEM_ERROR_CODE);
+				getActivityVo.setData(RestExceptionCode.REST_SYSTEM_ERROR_MSG);
+			}
 		}
 		return jsonMapper.toJson(getActivityVo);
 	}

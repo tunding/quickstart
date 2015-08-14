@@ -1,5 +1,7 @@
 package org.springside.fi.web.params;
 
+import javax.validation.constraints.Min;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 /**  
@@ -16,7 +18,9 @@ public class NearActivityListParam {
 	@NotBlank
 	private String latitude;//纬度
 	private int distance=10000;//附近活动定义的距离范围，默认10000米
+	@Min(1)
 	private int pageNum=1;//列表返回页码，默认第一页
+	@Min(1)
 	private int pageSize=10;//列表返回每页数量，默认10条记录
 	private String start_time;//附近活动列表返回某个时间点后才会开始的活动,时间格式为"20150701210000"
 	private String sort;//排序字段，默认按照距离由近及远排序

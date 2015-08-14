@@ -27,5 +27,5 @@ public interface ActivityDao extends JpaSpecificationExecutor<Activity>,
 //	public List<Activity> findHistoryByUUID(String uuid, Date now);
 	@Query(value="select * from activity_info where uuid=?1 and del_flag=1 order by time desc limit ?2, ?3", nativeQuery=true)
 	@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-	public List<Activity> findHistoryByUUID(String uuid, int pageNum, int pageSize);
+	public List<Activity> findHistoryByUUID(String uuid, int start, int size);
 }
