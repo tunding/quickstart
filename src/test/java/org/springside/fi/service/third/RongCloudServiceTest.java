@@ -20,7 +20,7 @@ public class RongCloudServiceTest extends SpringTransactionalTestCase{
 	@Test
 	public void getTokenTest(){
 		try {
-			rongcloud.getToken("c362342ab6de44d0b5ec91234a54e585", "wangzhichao");
+			rongcloud.getToken("c362342ab6de44d0b5ec91234a54e585", "wangzhichao","portraitUri");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -34,7 +34,7 @@ public class RongCloudService extends BaseThirdService{
 	 * @throws UnsupportedEncodingException
 	 * 判断发送token需要的参数
 	 */
-	public String getToken(String userId, String name) throws UnsupportedEncodingException{
+	public String getToken(String userId, String name, String portraitUri) throws UnsupportedEncodingException{
 		if(StringUtils.isEmpty(userId)){
 			logger.error("userId is empty");
 			return null;
@@ -43,7 +43,7 @@ public class RongCloudService extends BaseThirdService{
 			logger.error("name is empty");
 			return null;
 		}
-		return getTokenData(userId, name);
+		return getTokenData(userId, name, portraitUri);
 		
 	}
 	
@@ -53,8 +53,8 @@ public class RongCloudService extends BaseThirdService{
 	 * @return
 	 * 发送取得token的http请求
 	 */
-	private String getTokenData(String userId, String name){
-		String reqParams = "userId="+userId+"&name="+name;
+	private String getTokenData(String userId, String name, String portraitUri){
+		String reqParams = "userId="+userId+"&name="+name+"&portraitUri="+portraitUri;
 		StringRequestEntity requestEntity = null;
 		try{
 			requestEntity = new StringRequestEntity(reqParams, "application/x-www-form-urlencoded", "UTF-8");
