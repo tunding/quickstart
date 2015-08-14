@@ -30,7 +30,7 @@ public class ProfileController {
 	@Autowired
 	private AccountService accountService;
 	
-	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
+	protected JsonMapper jsonMapper = JsonMapper.nonEmptyMapper();
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String profileForm(Model model) {

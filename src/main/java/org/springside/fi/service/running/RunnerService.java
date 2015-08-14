@@ -29,7 +29,7 @@ import org.springside.modules.mapper.JsonMapper;
 @Transactional("transactionManager")
 public class RunnerService {
 	
-	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
+	protected JsonMapper jsonMapper = JsonMapper.nonEmptyMapper();
 	
 	@Autowired
 	private AccountService accountService;
@@ -42,6 +42,9 @@ public class RunnerService {
 	
 	public List<Runner> getAllRunner(Long user_id, String longitude, String latitude, int distance, int pageNumber, int pageSize, String sex, String age, String time, String sort){
 		Runner currentUser = getRunner(user_id);
+		currentUser.setLastUpdateTime(new Date());
+		runnerDao.save(currentUser);//保存runner最后一次在线时间
+		
 		String loginName = currentUser.getLoginName();
 		
 		if(StringUtils.isBlank(longitude) || StringUtils.isBlank(latitude)){
@@ -120,6 +123,8 @@ public class RunnerService {
 			gpsrunnerinfo.setLongitude(longitude);
 			gpsrunnerinfo.setGeohash(userGeoHash);
 			gpsRunnerInfoDao.save(gpsrunnerinfo);
+			runner.setLastUpdateTime(new Date());
+			runnerDao.save(runner);
 		}catch(RuntimeException e){
 			e.printStackTrace();
 		}
@@ -182,7 +187,7 @@ public class RunnerService {
 		return gpsRunnerInfoDao.findByGeohash(userGeoHash.subSequence(0, 4).toString());
 	}
 	
-	private GpsRunnerInfo getGpsRunnerInfo(String uuid){
+	public GpsRunnerInfo getGpsRunnerInfo(String uuid){
 		GpsRunnerInfo gps = gpsRunnerInfoDao.findByUUID(uuid);
 		if(gps!=null){
 			return gps;

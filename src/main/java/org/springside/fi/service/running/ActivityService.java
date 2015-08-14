@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springside.fi.entity.Activity;
 import org.springside.fi.entity.GpsActivityInfo;
+import org.springside.fi.entity.GpsRunnerInfo;
 import org.springside.fi.entity.Participate;
 import org.springside.fi.entity.Runner;
 import org.springside.fi.map.common.Geohash;
@@ -50,6 +51,8 @@ public class ActivityService extends BaseService{
 	@Autowired
 	private RunnerDao runnerDao;
 	@Autowired
+	private RunnerService runnerService;
+	@Autowired
 	private RongCloudService rongCloudService;
 	/**
 	 * @param distance 活动发起地点距离的最大范围
@@ -58,12 +61,24 @@ public class ActivityService extends BaseService{
 	 * @return 附近活动列表
 	 */
 	public HashMap<String, Object> getAllActivity(long user_id, NearActivityListParam nearActListParam, Date startTime){
-		String longitude  = nearActListParam.getLongitude();
-		String latitude   = nearActListParam.getLatitude();
 		int distance      = nearActListParam.getDistance();
 		int pageNumber    = nearActListParam.getPageNum();
 		int pageSize      = nearActListParam.getPageSize();
+		HashMap<String, Object> map = new HashMap<String, Object>();
 		Runner runner = getRunner(user_id);
+		runner.setLastUpdateTime(new Date());//更新runner最后一次在线时间
+		String longitude  = nearActListParam.getLongitude();
+		String latitude   = nearActListParam.getLatitude();
+		if(StringUtils.isBlank(longitude) || StringUtils.isBlank(latitude)){
+			GpsRunnerInfo gps = runnerService.getGpsRunnerInfo(runner.getUuid());
+			longitude = gps.getLongitude();
+			latitude = gps.getLatitude();
+			if(StringUtils.isBlank(longitude) || StringUtils.isBlank(latitude)){
+				map.put("total", 0);
+				map.put("acts", new ArrayList<Activity>());
+				return map;
+			}
+		}
 		/*
 		 * 目标地址geohash值
 		 */
@@ -80,7 +95,6 @@ public class ActivityService extends BaseService{
 		/*
 		 * 返回结果中包含，附近活动数量
 		 */
-		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("total", activities.size());
 		//调用重写的比较器，根据distance进行升序排序
 		sortByDistance(activities);

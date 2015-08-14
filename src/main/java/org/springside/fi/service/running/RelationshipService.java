@@ -36,7 +36,7 @@ public class RelationshipService extends BaseThirdService{
 	private final static String RongHOSTBlacklistAdd = SystemGlobal.getConfig("RongCloudAPI")+"user/blacklist/add.json";
 	private final static String RongHOSTBlacklistRemove = SystemGlobal.getConfig("RongCloudAPI")+"user/blacklist/remove.json";
 	private final static String RongHOSTSystemMsg = SystemGlobal.getConfig("RongCloudAPI")+"message/system/publish.json";
-	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
+	protected JsonMapper jsonMapper = JsonMapper.nonEmptyMapper();
 	
 	@Autowired
 	private HttpClientTemplate httpClientTemplate;

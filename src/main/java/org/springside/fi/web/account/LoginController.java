@@ -26,7 +26,7 @@ public class LoginController {
 	@Autowired
 	private AccountService accountService;
 	
-	protected JsonMapper jsonMapper = JsonMapper.nonDefaultMapper();
+	protected JsonMapper jsonMapper = JsonMapper.nonEmptyMapper();
 	protected HashMap<String, Object> map = new HashMap<String, Object>();
 
 	@RequestMapping(method = RequestMethod.GET)

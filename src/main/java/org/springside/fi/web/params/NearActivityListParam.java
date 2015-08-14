@@ -13,9 +13,7 @@ import org.hibernate.validator.constraints.NotBlank;
  * 类说明：  附近活动列表查询传入参数
  */
 public class NearActivityListParam {
-	@NotBlank
 	private String longitude;//经度
-	@NotBlank
 	private String latitude;//纬度
 	private int distance=10000;//附近活动定义的距离范围，默认10000米
 	@Min(1)
